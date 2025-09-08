@@ -27,12 +27,12 @@ export function Header() {
     <header
       className={cn(
         "sticky top-0 z-50 transition-colors duration-300",
-        isScrolled ? "bg-gradient-to-b from-black/80 to-transparent" : "bg-transparent"
+        isScrolled ? "bg-gradient-to-b from-black/95 to-transparent" : "bg-transparent"
       )}
     >
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent pointer-events-none",
+          "absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-transparent pointer-events-none",
           isScrolled && "opacity-0"
         )}
       />
@@ -53,7 +53,7 @@ export function Header() {
               <Link href="/catalog">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
+                  className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-full bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
                 >
                   <Grid3X3 className="w-5 h-5" />
                   <span>Каталог</span>
@@ -61,21 +61,21 @@ export function Header() {
               </Link>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
+                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-full bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
               >
                 <Folder className="w-5 h-5" />
                 <span>Медиа</span>
               </Button>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
+                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-full bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
               >
                 <ArrowUp className="w-5 h-5" />
                 <span>Пополнение</span>
               </Button>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
+                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-full bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
               >
                 <Gift className="w-5 h-5" />
                 <span>Донат</span>
@@ -84,7 +84,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <Button variant="ghost" size="icon" className="text-white hover:text-red-400 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
+            <Button variant="ghost" size="icon" className="text-white hover:text-white w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
               <Heart className="w-6 h-6" />
             </Button>
 
@@ -92,7 +92,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-white hover:text-red-400 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+                className="relative text-white hover:text-white w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm"
               >
                 <ShoppingCart className="w-6 h-6" />
                 <Badge className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center p-0 bg-red-500 text-white text-sm rounded-full">
