@@ -1,16 +1,41 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
 import { Search, ShoppingCart, Heart, Grid3X3, Folder, ArrowUp, Gift } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { MobileNav } from "@/components/mobile-nav"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 export function Header() {
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
   return (
-    <header className="relative z-50">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent pointer-events-none" />
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-colors duration-300",
+        isScrolled ? "bg-gray-900/90 backdrop-blur-sm" : "bg-transparent"
+      )}
+    >
+      <div
+        className={cn(
+          "absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent pointer-events-none",
+          isScrolled && "opacity-0"
+        )}
+      />
 
       <div className="relative container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
