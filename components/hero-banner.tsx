@@ -54,7 +54,7 @@ export function HeroBanner() {
   }
 
   return (
-    <div className="relative h-screen overflow-hidden -mt-20">
+    <div className="relative h-screen overflow-hidden">
       <div className="absolute inset-0 bg-black">
         <img
           key={activeCard}
@@ -134,7 +134,7 @@ export function HeroBanner() {
             </div>
 
             <div key={`content-${activeCard}`} className="animate-in fade-in slide-in-from-left-4 duration-700">
-              <h1 className="text-6xl font-bold text-white mb-6 leading-tight text-balance">{currentCard.name}</h1>
+              <h1 className="text-5xl font-bold text-white mb-6 leading-tight text-balance">{currentCard.name}</h1>
 
               <p className="text-gray-300 mb-8 text-xl leading-relaxed max-w-lg text-pretty">
                 {currentCard.description}
