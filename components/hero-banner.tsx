@@ -68,7 +68,7 @@ export function HeroBanner() {
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#06080A] to-transparent" />
       </div>
 
-      <div className="relative z-10 pt-20">
+      <div className="relative z-10 pt-32">
         <div className="container mx-auto px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center justify-start gap-2 h-32 overflow-visible">
@@ -76,13 +76,13 @@ export function HeroBanner() {
                 <button
                   key={card.id}
                   onClick={() => setActiveCard(index)}
-                  className={`relative flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-700 ease-out ${
+                  className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden transition-all duration-700 ease-out ${
                     index === activeCard
-                      ? "w-24 h-24 ring-4 ring-purple-400 shadow-2xl shadow-purple-500/40 z-10"
-                      : "w-16 h-16"
+                      ? "ring-2 ring-purple-400 shadow-2xl shadow-purple-500/40 z-10"
+                      : ""
                   }`}
                   style={{
-                    transform: index === activeCard ? "scale(1.4)" : "scale(1)",
+                    transform: index === activeCard ? "scale(1.5)" : "scale(1)",
                     marginLeft: index > 0 && (index === activeCard || index - 1 === activeCard) ? "8px" : "0px",
                     marginRight:
                       index < featuredCards.length - 1 && (index === activeCard || index + 1 === activeCard)
