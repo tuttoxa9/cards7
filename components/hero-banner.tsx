@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react"
+import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Info } from "lucide-react"
 
 const featuredCards = [
   {
@@ -65,6 +65,7 @@ export function HeroBanner() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-transparent to-red-900/30" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#06080A] to-transparent" />
       </div>
 
       <div className="relative z-10 pt-20">
@@ -133,7 +134,7 @@ export function HeroBanner() {
             </div>
 
             <div key={`content-${activeCard}`} className="animate-in fade-in slide-in-from-left-4 duration-700">
-              <h1 className="text-7xl font-bold text-white mb-6 leading-tight text-balance">{currentCard.name}</h1>
+              <h1 className="text-6xl font-bold text-white mb-6 leading-tight text-balance">{currentCard.name}</h1>
 
               <p className="text-gray-300 mb-8 text-xl leading-relaxed max-w-lg text-pretty">
                 {currentCard.description}
@@ -154,7 +155,7 @@ export function HeroBanner() {
               <div className="flex items-center gap-4">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0 px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 px-8 py-3 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Купить
@@ -162,14 +163,15 @@ export function HeroBanner() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-6 py-3 text-lg rounded-xl"
+                  className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-6 py-3 text-lg rounded-full"
                 >
+                  <Info className="w-5 h-5 mr-2" />
                   Подробнее
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white hover:bg-white/10 rounded-xl w-12 h-12"
+                  className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-12 h-12"
                 >
                   <Heart className="w-6 h-6" />
                 </Button>
