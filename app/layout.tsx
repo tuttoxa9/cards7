@@ -26,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className="dark">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}>
+      <body
+        className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}
+      >
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />
       </body>
