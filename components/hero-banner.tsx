@@ -121,9 +121,9 @@ export function HeroBanner() {
         </div>
       </div>
 
-      <div className="relative z-10 h-full flex items-center">
+      <div className="relative z-10 h-full flex items-center pointer-events-none">
         <div className="container mx-auto px-8">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-6">
               <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
                 {currentCard.collection}
