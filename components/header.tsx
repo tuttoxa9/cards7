@@ -27,7 +27,7 @@ export function Header() {
     <header
       className={cn(
         "sticky top-0 z-50 transition-colors duration-300",
-        isScrolled ? "bg-gray-900/90 backdrop-blur-sm" : "bg-transparent"
+        isScrolled ? "bg-gradient-to-b from-black/80 to-transparent" : "bg-transparent"
       )}
     >
       <div
