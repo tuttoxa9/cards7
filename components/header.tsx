@@ -49,11 +49,11 @@ export function Header() {
               </span>
             </Link>
 
-            <nav className="hidden md:flex items-center space-x-8">
+            <nav className="hidden md:flex items-center space-x-2">
               <Link href="/catalog">
                 <Button
                   variant="ghost"
-                  className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2"
+                  className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
                 >
                   <Grid3X3 className="w-5 h-5" />
                   <span>Каталог</span>
@@ -61,21 +61,21 @@ export function Header() {
               </Link>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2"
+                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
               >
                 <Folder className="w-5 h-5" />
                 <span>Медиа</span>
               </Button>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2"
+                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
               >
                 <ArrowUp className="w-5 h-5" />
                 <span>Пополнение</span>
               </Button>
               <Button
                 variant="ghost"
-                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2"
+                className="text-white hover:text-red-400 text-lg flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-white/10 transition-colors"
               >
                 <Gift className="w-5 h-5" />
                 <span>Донат</span>
@@ -84,7 +84,7 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <Button variant="ghost" size="icon" className="text-white hover:text-red-400 w-12 h-12 rounded-full">
+            <Button variant="ghost" size="icon" className="text-white hover:text-red-400 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm">
               <Heart className="w-6 h-6" />
             </Button>
 
@@ -92,7 +92,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-white hover:text-red-400 w-12 h-12 rounded-full"
+                className="relative text-white hover:text-red-400 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm"
               >
                 <ShoppingCart className="w-6 h-6" />
                 <Badge className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center p-0 bg-red-500 text-white text-sm rounded-full">
@@ -102,10 +102,10 @@ export function Header() {
             </Link>
 
             <div className="relative hidden md:block">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 pointer-events-none" />
               <Input
                 placeholder="Поиск"
-                className="pl-12 pr-4 py-3 w-80 border-white/20 rounded-full text-white placeholder:text-white/60 text-lg focus:border-white/40 bg-transparent"
+                className="pl-12 pr-4 py-3 w-80 border-white/20 rounded-full text-white placeholder:text-white/60 text-lg focus:border-white/40 bg-white/10 backdrop-blur-sm"
               />
             </div>
           </div>
