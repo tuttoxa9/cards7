@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star } from "lucide-react"
+import { Star, Heart, ShoppingCart } from "lucide-react"
 
 const relatedCards = [
   {
@@ -59,54 +59,47 @@ export function RelatedCards() {
         {relatedCards.map((card) => (
           <Card
             key={card.id}
-            className="group cursor-pointer bg-card border-border hover:border-primary/50 transition-all duration-300 overflow-hidden"
+            className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-primary/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square"
           >
-            <div className="aspect-[3/4] relative overflow-hidden">
+            <div className="relative w-full h-full overflow-hidden rounded-3xl">
               <img
                 src={card.image || "/placeholder.svg"}
                 alt={card.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute top-2 left-2">
-                <Badge className="bg-primary text-primary-foreground text-xs">{card.category}</Badge>
-              </div>
-              {card.discount && (
-                <div className="absolute top-2 right-2">
-                  <Badge variant="destructive" className="bg-red-600 text-xs">
-                    -{card.discount}%
-                  </Badge>
-                </div>
-              )}
-            </div>
 
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-card-foreground mb-2 text-balance line-clamp-2">{card.title}</h3>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-              <p className="text-xs text-muted-foreground mb-2">{card.rarity}</p>
-
-              <div className="flex items-center space-x-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-3 h-3 ${i < Math.floor(card.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                  />
-                ))}
-                <span className="text-xs text-muted-foreground ml-1">({card.rating})</span>
+              <div className="absolute top-4 left-4">
+                <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full">{card.category}</Badge>
               </div>
 
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg font-bold text-foreground">{card.price} ₽</span>
-                  {card.originalPrice && (
-                    <span className="text-sm text-muted-foreground line-through">{card.originalPrice} ₽</span>
+              <div className="absolute bottom-4 left-4">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-lg font-bold text-white">{card.price} ₽</span>
+                    {card.originalPrice && (
+                      <span className="text-sm text-gray-400 line-through">{card.originalPrice} ₽</span>
+                    )}
+                  </div>
+                  {card.discount && (
+                    <Badge variant="destructive" className="bg-red-600 text-white text-xs">
+                      -{card.discount}%
+                    </Badge>
                   )}
                 </div>
               </div>
 
-              <Button size="sm" className="w-full bg-primary hover:bg-primary/90">
-                Подробнее
-              </Button>
-            </CardContent>
+              {/* Hover icons */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                  <ShoppingCart className="w-6 h-6" />
+                </Button>
+                <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                  <Heart className="w-6 h-6" />
+                </Button>
+              </div>
+            </div>
           </Card>
         ))}
       </div>

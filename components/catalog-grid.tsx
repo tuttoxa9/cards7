@@ -167,85 +167,53 @@ export function CatalogGrid() {
       >
         {mockCards.map((card) => (
           <Link key={card.id} href={`/card/${card.id}`}>
-            <Card className="group cursor-pointer bg-card border-border hover:border-primary/50 transition-all duration-300 overflow-hidden">
-              <div
-                className={`relative overflow-hidden ${viewMode === "grid" ? "aspect-[3/4]" : "aspect-[4/3] md:aspect-[5/3]"}`}
-              >
+            <Card className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-primary/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square">
+              <div className="relative w-full h-full overflow-hidden rounded-3xl">
                 <img
                   src={card.image || "/placeholder.svg"}
                   alt={card.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover"
                 />
 
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
                 {/* Badges */}
-                <div className="absolute top-3 left-3 flex flex-col space-y-2">
-                  <Badge className="bg-primary text-primary-foreground text-xs">{card.category}</Badge>
-                  {card.isHot && <Badge className="bg-red-600 text-white text-xs">Хит продаж</Badge>}
+                <div className="absolute top-4 left-4 flex flex-col space-y-2">
+                  {card.isHot && <Badge className="bg-red-600 text-white text-sm px-3 py-1 rounded-full">Хит продаж</Badge>}
                   {!card.inStock && (
-                    <Badge variant="secondary" className="bg-gray-600 text-white text-xs">
+                    <Badge variant="secondary" className="bg-gray-600 text-white text-sm px-3 py-1 rounded-full">
                       Нет в наличии
                     </Badge>
                   )}
                 </div>
 
-                {card.discount && (
-                  <div className="absolute top-3 right-3">
-                    <Badge variant="destructive" className="bg-red-600 text-xs">
-                      -{card.discount}%
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Quick Actions */}
-                <div className="absolute bottom-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="icon" variant="secondary" className="w-8 h-8 bg-background/80 hover:bg-background">
-                    <Heart className="w-4 h-4" />
-                  </Button>
-                  <Button size="icon" variant="secondary" className="w-8 h-8 bg-background/80 hover:bg-background">
-                    <ShoppingCart className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-card-foreground text-balance line-clamp-2">{card.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{card.rarity}</p>
-                  </div>
-
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-3 h-3 ${i < Math.floor(card.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                      />
-                    ))}
-                    <span className="text-xs text-muted-foreground ml-1">
-                      ({card.rating}) • {card.reviews} отзывов
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
+                {/* Price at bottom */}
+                <div className="absolute bottom-4 left-4">
+                  <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-lg font-bold text-foreground">{card.price} ₽</span>
+                      <span className="text-xl font-bold text-white">{card.price} ₽</span>
                       {card.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">{card.originalPrice} ₽</span>
+                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} ₽</span>
                       )}
                     </div>
-
-                    {card.inStock ? (
-                      <Button size="sm" className="bg-primary hover:bg-primary/90">
-                        В корзину
-                      </Button>
-                    ) : (
-                      <Button size="sm" variant="outline" disabled>
-                        Нет в наличии
-                      </Button>
+                    {card.discount && (
+                      <Badge variant="destructive" className="bg-red-600 text-white text-xs">
+                        -{card.discount}%
+                      </Badge>
                     )}
                   </div>
                 </div>
-              </CardContent>
+
+                {/* Hover icons */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <ShoppingCart className="w-6 h-6" />
+                  </Button>
+                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <Heart className="w-6 h-6" />
+                  </Button>
+                </div>
+              </div>
             </Card>
           </Link>
         ))}

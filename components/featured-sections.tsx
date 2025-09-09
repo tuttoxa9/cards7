@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame } from "lucide-react"
+import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame, Heart } from "lucide-react"
 
 const newReleases = [
   {
@@ -157,34 +157,27 @@ export function FeaturedSections() {
             {newReleases.map((card) => (
               <Card
                 key={card.id}
-                className="group cursor-pointer flex-shrink-0 w-80 bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700/50 hover:border-red-500/50 transition-all duration-500 overflow-hidden backdrop-blur-sm hover:scale-105 hover:shadow-2xl hover:shadow-red-500/20 rounded-2xl"
+                className="group cursor-pointer flex-shrink-0 w-80 h-80 bg-transparent border-2 border-transparent hover:border-red-500/70 transition-all duration-300 overflow-hidden rounded-3xl"
               >
-                <div className="relative h-48 overflow-hidden rounded-t-2xl">
+                <div className="relative w-full h-full overflow-hidden rounded-3xl">
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
 
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                   {/* Discount badge */}
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-4 left-4">
                     <Badge className="bg-red-500 text-white font-bold text-sm px-3 py-1 rounded-full">
                       Акция
                     </Badge>
                   </div>
 
-                  {/* End date */}
-                  <div className="absolute top-3 right-3">
-                    <div className="bg-black/70 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">
-                      {card.endDate}
-                    </div>
-                  </div>
-
-                  {/* Price overlay */}
-                  <div className="absolute bottom-3 left-3">
+                  {/* Price at bottom */}
+                  <div className="absolute bottom-4 left-4">
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
@@ -199,19 +192,17 @@ export function FeaturedSections() {
                       </Badge>
                     </div>
                   </div>
+
+                  {/* Hover icons */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                      <ShoppingCart className="w-6 h-6" />
+                    </Button>
+                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                      <Heart className="w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
-
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-bold text-white mb-1 line-clamp-1 group-hover:text-red-400 transition-colors">
-                    {card.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 mb-3">{card.category}</p>
-
-                  <Button className="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-300 hover:scale-105">
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    В корзину
-                  </Button>
-                </CardContent>
               </Card>
             ))}
           </div>
@@ -254,24 +245,24 @@ export function FeaturedSections() {
           {bestSellers.map((card) => (
             <Card
               key={card.id}
-              className="group cursor-pointer bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700/50 hover:border-orange-500/50 transition-all duration-500 overflow-hidden backdrop-blur-sm hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20 rounded-2xl"
+              className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-orange-500/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square"
             >
-              <div className="relative aspect-video overflow-hidden rounded-t-2xl">
+              <div className="relative w-full h-full overflow-hidden rounded-3xl">
                 <img
                   src={card.image}
                   alt={card.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-                <div className="absolute top-3 left-3">
+                <div className="absolute top-4 left-4">
                   <Badge className="bg-orange-500 text-white font-bold text-sm px-3 py-1 rounded-full">
                     {card.tag}
                   </Badge>
                 </div>
 
-                <div className="absolute bottom-3 left-3">
+                <div className="absolute bottom-4 left-4">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-xl font-bold text-white">
@@ -286,18 +277,17 @@ export function FeaturedSections() {
                     </Badge>
                   </div>
                 </div>
+
+                {/* Hover icons */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <ShoppingCart className="w-6 h-6" />
+                  </Button>
+                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <Heart className="w-6 h-6" />
+                  </Button>
+                </div>
               </div>
-
-              <CardContent className="p-4">
-                <h3 className="text-lg font-bold text-white mb-3 line-clamp-1 group-hover:text-orange-400 transition-colors">
-                  {card.title}
-                </h3>
-
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-all duration-300 hover:scale-105">
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  В корзину
-                </Button>
-              </CardContent>
             </Card>
           ))}
         </div>
@@ -323,18 +313,18 @@ export function FeaturedSections() {
             {newInCatalog.map((card) => (
               <Card
                 key={card.id}
-                className="group cursor-pointer flex-shrink-0 w-80 bg-gradient-to-br from-slate-800/50 to-slate-900/50 border-slate-700/50 hover:border-blue-500/50 transition-all duration-500 overflow-hidden backdrop-blur-sm hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 rounded-2xl"
+                className="group cursor-pointer flex-shrink-0 w-80 h-80 bg-transparent border-2 border-transparent hover:border-blue-500/70 transition-all duration-300 overflow-hidden rounded-3xl"
               >
-                <div className="relative h-48 overflow-hidden rounded-t-2xl">
+                <div className="relative w-full h-full overflow-hidden rounded-3xl">
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-4 left-4">
                     <Badge className={`font-bold text-sm px-3 py-1 rounded-full ${
                       card.tag === "Новинка"
                         ? "bg-gray-700 text-white"
@@ -344,7 +334,7 @@ export function FeaturedSections() {
                     </Badge>
                   </div>
 
-                  <div className="absolute bottom-3 left-3">
+                  <div className="absolute bottom-4 left-4">
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
@@ -359,18 +349,17 @@ export function FeaturedSections() {
                       </Badge>
                     </div>
                   </div>
+
+                  {/* Hover icons */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                      <ShoppingCart className="w-6 h-6" />
+                    </Button>
+                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                      <Heart className="w-6 h-6" />
+                    </Button>
+                  </div>
                 </div>
-
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-bold text-white mb-3 line-clamp-1 group-hover:text-blue-400 transition-colors">
-                    {card.title}
-                  </h3>
-
-                  <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all duration-300 hover:scale-105">
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    В корзину
-                  </Button>
-                </CardContent>
               </Card>
             ))}
           </div>

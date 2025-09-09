@@ -86,19 +86,19 @@ export function CardCarousel() {
             <div key={collection.id} className="flex-shrink-0" style={{ width: `${100 / itemsPerView}%` }}>
               <div
                 className={`
-                  relative group cursor-pointer transition-all duration-300 hover:scale-105
+                  relative group cursor-pointer transition-all duration-300
                   ${collection.isActive ? "ring-2 ring-purple-500 ring-offset-2 ring-offset-background" : ""}
                 `}
               >
-                <div className="aspect-square relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900">
+                <div className="aspect-square relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-transparent hover:border-purple-500/70 transition-all duration-300">
                   <img
                     src={collection.image || "/placeholder.svg"}
                     alt={collection.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="font-semibold text-white text-sm text-center drop-shadow-lg">{collection.title}</h3>
                   </div>
                 </div>
