@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Star, TrendingUp, Clock, Zap, ShoppingCart, Fire } from "lucide-react"
+import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame } from "lucide-react"
 
 const newReleases = [
   {
@@ -141,7 +141,7 @@ export function FeaturedSections() {
       <section>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
-            <Fire className="w-8 h-8 text-red-500" />
+            <Flame className="w-8 h-8 text-red-500" />
             <h2 className="text-4xl font-bold text-white">Предложения недели</h2>
           </div>
           <Button
