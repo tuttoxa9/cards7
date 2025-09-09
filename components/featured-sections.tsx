@@ -163,11 +163,14 @@ export function FeaturedSections() {
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                   />
 
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Discount badge */}
                   <div className="absolute top-4 left-4">
@@ -193,14 +196,14 @@ export function FeaturedSections() {
                     </div>
                   </div>
 
-                  {/* Hover icons */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                  {/* Hover icons with glass blur effect */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                       </svg>
                     </Button>
-                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                       </svg>
@@ -245,50 +248,57 @@ export function FeaturedSections() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {bestSellers.map((card) => (
             <Card
               key={card.id}
-              className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-orange-500/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square"
+              className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-orange-500/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square h-64"
             >
               <div className="relative w-full h-full overflow-hidden rounded-3xl">
                 <img
                   src={card.image}
                   alt={card.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-orange-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <div className="absolute top-3 left-3">
+                  <Badge className="bg-orange-500 text-white font-bold text-xs px-2 py-1 rounded-full">
                     {card.tag}
                   </Badge>
                 </div>
 
-                <div className="absolute bottom-4 left-4">
+                <div className="absolute bottom-3 left-3">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-white">
+                      <span className="text-sm font-bold text-white">
                         {card.price} ₽
                       </span>
-                      <span className="text-sm text-orange-400 line-through">
+                      <span className="text-xs text-orange-400 line-through">
                         {card.originalPrice} ₽
                       </span>
                     </div>
-                    <Badge className="bg-orange-600 text-white text-xs font-bold">
+                    <Badge className="bg-orange-600 text-white text-xs font-bold px-2 py-1">
                       -{card.discount}%
                     </Badge>
                   </div>
                 </div>
 
-                {/* Hover icons */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
-                    <ShoppingCart className="w-6 h-6" />
+                {/* Hover icons with glass blur effect */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <Button size="icon" className="w-10 h-10 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-5 h-5" viewBox="0 0 16 16">
+                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                    </svg>
                   </Button>
-                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
-                    <Heart className="w-6 h-6" />
+                  <Button size="icon" className="w-10 h-10 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-5 h-5" viewBox="0 0 16 16">
+                      <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                    </svg>
                   </Button>
                 </div>
               </div>
@@ -323,10 +333,13 @@ export function FeaturedSections() {
                   <img
                     src={card.image}
                     alt={card.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   <div className="absolute top-4 left-4">
                     <Badge className={`font-bold text-sm px-3 py-1 rounded-full ${
@@ -354,14 +367,14 @@ export function FeaturedSections() {
                     </div>
                   </div>
 
-                  {/* Hover icons */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                  {/* Hover icons with glass blur effect */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                       </svg>
                     </Button>
-                    <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
+                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                       </svg>

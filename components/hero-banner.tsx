@@ -121,10 +121,10 @@ export function HeroBanner() {
         </div>
       </div>
 
-      <div className="relative z-10 h-full flex items-center pointer-events-none">
+      <div className="absolute bottom-10 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-8">
           <div className="max-w-2xl pointer-events-auto">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-4">
               <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
                 {currentCard.collection}
               </Badge>
@@ -134,16 +134,16 @@ export function HeroBanner() {
             </div>
 
             <div key={`content-${activeCard}`} className="animate-in fade-in slide-in-from-left-4 duration-700">
-              <h1 className="text-5xl font-bold text-white mb-6 leading-tight text-balance">{currentCard.name}</h1>
+              <h1 className="text-4xl font-bold text-white mb-4 leading-tight text-balance">{currentCard.name}</h1>
 
-              <p className="text-gray-300 mb-8 text-xl leading-relaxed max-w-lg text-pretty">
+              <p className="text-gray-300 mb-6 text-lg leading-relaxed max-w-lg text-pretty">
                 {currentCard.description}
               </p>
 
-              <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
-                  <span className="text-xl text-gray-400 line-through">
+                  <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
+                  <span className="text-lg text-gray-400 line-through">
                     {currentCard.originalPrice.toLocaleString()} ₽
                   </span>
                   <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
