@@ -27,7 +27,8 @@ export default function RootLayout({
   return (
     <html lang="ru" className="dark">
       <body
-        className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}
+        className={`bg-[#06080A] ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}
+        style={{ fontFamily: "'ArchiveUkr', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
       >
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />
