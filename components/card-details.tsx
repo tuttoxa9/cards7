@@ -136,7 +136,9 @@ export function CardDetails({ card }: CardDetailsProps) {
 
           <div className="flex space-x-3">
             <Button size="lg" className="flex-1 bg-primary hover:bg-primary/90">
-              <ShoppingCart className="w-4 h-4 mr-2" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-4 h-4 mr-2" viewBox="0 0 16 16">
+                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+              </svg>
               Добавить в корзину
             </Button>
             <Button
@@ -145,7 +147,9 @@ export function CardDetails({ card }: CardDetailsProps) {
               onClick={() => setIsWishlisted(!isWishlisted)}
               className={`border-border ${isWishlisted ? "bg-red-50 border-red-200 text-red-600" : ""}`}
             >
-              <Heart className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} />
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className={`bi bi-heart-fill w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} viewBox="0 0 16 16">
+                <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+              </svg>
             </Button>
             <Button variant="outline" size="lg" className="border-border bg-transparent">
               <Share2 className="w-4 h-4" />
