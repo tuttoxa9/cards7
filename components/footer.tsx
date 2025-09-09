@@ -6,32 +6,31 @@ import Link from "next/link"
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border mt-16">
+    <footer className="bg-black/30 border-t border-white/10 mt-16 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">CV</span>
-              </div>
-              <span className="text-xl font-bold text-card-foreground">CardVault</span>
+            <div className="flex items-center">
+              <span className="text-2xl font-bold">
+                <span className="text-red-500">CARD</span>
+                <span className="text-white">.GG</span>
+              </span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Премиальные коллекционные карточки супергероев и автомобилей. Эксклюзивные тиражи для истинных
-              коллекционеров.
+            <p className="text-sm text-white/60 leading-relaxed">
+              Лучшие коллекционные карточки со всего мира. Покемон, MTG, Yu-Gi-Oh! и многое другое для истинных коллекционеров.
             </p>
             <div className="flex space-x-3">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
                 <Facebook className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
                 <Twitter className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
                 <Instagram className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
                 <Youtube className="w-4 h-4" />
               </Button>
             </div>
@@ -39,46 +38,46 @@ export function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-card-foreground">Быстрые ссылки</h3>
+            <h3 className="font-semibold text-white">Каталог</h3>
             <nav className="space-y-2">
               <Link
                 href="/catalog"
-                className="block text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="block text-sm text-white/60 hover:text-red-400 transition-colors"
               >
-                Каталог
+                Pokemon TCG
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                Новинки
+              <Link href="/media" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
+                Magic: The Gathering
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                Популярные коллекции
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
+                Yu-Gi-Oh!
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                Ограниченные тиражи
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
+                Аниме карточки
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                О нас
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
+                Disney Lorcana
               </Link>
             </nav>
           </div>
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-card-foreground">Поддержка</h3>
+            <h3 className="font-semibold text-white">Поддержка</h3>
             <nav className="space-y-2">
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
                 Помощь
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
                 Доставка и оплата
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
                 Возврат товара
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                Гарантии
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
+                Аутентичность карт
               </Link>
-              <Link href="#" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
                 Контакты
               </Link>
             </nav>
@@ -86,29 +85,29 @@ export function Footer() {
 
           {/* Newsletter */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-card-foreground">Новости и скидки</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-semibold text-white">Новости и скидки</h3>
+            <p className="text-sm text-white/60">
               Подпишитесь на рассылку и получайте уведомления о новых коллекциях и специальных предложениях.
             </p>
             <div className="space-y-2">
-              <Input placeholder="Ваш email" className="bg-background border-border text-foreground" />
-              <Button className="w-full bg-primary hover:bg-primary/90">Подписаться</Button>
+              <Input placeholder="Ваш email" className="bg-white/5 border-white/20 text-white placeholder:text-white/40" />
+              <Button className="w-full bg-red-500 hover:bg-red-600 text-white">Подписаться</Button>
             </div>
           </div>
         </div>
 
-        <Separator className="my-8" />
+        <Separator className="my-8 bg-white/10" />
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-6 text-sm text-white/60">
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4" />
               <span>+7 (800) 123-45-67</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4" />
-              <span>info@cardvault.ru</span>
+              <span>info@card.gg</span>
             </div>
             <div className="flex items-center space-x-2">
               <MapPin className="w-4 h-4" />
@@ -116,14 +115,14 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-            <Link href="#" className="hover:text-primary transition-colors">
+          <div className="flex items-center space-x-6 text-sm text-white/60">
+            <Link href="#" className="hover:text-red-400 transition-colors">
               Политика конфиденциальности
             </Link>
-            <Link href="#" className="hover:text-primary transition-colors">
+            <Link href="#" className="hover:text-red-400 transition-colors">
               Условия использования
             </Link>
-            <span>&copy; 2024 CardVault. Все права защищены.</span>
+            <span>&copy; 2024 CARD.GG. Все права защищены.</span>
           </div>
         </div>
       </div>

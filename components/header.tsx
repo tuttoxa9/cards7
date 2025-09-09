@@ -1,16 +1,18 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Search, ShoppingCart, Heart, Grid3X3, Folder, ArrowUp, Gift } from "lucide-react"
+import { Search, ShoppingCart, Heart, Grid3X3, Folder } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { MobileNav } from "@/components/mobile-nav"
+import { CartOverlay } from "@/components/cart-overlay"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isCartOpen, setIsCartOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,27 +61,15 @@ export function Header() {
                   <span>Каталог</span>
                 </Button>
               </Link>
-              <Button
-                variant="ghost"
-                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-3xl bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
-              >
-                <Folder className="w-5 h-5" />
-                <span>Медиа</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-3xl bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
-              >
-                <ArrowUp className="w-5 h-5" />
-                <span>Пополнение</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-3xl bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
-              >
-                <Gift className="w-5 h-5" />
-                <span>Донат</span>
-              </Button>
+              <Link href="/media">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-3xl bg-black/20 hover:bg-white/10 transition-colors backdrop-blur-sm"
+                >
+                  <Folder className="w-5 h-5" />
+                  <span>Медиа</span>
+                </Button>
+              </Link>
             </nav>
           </div>
 
@@ -88,18 +78,17 @@ export function Header() {
               <Heart className="w-6 h-6" />
             </Button>
 
-            <Link href="/cart">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-              >
-                <ShoppingCart className="w-6 h-6" />
-                <Badge className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center p-0 bg-red-500 text-white text-sm rounded-full">
-                  1
-                </Badge>
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCartOpen(true)}
+              className="relative text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              <Badge className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center p-0 bg-red-500 text-white text-sm rounded-full">
+                3
+              </Badge>
+            </Button>
 
             <div className="relative hidden md:block">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 pointer-events-none" />
@@ -111,6 +100,8 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      <CartOverlay isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   )
 }
