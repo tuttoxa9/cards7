@@ -2,14 +2,15 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
-import { Manrope } from "next/font/google"
+import { Nunito } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
 
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
+const nunito = Nunito({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-nunito",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 })
 
 export const metadata: Metadata = {
@@ -27,8 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ru" className="dark">
       <body
-        className={`bg-[#06080A] ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}
-        style={{ fontFamily: "'ArchiveUkr', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+        className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${nunito.variable}`}
       >
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />

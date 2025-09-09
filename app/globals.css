@@ -3,14 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: 'ArchiveUkr';
-  src: url('/ArchiveUkr.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   /* Updated color scheme for collectible cards website */
   --background: oklch(0.25 0.01 240); /* #374151 - Main background */
@@ -85,10 +77,10 @@
 }
 
 @theme inline {
-  --font-sans: 'ArchiveUkr', var(--font-geist-sans);
-  --font-mono: 'ArchiveUkr', var(--font-geist-mono);
-  /* Added ArchiveUkr font variable for body text */
-  --font-body: 'ArchiveUkr', var(--font-manrope);
+  --font-sans: var(--font-nunito);
+  --font-mono: var(--font-geist-mono);
+  /* Added Nunito font variable for body text */
+  --font-body: var(--font-nunito);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -130,11 +122,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    font-family: 'ArchiveUkr', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
   body {
-    @apply bg-background text-foreground font-body;
-    font-family: 'ArchiveUkr', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    @apply bg-background text-foreground font-sans;
   }
 }
 
