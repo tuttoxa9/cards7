@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Manrope } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { CartProvider } from "@/context/cart-context"
 import "./globals.css"
 
 const manrope = Manrope({
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${manrope.variable}`}
       >
-        <Suspense fallback={null}>{children}</Suspense>
+        <CartProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+        </CartProvider>
         <Analytics />
       </body>
     </html>

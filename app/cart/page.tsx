@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCart } from "@/context/cart-context"
 import { Header } from "@/components/header"
 import { CartItem } from "@/components/cart-item"
 import { CartSummary } from "@/components/cart-summary"
@@ -8,68 +8,15 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 
-// Mock cart data
-const initialCartItems = [
-  {
-    id: 1,
-    title: "Spider-Man Multiverse Legendary",
-    image: "/spider-man-multiverse-trading-card-web-design.jpg",
-    price: 2499,
-    originalPrice: 3299,
-    discount: 24,
-    category: "Супергерои",
-    rarity: "Легендарные",
-    quantity: 1,
-    inStock: true,
-  },
-  {
-    id: 2,
-    title: "Cyberpunk GT-R",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 1899,
-    originalPrice: null,
-    discount: null,
-    category: "Автомобили",
-    rarity: "Эпические",
-    quantity: 2,
-    inStock: true,
-  },
-  {
-    id: 3,
-    title: "Batman Dark Knight",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 2799,
-    originalPrice: 3499,
-    discount: 20,
-    category: "Супергерои",
-    rarity: "Легендарные",
-    quantity: 1,
-    inStock: true,
-  },
-]
-
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems)
-
-  const handleUpdateQuantity = (id: number, quantity: number) => {
-    setCartItems((items) => items.map((item) => (item.id === id ? { ...item, quantity } : item)))
-  }
-
-  const handleRemoveItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
+  const { cartItems, updateCartQuantity, removeFromCart, cartItemCount } = useCart()
 
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const discount = cartItems.reduce((sum, item) => {
-    if (item.originalPrice) {
-      return sum + (item.originalPrice - item.price) * item.quantity
-    }
-    return sum
-  }, 0)
-  const shipping = subtotal >= 3000 ? 0 : 299
-  const total = subtotal + shipping
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  // Note: The discount calculation logic is not fully implemented in this mock scenario
+  const discount = 0
+  const shipping = subtotal >= 5000 ? 0 : 299
+  const total = subtotal - discount + shipping
 
   if (cartItems.length === 0) {
     return (
@@ -115,7 +62,8 @@ export default function CartPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Корзина</h1>
           <p className="text-muted-foreground">
-            {itemCount} {itemCount === 1 ? "товар" : itemCount < 5 ? "товара" : "товаров"} в корзине
+            {cartItemCount} {cartItemCount === 1 ? "товар" : cartItemCount < 5 ? "товара" : "товаров"} в
+            корзине
           </p>
         </div>
 
@@ -124,7 +72,12 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
-              <CartItem key={item.id} item={item} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemoveItem} />
+              <CartItem
+                key={item.id}
+                item={item}
+                onUpdateQuantity={updateCartQuantity}
+                onRemove={removeFromCart}
+              />
             ))}
           </div>
 
@@ -135,7 +88,7 @@ export default function CartPage() {
               discount={discount}
               shipping={shipping}
               total={total}
-              itemCount={itemCount}
+              itemCount={cartItemCount}
             />
           </div>
         </div>
