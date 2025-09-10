@@ -86,7 +86,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
             <button
               key={index}
               onClick={() => setCurrentImage(index)}
-              className={`flex-shrink-0 w-16 h-20 rounded border-2 overflow-hidden transition-all ${
+              className={`flex-shrink-0 w-16 h-20 rounded border-2 overflow-hidden transition-all cursor-pointer ${
                 currentImage === index ? "border-primary" : "border-border hover:border-primary/50"
               }`}
             >
