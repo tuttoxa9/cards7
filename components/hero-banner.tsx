@@ -39,6 +39,17 @@ const featuredCards = [
     image: "/goku-ultra-instinct-card-background.jpg",
     thumbnail: "/goku-card.jpg",
   },
+  {
+    id: 4,
+    name: "Spider-Man: Ночной Страж",
+    collection: "Marvel Heroes",
+    description: "Эпическая карточка дружелюбного соседа из Нью-Йорка. Ночное патрулирование по городу.",
+    price: 1850,
+    originalPrice: 2750,
+    discount: 33,
+    image: "/spide2.png",
+    thumbnail: "/spide.png",
+  },
 ]
 
 export function HeroBanner() {
