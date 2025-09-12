@@ -54,6 +54,16 @@ const newReleases = [
     endDate: "29.09.2025",
     category: "Аниме",
   },
+  {
+    id: 6,
+    title: "Spider-Man: Легендарный Герой",
+    image: "/spide.png",
+    price: 750,
+    originalPrice: 1250,
+    discount: 40,
+    endDate: "29.09.2025",
+    category: "Marvel",
+  },
 ]
 
 const bestSellers = [

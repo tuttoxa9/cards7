@@ -62,10 +62,10 @@ export function HeroBanner() {
           alt={currentCard.name}
           className="w-full h-full object-cover animate-in fade-in duration-1000"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-transparent to-red-900/30" />
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#06080A] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-red-900/20" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#06080A]/60 to-transparent" />
       </div>
 
       <div className="absolute inset-x-0 top-32 z-10">
