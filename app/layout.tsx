@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Nunito } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { AuthProvider } from "@/components/auth-context"
 import "./globals.css"
 
 const nunito = Nunito({
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${nunito.variable}`}
       >
-        <Suspense fallback={null}>{children}</Suspense>
+        <AuthProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
