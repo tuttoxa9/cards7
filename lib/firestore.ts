@@ -40,19 +40,23 @@ export class CardService {
   }
 
   static async getBySection(section: string): Promise<Card[]> {
+    // Загружаем все активные карточки и фильтруем по разделу на клиенте
     const q = query(
       collection(db, COLLECTIONS.CARDS),
-      where("section", "==", section),
-      where("status", "==", "active"),
-      orderBy("createdAt", "desc")
+      where("status", "==", "active")
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    const allCards = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as Card[];
+
+    // Фильтруем по разделу и сортируем
+    return allCards
+      .filter(card => card.section === section)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   static async getById(id: string): Promise<Card | null> {
@@ -107,18 +111,19 @@ export class BannerService {
   }
 
   static async getActive(): Promise<Banner[]> {
-    const q = query(
-      collection(db, COLLECTIONS.BANNERS),
-      where("isActive", "==", true),
-      orderBy("createdAt", "desc")
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    // Загружаем все баннеры и фильтруем активные на клиенте
+    const snapshot = await getDocs(collection(db, COLLECTIONS.BANNERS));
+    const allBanners = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as Banner[];
+
+    // Фильтруем активные и сортируем
+    return allBanners
+      .filter(banner => banner.isActive)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   static async create(bannerData: Omit<Banner, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
@@ -158,18 +163,19 @@ export class CategoryService {
   }
 
   static async getActive(): Promise<Category[]> {
-    const q = query(
-      collection(db, COLLECTIONS.CATEGORIES),
-      where("isActive", "==", true),
-      orderBy("name", "asc")
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    // Загружаем все категории и фильтруем активные на клиенте
+    const snapshot = await getDocs(collection(db, COLLECTIONS.CATEGORIES));
+    const allCategories = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
     })) as Category[];
+
+    // Фильтруем активные и сортируем по имени
+    return allCategories
+      .filter(category => category.isActive)
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   static async create(categoryData: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
