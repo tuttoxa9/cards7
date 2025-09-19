@@ -1,59 +1,58 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Info } from "lucide-react"
-
-const featuredCards = [
-  {
-    id: 1,
-    name: "Dark Phoenix",
-    collection: "Marvel Heroes",
-    description: "Легендарная карточка с силой Темного Феникса. Редкость: Мифическая.",
-    price: 2499,
-    originalPrice: 3499,
-    discount: 29,
-    image: "/dark-phoenix-marvel-card-background.jpg",
-    thumbnail: "/dark-phoenix-card.jpg",
-  },
-  {
-    id: 2,
-    name: "Lamborghini Aventador",
-    collection: "Speed Legends",
-    description: "Эксклюзивная карточка суперкара с голографическим эффектом.",
-    price: 1899,
-    originalPrice: 2299,
-    discount: 17,
-    image: "/lamborghini-aventador-card-background.jpg",
-    thumbnail: "/lamborghini-card.jpg",
-  },
-  {
-    id: 3,
-    name: "Goku Ultra Instinct",
-    collection: "Anime Masters",
-    description: "Ультра редкая карточка с анимированным эффектом трансформации.",
-    price: 3299,
-    originalPrice: 4199,
-    discount: 21,
-    image: "/goku-ultra-instinct-card-background.jpg",
-    thumbnail: "/goku-card.jpg",
-  },
-  {
-    id: 4,
-    name: "Spider-Man: Ночной Страж",
-    collection: "Marvel Heroes",
-    description: "Эпическая карточка дружелюбного соседа из Нью-Йорка. Ночное патрулирование по городу.",
-    price: 1850,
-    originalPrice: 2750,
-    discount: 33,
-    image: "/spide2.png",
-    thumbnail: "/spide.png",
-  },
-]
+import { Card as CardType, Banner } from "@/lib/types"
+import { CardService, BannerService } from "@/lib/firestore"
 
 export function HeroBanner() {
   const [activeCard, setActiveCard] = useState(0)
+  const [featuredCards, setFeaturedCards] = useState<CardType[]>([])
+  const [heroBanners, setHeroBanners] = useState<Banner[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadHeroData()
+  }, [])
+
+  const loadHeroData = async () => {
+    try {
+      setLoading(true)
+
+      // Загружаем hero баннеры
+      const banners = await BannerService.getActive()
+      const herobanners = banners.filter(banner => banner.position === 'hero')
+      setHeroBanners(herobanners)
+
+      // Загружаем карточки для hero (пока берем из best-sellers)
+      const cards = await CardService.getBySection('best-sellers')
+      setFeaturedCards(cards.slice(0, 4)) // Берем первые 4 карточки
+
+    } catch (error) {
+      console.error('Ошибка загрузки данных hero баннера:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      </div>
+    )
+  }
+
+  if (featuredCards.length === 0) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-black">
+        <p className="text-white">Нет карточек для отображения</p>
+      </div>
+    )
+  }
+
   const currentCard = featuredCards[activeCard]
 
   const nextCard = () => {
@@ -70,7 +69,7 @@ export function HeroBanner() {
         <img
           key={activeCard}
           src={currentCard.image || "/placeholder.svg"}
-          alt={currentCard.name}
+          alt={currentCard.title}
           className="w-full h-full object-cover animate-in fade-in duration-1000"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
@@ -102,8 +101,8 @@ export function HeroBanner() {
                   }}
                 >
                   <img
-                    src={card.thumbnail || "/placeholder.svg"}
-                    alt={card.name}
+                    src={card.image || "/placeholder.svg"}
+                    alt={card.title}
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -137,29 +136,35 @@ export function HeroBanner() {
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
               <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
-                {currentCard.collection}
+                {currentCard.category}
               </Badge>
-              <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
-                Новинка
-              </Badge>
+              {currentCard.isHot && (
+                <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
+                  Хит продаж
+                </Badge>
+              )}
             </div>
 
             <div key={`content-${activeCard}`} className="animate-in fade-in slide-in-from-left-4 duration-700">
-              <h1 className="text-4xl font-bold text-white mb-4 leading-tight text-balance">{currentCard.name}</h1>
+              <h1 className="text-4xl font-bold text-white mb-4 leading-tight text-balance">{currentCard.title}</h1>
 
               <p className="text-gray-300 mb-6 text-lg leading-relaxed max-w-lg text-pretty">
-                {currentCard.description}
+                {currentCard.description || "Описание карточки"}
               </p>
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
-                  <span className="text-lg text-gray-400 line-through">
-                    {currentCard.originalPrice.toLocaleString()} ₽
-                  </span>
-                  <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
-                    -{currentCard.discount}%
-                  </Badge>
+                  {currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
+                    <>
+                      <span className="text-lg text-gray-400 line-through">
+                        {currentCard.originalPrice.toLocaleString()} ₽
+                      </span>
+                      <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
+                        -{currentCard.discount}%
+                      </Badge>
+                    </>
+                  )}
                 </div>
               </div>
 

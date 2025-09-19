@@ -1,170 +1,76 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame, Heart } from "lucide-react"
-
-const newReleases = [
-  {
-    id: 1,
-    title: "Pokemon TCG Scarlet & Violet",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 1173,
-    originalPrice: 5479,
-    discount: 79,
-    endDate: "29.09.2025",
-    category: "Покемон",
-  },
-  {
-    id: 2,
-    title: "Magic: The Gathering Foundations",
-    image: "/avengers-team-trading-card-epic-composition.jpg",
-    price: 2909,
-    originalPrice: 4149,
-    discount: 30,
-    endDate: "29.09.2025",
-    category: "MTG",
-  },
-  {
-    id: 3,
-    title: "Yu-Gi-Oh! Quarter Century",
-    image: "/japanese-sports-car-trading-card-nissan-gtr.jpg",
-    price: 969,
-    originalPrice: 3489,
-    discount: 72,
-    endDate: "29.09.2025",
-    category: "Yu-Gi-Oh!",
-  },
-  {
-    id: 4,
-    title: "Disney Lorcana",
-    image: "/spider-man-multiverse-trading-card-web-design.jpg",
-    price: 290,
-    originalPrice: 595,
-    discount: 52,
-    endDate: "29.09.2025",
-    category: "Disney",
-  },
-  {
-    id: 5,
-    title: "One Piece Card Game",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 290,
-    originalPrice: 550,
-    discount: 47,
-    endDate: "29.09.2025",
-    category: "Аниме",
-  },
-  {
-    id: 6,
-    title: "Spider-Man: Легендарный Герой",
-    image: "/spide.png",
-    price: 750,
-    originalPrice: 1250,
-    discount: 40,
-    endDate: "29.09.2025",
-    category: "Marvel",
-  },
-]
-
-const bestSellers = [
-  {
-    id: 1,
-    title: "Pokemon Classic Collection",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 484,
-    originalPrice: 3559,
-    discount: 86,
-    tag: "Хит продаж",
-  },
-  {
-    id: 2,
-    title: "Magic Vintage Masters",
-    image: "/formula-1-racing-car-trading-card-speed.jpg",
-    price: 290,
-    originalPrice: 1179,
-    discount: 75,
-    tag: "Хит продаж",
-  },
-  {
-    id: 3,
-    title: "Yu-Gi-Oh! 25th Anniversary",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 57,
-    originalPrice: 999,
-    discount: 94,
-    tag: "Хит продаж",
-  },
-]
-
-const newInCatalog = [
-  {
-    id: 1,
-    title: "God of War Collection",
-    image: "/placeholder-2n0yc.png",
-    price: 2036,
-    originalPrice: 2989,
-    discount: 32,
-    tag: "Новинка",
-  },
-  {
-    id: 2,
-    title: "Medieval Fantasy Set",
-    image: "/dark-fantasy-trading-card-background-with-mystical.jpg",
-    price: 899,
-    originalPrice: 999,
-    discount: 10,
-    tag: "Премиум скидка по подписке",
-  },
-  {
-    id: 3,
-    title: "Farming Simulator Pack",
-    image: "/placeholder-47xbe.png",
-    price: 809,
-    originalPrice: 899,
-    discount: 10,
-    tag: "Премиум скидка по подписке",
-  },
-  {
-    id: 4,
-    title: "Knights & Crusades",
-    image: "/placeholder-9ud78.png",
-    price: 823,
-    originalPrice: 849,
-    discount: 3,
-    tag: "Новинка",
-  },
-  {
-    id: 5,
-    title: "Chaos: The New Dawn",
-    image: "/placeholder-cud1g.png",
-    price: 3879,
-    originalPrice: 5339,
-    discount: 27,
-    tag: "Новинка",
-  },
-]
+import { Card as CardType } from "@/lib/types"
+import { CardService } from "@/lib/firestore"
 
 export function FeaturedSections() {
+  const [newReleases, setNewReleases] = useState<CardType[]>([])
+  const [bestSellers, setBestSellers] = useState<CardType[]>([])
+  const [newInCatalog, setNewInCatalog] = useState<CardType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadFeaturedData()
+  }, [])
+
+  const loadFeaturedData = async () => {
+    try {
+      setLoading(true)
+
+      // Загружаем карточки по разделам
+      const [newReleasesData, bestSellersData, newInCatalogData] = await Promise.all([
+        CardService.getBySection('new-releases'),
+        CardService.getBySection('best-sellers'),
+        CardService.getBySection('new-in-catalog')
+      ])
+
+      setNewReleases(newReleasesData)
+      setBestSellers(bestSellersData)
+      setNewInCatalog(newInCatalogData)
+
+    } catch (error) {
+      console.error('Ошибка загрузки данных разделов:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-16">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+          <p className="text-gray-400 mt-2">Загрузка...</p>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="space-y-16">
       {/* Weekly Deals Section */}
-      <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Flame className="w-8 h-8 text-red-500" />
-            <h2 className="text-4xl font-bold text-white">Предложения недели</h2>
+      {newReleases.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-3">
+              <Flame className="w-8 h-8 text-red-500" />
+              <h2 className="text-4xl font-bold text-white">Предложения недели</h2>
+            </div>
+            <Button
+              variant="ghost"
+              className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            >
+              Смотреть все
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
-          >
-            Смотреть все
-          </Button>
-        </div>
 
-        <div className="relative">
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {newReleases.map((card) => (
+          <div className="relative">
+            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+              {newReleases.map((card) => (
               <Card
                 key={card.id}
                 className="group cursor-pointer flex-shrink-0 w-80 h-80 bg-transparent border-2 border-transparent hover:border-red-500/70 transition-all duration-300 overflow-hidden rounded-3xl"
@@ -221,25 +127,27 @@ export function FeaturedSections() {
                   </div>
                 </div>
               </Card>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Best Sellers Section */}
-      <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <TrendingUp className="w-8 h-8 text-orange-500" />
-            <h2 className="text-4xl font-bold text-white">Лидеры продаж</h2>
+      {bestSellers.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-3">
+              <TrendingUp className="w-8 h-8 text-orange-500" />
+              <h2 className="text-4xl font-bold text-white">Лидеры продаж</h2>
+            </div>
+            <Button
+              variant="ghost"
+              className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            >
+              Смотреть все
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
-          >
-            Смотреть все
-          </Button>
-        </div>
 
         {/* Category filters */}
         <div className="flex flex-wrap gap-3 mb-8">
@@ -278,7 +186,7 @@ export function FeaturedSections() {
 
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-orange-500 text-white font-bold text-xs px-2 py-1 rounded-full">
-                    {card.tag}
+                    {card.isHot ? "Хит продаж" : "Популярно"}
                   </Badge>
                 </div>
 
@@ -286,15 +194,19 @@ export function FeaturedSections() {
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-bold text-white">
-                        {card.price} ₽
+                        {card.price.toLocaleString()} ₽
                       </span>
-                      <span className="text-xs text-orange-400 line-through">
-                        {card.originalPrice} ₽
-                      </span>
+                      {card.originalPrice && card.originalPrice > card.price && (
+                        <span className="text-xs text-orange-400 line-through">
+                          {card.originalPrice.toLocaleString()} ₽
+                        </span>
+                      )}
                     </div>
-                    <Badge className="bg-orange-600 text-white text-xs font-bold px-2 py-1">
-                      -{card.discount}%
-                    </Badge>
+                    {card.discount && (
+                      <Badge className="bg-orange-600 text-white text-xs font-bold px-2 py-1">
+                        -{card.discount}%
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
@@ -315,22 +227,24 @@ export function FeaturedSections() {
             </Card>
           ))}
         </div>
-      </section>
+        </section>
+      )}
 
       {/* New in Catalog Section */}
-      <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Zap className="w-8 h-8 text-blue-500" />
-            <h2 className="text-4xl font-bold text-white">Новое в каталоге</h2>
+      {newInCatalog.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-3">
+              <Zap className="w-8 h-8 text-blue-500" />
+              <h2 className="text-4xl font-bold text-white">Новое в каталоге</h2>
+            </div>
+            <Button
+              variant="ghost"
+              className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            >
+              Смотреть все
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
-          >
-            Смотреть все
-          </Button>
-        </div>
 
         <div className="relative">
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
@@ -352,12 +266,8 @@ export function FeaturedSections() {
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   <div className="absolute top-4 left-4">
-                    <Badge className={`font-bold text-sm px-3 py-1 rounded-full ${
-                      card.tag === "Новинка"
-                        ? "bg-gray-700 text-white"
-                        : "bg-blue-500 text-white"
-                    }`}>
-                      {card.tag === "Новинка" ? "Новинка" : "Премиум скидка по подписке"}
+                    <Badge className="bg-blue-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                      Новинка
                     </Badge>
                   </div>
 
@@ -395,7 +305,8 @@ export function FeaturedSections() {
             ))}
           </div>
         </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }
