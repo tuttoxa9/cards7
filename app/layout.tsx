@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Nunito } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
+import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
 const nunito = Nunito({
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <Suspense fallback={null}>{children}</Suspense>
         <Analytics />
+        <Toaster />
       </body>
     </html>
   )
