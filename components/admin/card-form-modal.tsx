@@ -133,26 +133,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     onSave(cardData);
   };
 
-  const uploadToCloudflare = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
 
-    const response = await fetch('https://api.cloudflare.com/client/v4/accounts/2d16ebaf34d96e6d891d5b0a20364b20/r2/buckets/cards/objects', {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'Bearer fd954b6ca17169911bff1616221e162f:d8e9945f178c5c5ea7e27965d62194ba5209bb56fa5d4c2be8e44397f5218305',
-        'Content-Type': file.type,
-      },
-      body: file,
-    });
-
-    if (!response.ok) {
-      throw new Error('Ошибка загрузки файла');
-    }
-
-    const fileName = `card-${Date.now()}-${file.name}`;
-    return `https://pub-f4c677382cef430f9372c49ceb7d3535.r2.dev/${fileName}`;
-  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -162,27 +143,36 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setUploadProgress(0);
 
     try {
-      // Имитация прогресса загрузки
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 10, 90));
-      }, 100);
+      // Создаем data URL из файла
+      const reader = new FileReader();
 
-      // Простая реализация загрузки на Cloudflare R2
-      const fileName = `card-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const imageUrl = `https://pub-f4c677382cef430f9372c49ceb7d3535.r2.dev/${fileName}`;
+      reader.onloadstart = () => setUploadProgress(10);
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 90);
+          setUploadProgress(progress);
+        }
+      };
 
-      // В реальном проекте здесь была бы загрузка на Cloudflare R2
-      // Пока используем временную реализацию
-      setTimeout(() => {
-        clearInterval(progressInterval);
+      reader.onload = () => {
         setUploadProgress(100);
+        const dataUrl = reader.result as string;
         setFormData(prev => ({
           ...prev,
-          image: imageUrl,
-          imageUrl: imageUrl
+          image: dataUrl,
+          imageUrl: dataUrl
         }));
         setIsUploading(false);
-      }, 1500);
+      };
+
+      reader.onerror = () => {
+        console.error('Ошибка чтения файла');
+        setIsUploading(false);
+        setUploadProgress(0);
+        alert('Ошибка загрузки файла');
+      };
+
+      reader.readAsDataURL(file);
 
     } catch (error) {
       console.error('Ошибка загрузки файла:', error);
@@ -200,26 +190,35 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setBannerUploadProgress(0);
 
     try {
-      // Имитация прогресса загрузки
-      const progressInterval = setInterval(() => {
-        setBannerUploadProgress(prev => Math.min(prev + 10, 90));
-      }, 100);
+      // Создаем data URL из файла
+      const reader = new FileReader();
 
-      // Простая реализация загрузки на Cloudflare R2
-      const fileName = `banner-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const bannerUrl = `https://pub-f4c677382cef430f9372c49ceb7d3535.r2.dev/${fileName}`;
+      reader.onloadstart = () => setBannerUploadProgress(10);
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 90);
+          setBannerUploadProgress(progress);
+        }
+      };
 
-      // В реальном проекте здесь была бы загрузка на Cloudflare R2
-      // Пока используем временную реализацию
-      setTimeout(() => {
-        clearInterval(progressInterval);
+      reader.onload = () => {
         setBannerUploadProgress(100);
+        const dataUrl = reader.result as string;
         setFormData(prev => ({
           ...prev,
-          bannerImageUrl: bannerUrl
+          bannerImageUrl: dataUrl
         }));
         setIsUploadingBanner(false);
-      }, 1500);
+      };
+
+      reader.onerror = () => {
+        console.error('Ошибка чтения файла баннера');
+        setIsUploadingBanner(false);
+        setBannerUploadProgress(0);
+        alert('Ошибка загрузки баннера');
+      };
+
+      reader.readAsDataURL(file);
 
     } catch (error) {
       console.error('Ошибка загрузки баннера:', error);
