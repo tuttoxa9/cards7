@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,15 +22,29 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
     e.preventDefault();
     setIsLoading(true);
 
-    // Простая проверка для демонстрации
-    if (email === "admin@card.gg" && password === "admin123") {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       toast.success("Успешный вход в систему");
       onLogin();
-    } else {
-      toast.error("Неверные учетные данные");
-    }
+    } catch (error: any) {
+      console.error("Ошибка аутентификации:", error);
 
-    setIsLoading(false);
+      // Обработка различных ошибок Firebase
+      let errorMessage = "Неверные учетные данные";
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "Пользователь не найден";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Неверный пароль";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Неверный формат email";
+      } else if (error.code === "auth/too-many-requests") {
+        errorMessage = "Слишком много попыток входа. Попробуйте позже";
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -51,7 +67,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="admin@card.gg"
+                placeholder="Введите ваш email"
                 required
               />
             </div>

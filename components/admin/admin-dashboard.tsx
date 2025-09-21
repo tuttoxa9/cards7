@@ -8,12 +8,12 @@ import { Separator } from "@/components/ui/separator";
 
 type ActiveTab = "cards" | "offers" | "orders";
 
-export function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("cards");
+interface AdminDashboardProps {
+  onLogout: () => void;
+}
 
-  const handleLogout = () => {
-    window.location.reload();
-  };
+export function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("cards");
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -85,7 +85,7 @@ export function AdminDashboard() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleLogout}
+              onClick={onLogout}
               className="text-zinc-400 hover:text-white"
             >
               <LogOut className="h-4 w-4" />
