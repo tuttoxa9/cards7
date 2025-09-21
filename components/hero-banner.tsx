@@ -1,49 +1,70 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Info } from "lucide-react"
+import { collection, getDocs, query, where } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
-const featuredCards = [
-  {
-    id: 1,
-    name: "Dark Phoenix",
-    collection: "Marvel Heroes",
-    description: "Легендарная карточка с силой Темного Феникса. Редкость: Мифическая.",
-    price: 2499,
-    originalPrice: 3499,
-    discount: 29,
-    image: "/dark-phoenix-marvel-card-background.jpg",
-    thumbnail: "/dark-phoenix-card.jpg",
-  },
-  {
-    id: 2,
-    name: "Lamborghini Aventador",
-    collection: "Speed Legends",
-    description: "Эксклюзивная карточка суперкара с голографическим эффектом.",
-    price: 1899,
-    originalPrice: 2299,
-    discount: 17,
-    image: "/lamborghini-aventador-card-background.jpg",
-    thumbnail: "/lamborghini-card.jpg",
-  },
-  {
-    id: 3,
-    name: "Goku Ultra Instinct",
-    collection: "Anime Masters",
-    description: "Ультра редкая карточка с анимированным эффектом трансформации.",
-    price: 3299,
-    originalPrice: 4199,
-    discount: 21,
-    image: "/goku-ultra-instinct-card-background.jpg",
-    thumbnail: "/goku-card.jpg",
-  },
-]
+interface FeaturedCard {
+  id: string;
+  name: string;
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  imageUrl: string;
+  bannerImageUrl?: string;
+}
 
 export function HeroBanner() {
+  const [featuredCards, setFeaturedCards] = useState<FeaturedCard[]>([])
   const [activeCard, setActiveCard] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+
   const currentCard = featuredCards[activeCard]
+
+  // Загрузка избранных карточек из Firebase
+  useEffect(() => {
+    const loadFeaturedCards = async () => {
+      try {
+        setIsLoading(true)
+        const q = query(collection(db, "cards"), where("isFeatured", "==", true))
+        const querySnapshot = await getDocs(q)
+
+        const cards: FeaturedCard[] = []
+        querySnapshot.forEach((doc) => {
+          const data = doc.data()
+          cards.push({
+            id: doc.id,
+            name: data.name || data.title,
+            title: data.title || data.name,
+            category: data.category,
+            description: data.description,
+            price: data.price,
+            originalPrice: data.originalPrice,
+            discount: data.discount,
+            imageUrl: data.imageUrl || data.image,
+            bannerImageUrl: data.bannerImageUrl
+          })
+        })
+
+        setFeaturedCards(cards)
+        if (cards.length > 0) {
+          setActiveCard(0)
+        }
+      } catch (error) {
+        console.error("Ошибка загрузки избранных карточек:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadFeaturedCards()
+  }, [])
 
   const nextCard = () => {
     setActiveCard((prev) => (prev + 1) % featuredCards.length)
@@ -53,12 +74,36 @@ export function HeroBanner() {
     setActiveCard((prev) => (prev - 1 + featuredCards.length) % featuredCards.length)
   }
 
+  // Показать сообщение если нет избранных карточек
+  if (!isLoading && featuredCards.length === 0) {
+    return (
+      <div className="relative h-screen overflow-hidden -mt-20 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">Нет избранных карточек</h2>
+          <p className="text-gray-400">Добавьте карточки в избранное через админ-панель</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Показать загрузку
+  if (isLoading || !currentCard) {
+    return (
+      <div className="relative h-screen overflow-hidden -mt-20 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-gray-400">Загрузка...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="relative h-screen overflow-hidden -mt-20">
       <div className="absolute inset-0 bg-black">
         <img
           key={activeCard}
-          src={currentCard.image || "/placeholder.svg"}
+          src={currentCard.bannerImageUrl || currentCard.imageUrl || "/placeholder.svg"}
           alt={currentCard.name}
           className="w-full h-full object-cover animate-in fade-in duration-1000"
         />
@@ -91,7 +136,7 @@ export function HeroBanner() {
                   }}
                 >
                   <img
-                    src={card.thumbnail || "/placeholder.svg"}
+                    src={card.imageUrl || "/placeholder.svg"}
                     alt={card.name}
                     className="w-full h-full object-cover"
                   />
@@ -126,10 +171,10 @@ export function HeroBanner() {
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
               <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
-                {currentCard.collection}
+                {currentCard.category}
               </Badge>
               <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
-                Новинка
+                Избранное
               </Badge>
             </div>
 
@@ -143,12 +188,16 @@ export function HeroBanner() {
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
-                  <span className="text-lg text-gray-400 line-through">
-                    {currentCard.originalPrice.toLocaleString()} ₽
-                  </span>
-                  <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
-                    -{currentCard.discount}%
-                  </Badge>
+                  {currentCard.originalPrice && (
+                    <span className="text-lg text-gray-400 line-through">
+                      {currentCard.originalPrice.toLocaleString()} ₽
+                    </span>
+                  )}
+                  {currentCard.discount && (
+                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
+                      -{currentCard.discount}%
+                    </Badge>
+                  )}
                 </div>
               </div>
 

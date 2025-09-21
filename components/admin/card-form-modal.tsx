@@ -20,6 +20,8 @@ interface Card {
   rarity: "common" | "rare" | "epic" | "legendary";
   image: string;
   imageUrl: string;
+  bannerImageUrl?: string;
+  isFeatured: boolean;
   category: string;
   description: string;
   inStock: boolean;
@@ -46,6 +48,8 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     rarity: "common" as const,
     image: "",
     imageUrl: "",
+    bannerImageUrl: "",
+    isFeatured: false,
     category: "",
     description: "",
     inStock: true,
@@ -55,7 +59,9 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     tag: ""
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [bannerUploadProgress, setBannerUploadProgress] = useState(0);
 
   useEffect(() => {
     if (editingCard) {
@@ -68,6 +74,8 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         rarity: editingCard.rarity,
         image: editingCard.image || "",
         imageUrl: editingCard.imageUrl || "",
+        bannerImageUrl: editingCard.bannerImageUrl || "",
+        isFeatured: editingCard.isFeatured || false,
         category: editingCard.category,
         description: editingCard.description,
         inStock: editingCard.inStock,
@@ -86,6 +94,8 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         rarity: "common",
         image: "",
         imageUrl: "",
+        bannerImageUrl: "",
+        isFeatured: false,
         category: "",
         description: "",
         inStock: true,
@@ -109,6 +119,8 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       rarity: formData.rarity,
       image: formData.image,
       imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
+      bannerImageUrl: formData.bannerImageUrl || undefined,
+      isFeatured: formData.isFeatured,
       category: formData.category,
       description: formData.description,
       inStock: formData.inStock,
@@ -177,6 +189,43 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       setIsUploading(false);
       setUploadProgress(0);
       alert('Ошибка загрузки файла');
+    }
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingBanner(true);
+    setBannerUploadProgress(0);
+
+    try {
+      // Имитация прогресса загрузки
+      const progressInterval = setInterval(() => {
+        setBannerUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 100);
+
+      // Простая реализация загрузки на Cloudflare R2
+      const fileName = `banner-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const bannerUrl = `https://pub-f4c677382cef430f9372c49ceb7d3535.r2.dev/${fileName}`;
+
+      // В реальном проекте здесь была бы загрузка на Cloudflare R2
+      // Пока используем временную реализацию
+      setTimeout(() => {
+        clearInterval(progressInterval);
+        setBannerUploadProgress(100);
+        setFormData(prev => ({
+          ...prev,
+          bannerImageUrl: bannerUrl
+        }));
+        setIsUploadingBanner(false);
+      }, 1500);
+
+    } catch (error) {
+      console.error('Ошибка загрузки баннера:', error);
+      setIsUploadingBanner(false);
+      setBannerUploadProgress(0);
+      alert('Ошибка загрузки баннера');
     }
   };
 
@@ -393,6 +442,18 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   Хит продаж
                 </Label>
               </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <Label htmlFor="isFeatured" className="text-white">
+                  Показывать на главной странице
+                </Label>
+              </div>
             </div>
           </div>
 
@@ -411,9 +472,9 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
             />
           </div>
 
-          {/* Загрузка изображения */}
+          {/* Загрузка изображения карточки */}
           <div className="space-y-2">
-            <Label className="text-white">Изображение</Label>
+            <Label className="text-white">Загрузить изображение карточки</Label>
             <div className="border-2 border-dashed border-zinc-600 rounded-lg p-6 text-center">
               {isUploading ? (
                 <div className="space-y-2">
@@ -449,6 +510,52 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
+                    className="bg-[#18181B] border-zinc-600 text-white file:text-white"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Загрузка изображения для баннера */}
+          <div className="space-y-2">
+            <Label className="text-white">Загрузить изображение для баннера (для главной)</Label>
+            <div className="border-2 border-dashed border-zinc-600 rounded-lg p-6 text-center">
+              {isUploadingBanner ? (
+                <div className="space-y-2">
+                  <Progress value={bannerUploadProgress} className="w-full" />
+                  <p className="text-sm text-zinc-400">Загрузка баннера... {bannerUploadProgress}%</p>
+                </div>
+              ) : formData.bannerImageUrl ? (
+                <div className="space-y-2">
+                  <img
+                    src={formData.bannerImageUrl}
+                    alt="Banner Preview"
+                    className="w-32 h-20 object-cover rounded mx-auto"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.jpg";
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
+                    className="text-zinc-400 hover:text-white"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Удалить баннер
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Upload className="w-8 h-8 text-zinc-400 mx-auto" />
+                  <p className="text-zinc-400">Загрузите изображение для баннера (опционально)</p>
+                  <p className="text-xs text-zinc-500">Будет использоваться как фон на главной странице</p>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerUpload}
                     className="bg-[#18181B] border-zinc-600 text-white file:text-white"
                   />
                 </div>

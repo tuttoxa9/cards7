@@ -22,6 +22,8 @@ interface Card {
   rarity: "common" | "rare" | "epic" | "legendary";
   image: string;
   imageUrl: string;
+  bannerImageUrl?: string;
+  isFeatured: boolean;
   category: string;
   description: string;
   inStock: boolean;
@@ -188,6 +190,7 @@ export function CardsManagement() {
               <TableHead className="text-zinc-300">Цена</TableHead>
               <TableHead className="text-zinc-300">Редкость</TableHead>
               <TableHead className="text-zinc-300">Категория</TableHead>
+              <TableHead className="text-zinc-300">На главной</TableHead>
               <TableHead className="text-zinc-300">Действия</TableHead>
             </TableRow>
           </TableHeader>
@@ -212,6 +215,17 @@ export function CardsManagement() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-zinc-400">{card.category}</TableCell>
+                <TableCell>
+                  {card.isFeatured ? (
+                    <Badge className="bg-green-600 text-white">
+                      Да
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="bg-zinc-600 text-zinc-300">
+                      Нет
+                    </Badge>
+                  )}
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button
