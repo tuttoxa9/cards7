@@ -251,173 +251,166 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-[#27272A] border-zinc-700 text-white">
+      <DialogContent className="max-w-4xl max-h-[90vh] bg-[#27272A] border-zinc-700 text-white overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {editingCard ? "Редактировать карточку" : "Добавить новую карточку"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-3 gap-4">
-            {/* Название */}
-            <div className="space-y-2">
-              <Label htmlFor="title" className="text-white">
-                Название карточки
-              </Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value, name: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="Введите название"
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Основная информация */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Основная информация</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="title" className="text-xs text-zinc-300">Название карточки</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value, name: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="Введите название"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-300">Категория</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                  <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-8">
+                    <SelectValue placeholder="Выберите категорию" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#27272A] border-zinc-600">
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category} className="text-white hover:bg-[#18181B]">
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="description" className="text-xs text-zinc-300">Описание</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="bg-[#18181B] border-zinc-600 text-white min-h-[60px] text-sm"
+                placeholder="Введите описание карточки"
                 required
               />
-            </div>
-
-            {/* Цена */}
-            <div className="space-y-2">
-              <Label htmlFor="price" className="text-white">
-                Цена (₽)
-              </Label>
-              <Input
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="0"
-                required
-                min="0"
-              />
-            </div>
-
-            {/* Оригинальная цена */}
-            <div className="space-y-2">
-              <Label htmlFor="originalPrice" className="text-white">
-                Оригинальная цена (₽)
-              </Label>
-              <Input
-                id="originalPrice"
-                type="number"
-                value={formData.originalPrice}
-                onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="0"
-                min="0"
-              />
-            </div>
-
-            {/* Скидка */}
-            <div className="space-y-2">
-              <Label htmlFor="discount" className="text-white">
-                Скидка (%)
-              </Label>
-              <Input
-                id="discount"
-                type="number"
-                value={formData.discount}
-                onChange={(e) => setFormData(prev => ({ ...prev, discount: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="0"
-                min="0"
-                max="100"
-              />
-            </div>
-
-            {/* Категория */}
-            <div className="space-y-2">
-              <Label className="text-white">Категория</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-              >
-                <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white">
-                  <SelectValue placeholder="Выберите категорию" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#27272A] border-zinc-600">
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category} className="text-white hover:bg-[#18181B]">
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Редкость */}
-            <div className="space-y-2">
-              <Label className="text-white">Редкость</Label>
-              <Select
-                value={formData.rarity}
-                onValueChange={(value: any) => setFormData(prev => ({ ...prev, rarity: value }))}
-              >
-                <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white">
-                  <SelectValue placeholder="Выберите редкость" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#27272A] border-zinc-600">
-                  {rarities.map((rarity) => (
-                    <SelectItem key={rarity.value} value={rarity.value} className="text-white hover:bg-[#18181B]">
-                      {rarity.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
 
-          {/* Дополнительные поля */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Тег */}
-            <div className="space-y-2">
-              <Label htmlFor="tag" className="text-white">
-                Тег
-              </Label>
-              <Input
-                id="tag"
-                value={formData.tag}
-                onChange={(e) => setFormData(prev => ({ ...prev, tag: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="Хит продаж, Новинка"
-              />
+          {/* Цены и скидки */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Цены и скидки</h3>
+            <div className="grid grid-cols-4 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (₽)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="0"
+                  required
+                  min="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (₽)</Label>
+                <Input
+                  id="originalPrice"
+                  type="number"
+                  value={formData.originalPrice}
+                  onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="discount" className="text-xs text-zinc-300">Скидка (%)</Label>
+                <Input
+                  id="discount"
+                  type="number"
+                  value={formData.discount}
+                  onChange={(e) => setFormData(prev => ({ ...prev, discount: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="0"
+                  min="0"
+                  max="100"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-300">Редкость</Label>
+                <Select value={formData.rarity} onValueChange={(value: any) => setFormData(prev => ({ ...prev, rarity: value }))}>
+                  <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-8">
+                    <SelectValue placeholder="Редкость" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#27272A] border-zinc-600">
+                    {rarities.map((rarity) => (
+                      <SelectItem key={rarity.value} value={rarity.value} className="text-white hover:bg-[#18181B]">
+                        {rarity.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+          </div>
 
-            {/* Рейтинг */}
-            <div className="space-y-2">
-              <Label htmlFor="rating" className="text-white">
-                Рейтинг (1-5)
-              </Label>
-              <Input
-                id="rating"
-                type="number"
-                value={formData.rating}
-                onChange={(e) => setFormData(prev => ({ ...prev, rating: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="4.8"
-                min="1"
-                max="5"
-                step="0.1"
-              />
+          {/* Дополнительные параметры */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Дополнительные параметры</h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="tag" className="text-xs text-zinc-300">Тег</Label>
+                <Input
+                  id="tag"
+                  value={formData.tag}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tag: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="Хит продаж, Новинка"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="rating" className="text-xs text-zinc-300">Рейтинг (1-5)</Label>
+                <Input
+                  id="rating"
+                  type="number"
+                  value={formData.rating}
+                  onChange={(e) => setFormData(prev => ({ ...prev, rating: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="4.8"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="reviews" className="text-xs text-zinc-300">Отзывы</Label>
+                <Input
+                  id="reviews"
+                  type="number"
+                  value={formData.reviews}
+                  onChange={(e) => setFormData(prev => ({ ...prev, reviews: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="150"
+                  min="0"
+                />
+              </div>
             </div>
+          </div>
 
-            {/* Количество отзывов */}
-            <div className="space-y-2">
-              <Label htmlFor="reviews" className="text-white">
-                Количество отзывов
-              </Label>
-              <Input
-                id="reviews"
-                type="number"
-                value={formData.reviews}
-                onChange={(e) => setFormData(prev => ({ ...prev, reviews: e.target.value }))}
-                className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="150"
-                min="0"
-              />
-            </div>
-
-            {/* Чекбоксы */}
-            <div className="space-y-4">
+          {/* Настройки отображения */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Настройки отображения</h3>
+            <div className="grid grid-cols-3 gap-6">
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -426,9 +419,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   onChange={(e) => setFormData(prev => ({ ...prev, inStock: e.target.checked }))}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <Label htmlFor="inStock" className="text-white">
-                  В наличии
-                </Label>
+                <Label htmlFor="inStock" className="text-sm text-white">В наличии</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
@@ -438,9 +429,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   onChange={(e) => setFormData(prev => ({ ...prev, isHot: e.target.checked }))}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <Label htmlFor="isHot" className="text-white">
-                  Хит продаж
-                </Label>
+                <Label htmlFor="isHot" className="text-sm text-white">Хит продаж</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
@@ -450,135 +439,124 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <Label htmlFor="isFeatured" className="text-white">
-                  Показывать на главной странице
-                </Label>
+                <Label htmlFor="isFeatured" className="text-sm text-white">На главной</Label>
               </div>
             </div>
           </div>
 
-          {/* Описание */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-white">
-              Описание
-            </Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="bg-[#18181B] border-zinc-600 text-white min-h-[100px]"
-              placeholder="Введите описание карточки"
-              required
-            />
-          </div>
+          {/* Изображения */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Изображения</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Изображение карточки */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Изображение карточки</Label>
+                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
+                  {isUploading ? (
+                    <div className="space-y-1">
+                      <Progress value={uploadProgress} className="w-full h-2" />
+                      <p className="text-xs text-zinc-400">Загрузка... {uploadProgress}%</p>
+                    </div>
+                  ) : (formData.imageUrl || formData.image) ? (
+                    <div className="space-y-2">
+                      <img
+                        src={formData.imageUrl || formData.image}
+                        alt="Preview"
+                        className="w-16 h-20 object-cover rounded mx-auto"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.jpg";
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setFormData(prev => ({ ...prev, image: "", imageUrl: "" }))}
+                        className="text-zinc-400 hover:text-white text-xs h-6"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Удалить
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <Upload className="w-6 h-6 text-zinc-400 mx-auto" />
+                      <p className="text-xs text-zinc-400">Загрузить карточку</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="bg-[#18181B] border-zinc-600 text-white file:text-white text-xs h-7"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
 
-          {/* Загрузка изображения карточки */}
-          <div className="space-y-2">
-            <Label className="text-white">Загрузить изображение карточки</Label>
-            <div className="border-2 border-dashed border-zinc-600 rounded-lg p-6 text-center">
-              {isUploading ? (
-                <div className="space-y-2">
-                  <Progress value={uploadProgress} className="w-full" />
-                  <p className="text-sm text-zinc-400">Загрузка... {uploadProgress}%</p>
+              {/* Изображение баннера */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Баннер для главной (опционально)</Label>
+                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
+                  {isUploadingBanner ? (
+                    <div className="space-y-1">
+                      <Progress value={bannerUploadProgress} className="w-full h-2" />
+                      <p className="text-xs text-zinc-400">Загрузка... {bannerUploadProgress}%</p>
+                    </div>
+                  ) : formData.bannerImageUrl ? (
+                    <div className="space-y-2">
+                      <img
+                        src={formData.bannerImageUrl}
+                        alt="Banner Preview"
+                        className="w-20 h-12 object-cover rounded mx-auto"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.jpg";
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
+                        className="text-zinc-400 hover:text-white text-xs h-6"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Удалить
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <Upload className="w-6 h-6 text-zinc-400 mx-auto" />
+                      <p className="text-xs text-zinc-400">Загрузить баннер</p>
+                      <p className="text-xs text-zinc-500">Для фона главной</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleBannerUpload}
+                        className="bg-[#18181B] border-zinc-600 text-white file:text-white text-xs h-7"
+                      />
+                    </div>
+                  )}
                 </div>
-              ) : (formData.imageUrl || formData.image) ? (
-                <div className="space-y-2">
-                  <img
-                    src={formData.imageUrl || formData.image}
-                    alt="Preview"
-                    className="w-24 h-32 object-cover rounded mx-auto"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.jpg";
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFormData(prev => ({ ...prev, image: "", imageUrl: "" }))}
-                    className="text-zinc-400 hover:text-white"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Удалить
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="w-8 h-8 text-zinc-400 mx-auto" />
-                  <p className="text-zinc-400">Загрузите изображение карточки</p>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="bg-[#18181B] border-zinc-600 text-white file:text-white"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Загрузка изображения для баннера */}
-          <div className="space-y-2">
-            <Label className="text-white">Загрузить изображение для баннера (для главной)</Label>
-            <div className="border-2 border-dashed border-zinc-600 rounded-lg p-6 text-center">
-              {isUploadingBanner ? (
-                <div className="space-y-2">
-                  <Progress value={bannerUploadProgress} className="w-full" />
-                  <p className="text-sm text-zinc-400">Загрузка баннера... {bannerUploadProgress}%</p>
-                </div>
-              ) : formData.bannerImageUrl ? (
-                <div className="space-y-2">
-                  <img
-                    src={formData.bannerImageUrl}
-                    alt="Banner Preview"
-                    className="w-32 h-20 object-cover rounded mx-auto"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.jpg";
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
-                    className="text-zinc-400 hover:text-white"
-                  >
-                    <X className="h-4 w-4 mr-1" />
-                    Удалить баннер
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="w-8 h-8 text-zinc-400 mx-auto" />
-                  <p className="text-zinc-400">Загрузите изображение для баннера (опционально)</p>
-                  <p className="text-xs text-zinc-500">Будет использоваться как фон на главной странице</p>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleBannerUpload}
-                    className="bg-[#18181B] border-zinc-600 text-white file:text-white"
-                  />
-                </div>
-              )}
+              </div>
             </div>
           </div>
 
           {/* Кнопки */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-4 border-t border-zinc-600">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-zinc-600 text-zinc-400 hover:text-white"
+              className="border-zinc-600 text-zinc-400 hover:text-white h-8 px-4"
             >
               Отмена
             </Button>
             <Button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700"
-              disabled={isUploading}
+              className="bg-blue-600 hover:bg-blue-700 h-8 px-4"
+              disabled={isUploading || isUploadingBanner}
             >
-              {editingCard ? "Сохранить изменения" : "Добавить карточку"}
+              {editingCard ? "Сохранить" : "Добавить"}
             </Button>
           </div>
         </form>
