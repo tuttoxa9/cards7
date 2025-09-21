@@ -9,15 +9,26 @@ import { Badge } from "@/components/ui/badge";
 import { CardFormModal } from "./card-form-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface Card {
   id: string;
   name: string;
+  title: string;
   price: number;
+  originalPrice?: number;
+  discount?: number;
   rarity: "common" | "rare" | "epic" | "legendary";
   image: string;
+  imageUrl: string;
   category: string;
   description: string;
+  inStock: boolean;
+  isHot: boolean;
+  rating?: number;
+  reviews?: number;
+  tag?: string;
 }
 
 export function CardsManagement() {
@@ -27,48 +38,31 @@ export function CardsManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Card | null>(null);
 
-  // Имитация загрузки данных
-  useEffect(() => {
-    const loadCards = async () => {
+  // Загрузка карточек из Firestore
+  const loadCards = async () => {
+    try {
       setIsLoading(true);
-      // Имитация задержки API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const querySnapshot = await getDocs(collection(db, "cards"));
+      const cardsData: Card[] = [];
 
-      // Демо данные
-      const demoCards: Card[] = [
-        {
-          id: "1",
-          name: "Темный Феникс",
-          price: 2999,
-          rarity: "legendary",
-          image: "/dark-phoenix-card.jpg",
-          category: "Супергерои",
-          description: "Редкая карточка Темного Феникса из коллекции Marvel"
-        },
-        {
-          id: "2",
-          name: "Lamborghini Aventador",
-          price: 1999,
-          rarity: "epic",
-          image: "/lamborghini-card.jpg",
-          category: "Автомобили",
-          description: "Эксклюзивная карточка суперкара Lamborghini"
-        },
-        {
-          id: "3",
-          name: "Гоку Ультра Инстинкт",
-          price: 2499,
-          rarity: "legendary",
-          image: "/goku-card.jpg",
-          category: "Аниме",
-          description: "Ультра редкая карточка Гоку в форме Ультра Инстинкт"
-        }
-      ];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        cardsData.push({
+          id: doc.id,
+          ...data,
+        } as Card);
+      });
 
-      setCards(demoCards);
+      setCards(cardsData);
+    } catch (error) {
+      console.error("Ошибка загрузки карточек:", error);
+      toast.error("Ошибка загрузки карточек");
+    } finally {
       setIsLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     loadCards();
   }, []);
 
@@ -104,8 +98,14 @@ export function CardsManagement() {
 
   const handleDelete = async (cardId: string) => {
     if (window.confirm("Вы уверены, что хотите удалить эту карточку?")) {
-      setCards(cards.filter(card => card.id !== cardId));
-      toast.success("Карточка успешно удалена");
+      try {
+        await deleteDoc(doc(db, "cards", cardId));
+        setCards(cards.filter(card => card.id !== cardId));
+        toast.success("Карточка успешно удалена");
+      } catch (error) {
+        console.error("Ошибка удаления карточки:", error);
+        toast.error("Ошибка удаления карточки");
+      }
     }
   };
 
@@ -114,26 +114,33 @@ export function CardsManagement() {
     setIsModalOpen(true);
   };
 
-  const handleSaveCard = (cardData: Omit<Card, "id">) => {
-    if (editingCard) {
-      // Редактирование
-      setCards(cards.map(card =>
-        card.id === editingCard.id
-          ? { ...cardData, id: editingCard.id }
-          : card
-      ));
-      toast.success("Карточка успешно обновлена");
-    } else {
-      // Добавление
-      const newCard: Card = {
-        ...cardData,
-        id: Date.now().toString()
-      };
-      setCards([...cards, newCard]);
-      toast.success("Карточка успешно добавлена");
+  const handleSaveCard = async (cardData: Omit<Card, "id">) => {
+    try {
+      if (editingCard) {
+        // Редактирование
+        await updateDoc(doc(db, "cards", editingCard.id), cardData);
+        setCards(cards.map(card =>
+          card.id === editingCard.id
+            ? { ...cardData, id: editingCard.id }
+            : card
+        ));
+        toast.success("Карточка успешно обновлена");
+      } else {
+        // Добавление
+        const docRef = await addDoc(collection(db, "cards"), cardData);
+        const newCard: Card = {
+          ...cardData,
+          id: docRef.id
+        };
+        setCards([...cards, newCard]);
+        toast.success("Карточка успешно добавлена");
+      }
+      setIsModalOpen(false);
+      setEditingCard(null);
+    } catch (error) {
+      console.error("Ошибка сохранения карточки:", error);
+      toast.error("Ошибка сохранения карточки");
     }
-    setIsModalOpen(false);
-    setEditingCard(null);
   };
 
   if (isLoading) {
@@ -189,15 +196,15 @@ export function CardsManagement() {
               <TableRow key={card.id} className="border-zinc-700 hover:bg-[#27272A]">
                 <TableCell>
                   <img
-                    src={card.image}
-                    alt={card.name}
+                    src={card.imageUrl || card.image}
+                    alt={card.title || card.name}
                     className="w-12 h-16 object-cover rounded"
                     onError={(e) => {
                       e.currentTarget.src = "/placeholder.jpg";
                     }}
                   />
                 </TableCell>
-                <TableCell className="text-white font-medium">{card.name}</TableCell>
+                <TableCell className="text-white font-medium">{card.title || card.name}</TableCell>
                 <TableCell className="text-white">{card.price.toLocaleString()} ₽</TableCell>
                 <TableCell>
                   <Badge className={`${getRarityColor(card.rarity)} text-white`}>

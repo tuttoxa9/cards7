@@ -1,140 +1,97 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame, Heart } from "lucide-react"
+import { collection, getDocs, doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
-const newReleases = [
-  {
-    id: 1,
-    title: "Pokemon TCG Scarlet & Violet",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 1173,
-    originalPrice: 5479,
-    discount: 79,
-    endDate: "29.09.2025",
-    category: "Покемон",
-  },
-  {
-    id: 2,
-    title: "Magic: The Gathering Foundations",
-    image: "/avengers-team-trading-card-epic-composition.jpg",
-    price: 2909,
-    originalPrice: 4149,
-    discount: 30,
-    endDate: "29.09.2025",
-    category: "MTG",
-  },
-  {
-    id: 3,
-    title: "Yu-Gi-Oh! Quarter Century",
-    image: "/japanese-sports-car-trading-card-nissan-gtr.jpg",
-    price: 969,
-    originalPrice: 3489,
-    discount: 72,
-    endDate: "29.09.2025",
-    category: "Yu-Gi-Oh!",
-  },
-  {
-    id: 4,
-    title: "Disney Lorcana",
-    image: "/spider-man-multiverse-trading-card-web-design.jpg",
-    price: 290,
-    originalPrice: 595,
-    discount: 52,
-    endDate: "29.09.2025",
-    category: "Disney",
-  },
-  {
-    id: 5,
-    title: "One Piece Card Game",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 290,
-    originalPrice: 550,
-    discount: 47,
-    endDate: "29.09.2025",
-    category: "Аниме",
-  },
-]
+interface CardData {
+  id: string;
+  title: string;
+  image?: string;
+  imageUrl?: string;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  category: string;
+  tag?: string;
+}
 
-const bestSellers = [
-  {
-    id: 1,
-    title: "Pokemon Classic Collection",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 484,
-    originalPrice: 3559,
-    discount: 86,
-    tag: "Хит продаж",
-  },
-  {
-    id: 2,
-    title: "Magic Vintage Masters",
-    image: "/formula-1-racing-car-trading-card-speed.jpg",
-    price: 290,
-    originalPrice: 1179,
-    discount: 75,
-    tag: "Хит продаж",
-  },
-  {
-    id: 3,
-    title: "Yu-Gi-Oh! 25th Anniversary",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 57,
-    originalPrice: 999,
-    discount: 94,
-    tag: "Хит продаж",
-  },
-]
-
-const newInCatalog = [
-  {
-    id: 1,
-    title: "God of War Collection",
-    image: "/placeholder-2n0yc.png",
-    price: 2036,
-    originalPrice: 2989,
-    discount: 32,
-    tag: "Новинка",
-  },
-  {
-    id: 2,
-    title: "Medieval Fantasy Set",
-    image: "/dark-fantasy-trading-card-background-with-mystical.jpg",
-    price: 899,
-    originalPrice: 999,
-    discount: 10,
-    tag: "Премиум скидка по подписке",
-  },
-  {
-    id: 3,
-    title: "Farming Simulator Pack",
-    image: "/placeholder-47xbe.png",
-    price: 809,
-    originalPrice: 899,
-    discount: 10,
-    tag: "Премиум скидка по подписке",
-  },
-  {
-    id: 4,
-    title: "Knights & Crusades",
-    image: "/placeholder-9ud78.png",
-    price: 823,
-    originalPrice: 849,
-    discount: 3,
-    tag: "Новинка",
-  },
-  {
-    id: 5,
-    title: "Chaos: The New Dawn",
-    image: "/placeholder-cud1g.png",
-    price: 3879,
-    originalPrice: 5339,
-    discount: 27,
-    tag: "Новинка",
-  },
-]
+interface SectionData {
+  cardIds: string[];
+}
 
 export function FeaturedSections() {
+  const [weeklyDeals, setWeeklyDeals] = useState<CardData[]>([]);
+  const [bestSellers, setBestSellers] = useState<CardData[]>([]);
+  const [newArrivals, setNewArrivals] = useState<CardData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Функция для получения карточек по их ID
+  const getCardsByIds = async (cardIds: string[]): Promise<CardData[]> => {
+    const cards: CardData[] = [];
+
+    for (const cardId of cardIds) {
+      try {
+        const cardDoc = await getDoc(doc(db, "cards", cardId));
+        if (cardDoc.exists()) {
+          cards.push({
+            id: cardDoc.id,
+            ...cardDoc.data()
+          } as CardData);
+        }
+      } catch (error) {
+        console.error(`Ошибка загрузки карточки ${cardId}:`, error);
+      }
+    }
+
+    return cards;
+  };
+
+  // Загрузка данных секций из Firestore
+  useEffect(() => {
+    const loadSections = async () => {
+      try {
+        setIsLoading(true);
+
+        // Загрузка конфигурации секций
+        const [weeklyDealsDoc, bestSellersDoc, newArrivalsDoc] = await Promise.all([
+          getDoc(doc(db, "homepageSections", "weeklyDeals")),
+          getDoc(doc(db, "homepageSections", "bestSellers")),
+          getDoc(doc(db, "homepageSections", "newArrivals"))
+        ]);
+
+        // Загрузка карточек для каждой секции
+        if (weeklyDealsDoc.exists()) {
+          const data = weeklyDealsDoc.data() as SectionData;
+          const cards = await getCardsByIds(data.cardIds || []);
+          setWeeklyDeals(cards);
+        }
+
+        if (bestSellersDoc.exists()) {
+          const data = bestSellersDoc.data() as SectionData;
+          const cards = await getCardsByIds(data.cardIds || []);
+          setBestSellers(cards);
+        }
+
+        if (newArrivalsDoc.exists()) {
+          const data = newArrivalsDoc.data() as SectionData;
+          const cards = await getCardsByIds(data.cardIds || []);
+          setNewArrivals(cards);
+        }
+
+      } catch (error) {
+        console.error("Ошибка загрузки секций:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSections();
+  }, []);
   return (
     <div className="space-y-16">
       {/* Weekly Deals Section */}
@@ -154,14 +111,20 @@ export function FeaturedSections() {
 
         <div className="relative">
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {newReleases.map((card) => (
+            {isLoading ? (
+              // Скелетоны загрузки
+              [...Array(5)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-80 h-80 bg-gray-800 rounded-3xl animate-pulse" />
+              ))
+            ) : (
+              weeklyDeals.map((card) => (
               <Card
                 key={card.id}
                 className="group cursor-pointer flex-shrink-0 w-80 h-80 bg-transparent border-2 border-transparent hover:border-red-500/70 transition-all duration-300 overflow-hidden rounded-3xl"
               >
                 <div className="relative w-full h-full overflow-hidden rounded-3xl">
                   <img
-                    src={card.image}
+                    src={card.imageUrl || card.image}
                     alt={card.title}
                     className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                   />
@@ -175,7 +138,7 @@ export function FeaturedSections() {
                   {/* Discount badge */}
                   <div className="absolute top-4 left-4">
                     <Badge className="bg-red-500 text-white font-bold text-sm px-3 py-1 rounded-full">
-                      Акция
+                      {card.tag || "Акция"}
                     </Badge>
                   </div>
 
@@ -211,7 +174,8 @@ export function FeaturedSections() {
                   </div>
                 </div>
               </Card>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -249,14 +213,20 @@ export function FeaturedSections() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {bestSellers.map((card) => (
+          {isLoading ? (
+            // Скелетоны загрузки
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="aspect-square h-64 bg-gray-800 rounded-3xl animate-pulse" />
+            ))
+          ) : (
+            bestSellers.map((card) => (
             <Card
               key={card.id}
               className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-orange-500/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square h-64"
             >
               <div className="relative w-full h-full overflow-hidden rounded-3xl">
                 <img
-                  src={card.image}
+                  src={card.imageUrl || card.image}
                   alt={card.title}
                   className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                 />
@@ -268,7 +238,7 @@ export function FeaturedSections() {
 
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-orange-500 text-white font-bold text-xs px-2 py-1 rounded-full">
-                    {card.tag}
+                    {card.tag || "Хит продаж"}
                   </Badge>
                 </div>
 
@@ -303,7 +273,8 @@ export function FeaturedSections() {
                 </div>
               </div>
             </Card>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
@@ -324,14 +295,20 @@ export function FeaturedSections() {
 
         <div className="relative">
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {newInCatalog.map((card) => (
+            {isLoading ? (
+              // Скелетоны загрузки
+              [...Array(5)].map((_, i) => (
+                <div key={i} className="flex-shrink-0 w-80 h-80 bg-gray-800 rounded-3xl animate-pulse" />
+              ))
+            ) : (
+              newArrivals.map((card) => (
               <Card
                 key={card.id}
                 className="group cursor-pointer flex-shrink-0 w-80 h-80 bg-transparent border-2 border-transparent hover:border-blue-500/70 transition-all duration-300 overflow-hidden rounded-3xl"
               >
                 <div className="relative w-full h-full overflow-hidden rounded-3xl">
                   <img
-                    src={card.image}
+                    src={card.imageUrl || card.image}
                     alt={card.title}
                     className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                   />
@@ -347,7 +324,7 @@ export function FeaturedSections() {
                         ? "bg-gray-700 text-white"
                         : "bg-blue-500 text-white"
                     }`}>
-                      {card.tag === "Новинка" ? "Новинка" : "Премиум скидка по подписке"}
+                      {card.tag || "Новинка"}
                     </Badge>
                   </div>
 
@@ -382,7 +359,8 @@ export function FeaturedSections() {
                   </div>
                 </div>
               </Card>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
