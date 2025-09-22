@@ -183,7 +183,7 @@ export function HeroBanner() {
           <div
             className="absolute w-80 h-[28rem] rounded-3xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
-              transform: 'rotate(-12deg) translate(-40px, 30px)',
+              transform: 'rotate(-12deg) translate(-60px, 30px)',
               zIndex: 1
             }}
           >
@@ -202,7 +202,8 @@ export function HeroBanner() {
             className="absolute w-80 h-[28rem] rounded-3xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
               transform: 'rotate(0deg) translate(0px, 0px)',
-              zIndex: 2
+              zIndex: 2,
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
             }}
           >
             <img
