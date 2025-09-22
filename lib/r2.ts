@@ -11,4 +11,4 @@ export const r2Client = new S3Client({
 });
 
 export const R2_BUCKET_NAME = "cards";
-export const R2_PUBLIC_URL = `https://cards.2d16ebaf34d96e6d891d5b0a20364b20.r2.cloudflarestorage.com`;
+export const R2_PUBLIC_URL = `https://pub-2d16ebaf34d96e6d891d5b0a20364b20.r2.dev`;
