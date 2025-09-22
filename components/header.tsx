@@ -50,7 +50,7 @@ export function Header() {
               <img
                 src="/logocards.png"
                 alt="GOLO CARDS"
-                className="h-20 w-auto"
+                className="h-28 w-auto"
                 onError={(e) => {
                   // Fallback to text logo if image fails to load
                   e.currentTarget.style.display = 'none';

@@ -47,18 +47,21 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
   return (
     <div className={cn(
-      "fixed inset-0 z-50 flex transition-all duration-300",
-      isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+      "fixed inset-0 z-50 flex",
+      isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
     )}>
       {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className={cn(
+          "absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-500",
+          isOpen ? "opacity-100" : "opacity-0"
+        )}
         onClick={onClose}
       />
 
       {/* Cart Content */}
       <div className={cn(
-        "relative ml-auto w-1/3 h-full flex flex-col bg-slate-900 transition-all duration-700 ease-in-out",
+        "relative ml-auto w-1/3 h-full flex flex-col bg-slate-900 transform transition-transform duration-500 ease-in-out",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Header */}
