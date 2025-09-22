@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DragDropUpload } from "@/components/ui/drag-drop-upload";
 import { Progress } from "@/components/ui/progress";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -168,9 +169,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
 
 
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleCardImageUpload = async (file: File) => {
 
     setIsUploading(true);
     setUploadProgress(0);
@@ -221,9 +220,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     }
   };
 
-  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleBannerImageUpload = async (file: File) => {
 
     setIsUploadingBanner(true);
     setBannerUploadProgress(0);
@@ -482,92 +479,31 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
               {/* Изображение карточки */}
               <div className="space-y-2">
                 <Label className="text-xs text-zinc-300">Изображение карточки</Label>
-                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
-                  {isUploading ? (
-                    <div className="space-y-1">
-                      <Progress value={uploadProgress} className="w-full h-2" />
-                      <p className="text-xs text-zinc-400">Загрузка... {uploadProgress}%</p>
-                    </div>
-                  ) : (formData.imageUrl || formData.image) ? (
-                    <div className="space-y-2">
-                      <img
-                        src={formData.imageUrl || formData.image}
-                        alt="Preview"
-                        className="w-16 h-20 object-cover rounded mx-auto"
-                        onError={(e) => {
-                          e.currentTarget.src = "/placeholder.jpg";
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setFormData(prev => ({ ...prev, image: "", imageUrl: "" }))}
-                        className="text-zinc-400 hover:text-white text-xs h-6"
-                      >
-                        <X className="h-3 w-3 mr-1" />
-                        Удалить
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <Upload className="w-6 h-6 text-zinc-400 mx-auto" />
-                      <p className="text-xs text-zinc-400">Загрузить карточку</p>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        className="bg-[#18181B] border-zinc-600 text-white file:text-white text-xs h-7"
-                      />
-                    </div>
-                  )}
-                </div>
+                <DragDropUpload
+                  onUpload={handleCardImageUpload}
+                  currentFile={formData.imageUrl || formData.image}
+                  onRemove={() => setFormData(prev => ({ ...prev, image: "", imageUrl: "" }))}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
+                  placeholder="Перетащите изображение карточки сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
               </div>
 
               {/* Изображение баннера */}
               <div className="space-y-2">
                 <Label className="text-xs text-zinc-300">Баннер для главной (опционально)</Label>
-                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
-                  {isUploadingBanner ? (
-                    <div className="space-y-1">
-                      <Progress value={bannerUploadProgress} className="w-full h-2" />
-                      <p className="text-xs text-zinc-400">Загрузка... {bannerUploadProgress}%</p>
-                    </div>
-                  ) : formData.bannerImageUrl ? (
-                    <div className="space-y-2">
-                      <img
-                        src={formData.bannerImageUrl}
-                        alt="Banner Preview"
-                        className="w-20 h-12 object-cover rounded mx-auto"
-                        onError={(e) => {
-                          e.currentTarget.src = "/placeholder.jpg";
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
-                        className="text-zinc-400 hover:text-white text-xs h-6"
-                      >
-                        <X className="h-3 w-3 mr-1" />
-                        Удалить
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <Upload className="w-6 h-6 text-zinc-400 mx-auto" />
-                      <p className="text-xs text-zinc-400">Загрузить баннер</p>
-                      <p className="text-xs text-zinc-500">Для фона главной</p>
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleBannerUpload}
-                        className="bg-[#18181B] border-zinc-600 text-white file:text-white text-xs h-7"
-                      />
-                    </div>
-                  )}
-                </div>
+                <DragDropUpload
+                  onUpload={handleBannerImageUpload}
+                  currentFile={formData.bannerImageUrl}
+                  onRemove={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
+                  isUploading={isUploadingBanner}
+                  uploadProgress={bannerUploadProgress}
+                  placeholder="Перетащите баннер сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
               </div>
 
               {/* Задник карточки */}

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { DragDropUpload } from "@/components/ui/drag-drop-upload";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
@@ -69,9 +70,7 @@ export function ImagesManagement() {
     image.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageUpload = async (file: File) => {
 
     setIsUploading(true);
     setUploadProgress(0);
@@ -353,46 +352,16 @@ export function ImagesManagement() {
             {/* Загрузка изображения */}
             <div className="space-y-2">
               <Label className="text-sm text-zinc-300">Изображение *</Label>
-              <div className="border-2 border-dashed border-zinc-600 rounded-lg p-4 text-center">
-                {isUploading ? (
-                  <div className="space-y-2">
-                    <Progress value={uploadProgress} className="w-full h-2" />
-                    <p className="text-sm text-zinc-400">Загрузка... {uploadProgress}%</p>
-                  </div>
-                ) : formData.imageUrl ? (
-                  <div className="space-y-2">
-                    <img
-                      src={formData.imageUrl}
-                      alt="Preview"
-                      className="w-32 h-20 object-cover rounded mx-auto"
-                      onError={(e) => {
-                        e.currentTarget.src = "/placeholder.jpg";
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
-                      className="text-zinc-400 hover:text-white"
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Удалить
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <Upload className="w-8 h-8 text-zinc-400 mx-auto" />
-                    <p className="text-sm text-zinc-400">Загрузить изображение</p>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="bg-[#18181B] border-zinc-600 text-white file:text-white"
-                    />
-                  </div>
-                )}
-              </div>
+              <DragDropUpload
+                onUpload={handleImageUpload}
+                currentFile={formData.imageUrl}
+                onRemove={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
+                isUploading={isUploading}
+                uploadProgress={uploadProgress}
+                placeholder="Перетащите изображение сюда или нажмите для выбора"
+                accept="image/*"
+                maxSize={10}
+              />
             </div>
 
             {/* Кнопки */}
