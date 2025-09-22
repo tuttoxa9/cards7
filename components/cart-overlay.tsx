@@ -58,7 +58,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
       {/* Cart Content */}
       <div className={cn(
-        "relative ml-auto w-1/3 h-full flex flex-col bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 transition-all duration-700 ease-in-out",
+        "relative ml-auto w-1/3 h-full flex flex-col bg-slate-900 transition-all duration-700 ease-in-out",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Header */}
