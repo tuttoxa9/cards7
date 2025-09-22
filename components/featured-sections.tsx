@@ -28,6 +28,7 @@ export function FeaturedSections() {
   const [weeklyDeals, setWeeklyDeals] = useState<CardData[]>([]);
   const [bestSellers, setBestSellers] = useState<CardData[]>([]);
   const [newArrivals, setNewArrivals] = useState<CardData[]>([]);
+  const [categories, setCategories] = useState<string[]>(["Все"]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Функция для получения карточек по их ID
@@ -51,11 +52,27 @@ export function FeaturedSections() {
     return cards;
   };
 
+  // Функция для загрузки категорий из Firestore
+  const loadCategories = async () => {
+    try {
+      const categoriesDoc = await getDoc(doc(db, "settings", "categories"));
+      if (categoriesDoc.exists()) {
+        const data = categoriesDoc.data();
+        setCategories(["Все", ...(data.list || [])]);
+      }
+    } catch (error) {
+      console.error("Ошибка загрузки категорий:", error);
+    }
+  };
+
   // Загрузка данных секций из Firestore
   useEffect(() => {
     const loadSections = async () => {
       try {
         setIsLoading(true);
+
+        // Загрузка категорий
+        await loadCategories();
 
         // Загрузка конфигурации секций
         const [weeklyDealsDoc, bestSellersDoc, newArrivalsDoc] = await Promise.all([
@@ -201,7 +218,7 @@ export function FeaturedSections() {
 
         {/* Category filters */}
         <div className="flex flex-wrap gap-3 mb-8">
-          {["Все", "Покемон", "MTG", "Yu-Gi-Oh!", "Аниме", "Disney", "Marvel"].map((category) => (
+          {categories.map((category) => (
             <Button
               key={category}
               variant={category === "Все" ? "default" : "ghost"}

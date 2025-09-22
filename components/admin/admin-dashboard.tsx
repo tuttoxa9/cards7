@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { CardsManagement } from "./cards-management";
 import { SectionsManagement } from "./sections-management";
 import { ImagesManagement } from "./images-management";
+import { CategoriesManagement } from "./categories-management";
 import { Separator } from "@/components/ui/separator";
 
-type ActiveTab = "cards" | "sections" | "images" | "offers" | "orders";
+type ActiveTab = "cards" | "sections" | "images" | "categories" | "offers" | "orders";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -25,6 +26,8 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
         return <SectionsManagement />;
       case "images":
         return <ImagesManagement />;
+      case "categories":
+        return <CategoriesManagement />;
       case "offers":
         return (
           <div className="text-center text-zinc-400 py-20">
@@ -51,6 +54,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
             {activeTab === "cards" && "Карточки товаров"}
             {activeTab === "sections" && "Секции главной страницы"}
             {activeTab === "images" && "Изображения"}
+            {activeTab === "categories" && "Категории"}
             {activeTab === "offers" && "Предложения"}
             {activeTab === "orders" && "Заказы"}
           </h1>
@@ -87,6 +91,16 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 }`}
               >
                 Изображения
+              </button>
+              <button
+                onClick={() => setActiveTab("categories")}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === "categories"
+                    ? "bg-[#27272A] text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                Категории
               </button>
               <button
                 onClick={() => setActiveTab("offers")}
