@@ -173,8 +173,8 @@ export function CatalogFilters() {
             className="w-full"
           />
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>от {filters.priceRange[0]} ₽</span>
-            <span>до {filters.priceRange[1]} ₽</span>
+            <span>от {filters.priceRange[0]} Br</span>
+            <span>до {filters.priceRange[1]} Br</span>
           </div>
         </CardContent>
       </Card>

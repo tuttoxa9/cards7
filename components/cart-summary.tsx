@@ -25,26 +25,26 @@ export function CartSummary({ subtotal, discount, shipping, total, itemCount }: 
         <CardContent className="space-y-4">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Товары ({itemCount}):</span>
-            <span className="text-foreground">{subtotal.toLocaleString()} ₽</span>
+            <span className="text-foreground">{subtotal.toLocaleString()} Br</span>
           </div>
 
           {discount > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Скидка:</span>
-              <span className="text-green-600">-{discount.toLocaleString()} ₽</span>
+              <span className="text-green-600">-{discount.toLocaleString()} Br</span>
             </div>
           )}
 
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Доставка:</span>
-            <span className="text-foreground">{shipping === 0 ? "Бесплатно" : `${shipping.toLocaleString()} ₽`}</span>
+            <span className="text-foreground">{shipping === 0 ? "Бесплатно" : `${shipping.toLocaleString()} Br`}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between text-lg font-bold">
             <span className="text-foreground">Итого:</span>
-            <span className="text-foreground">{total.toLocaleString()} ₽</span>
+            <span className="text-foreground">{total.toLocaleString()} Br</span>
           </div>
 
           <Button size="lg" className="w-full bg-primary hover:bg-primary/90">
@@ -114,7 +114,7 @@ export function CartSummary({ subtotal, discount, shipping, total, itemCount }: 
             <div className="text-center space-y-2">
               <Badge className="bg-primary text-primary-foreground">Бесплатная доставка</Badge>
               <p className="text-sm text-foreground">
-                Добавьте товаров на {(3000 - subtotal).toLocaleString()} ₽ для бесплатной доставки
+                Добавьте товаров на {(3000 - subtotal).toLocaleString()} Br для бесплатной доставки
               </p>
               <div className="w-full bg-border rounded-full h-2">
                 <div

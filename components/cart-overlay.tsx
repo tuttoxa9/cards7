@@ -141,12 +141,12 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                       {/* Price */}
                       <div className="flex items-center space-x-2">
                         <span className="text-xl font-bold text-white">
-                          {item.price.toLocaleString()} ₽
+                          {item.price.toLocaleString()} Br
                         </span>
                         {item.originalPrice && (
                           <>
                             <span className="text-sm text-white/50 line-through">
-                              {item.originalPrice.toLocaleString()} ₽
+                              {item.originalPrice.toLocaleString()} Br
                             </span>
                             <Badge variant="destructive" className="bg-red-600 text-xs">
                               -{item.discount}%
@@ -183,7 +183,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
                         <div className="text-right">
                           <span className="text-lg font-bold text-white">
-                            {(item.price * item.quantity).toLocaleString()} ₽
+                            {(item.price * item.quantity).toLocaleString()} Br
                           </span>
                         </div>
                       </div>
@@ -201,19 +201,19 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             <div className="space-y-2">
               <div className="flex justify-between text-white/70">
                 <span>Товары ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} шт.)</span>
-                <span>{(totalPrice + totalDiscount).toLocaleString()} ₽</span>
+                <span>{(totalPrice + totalDiscount).toLocaleString()} Br</span>
               </div>
 
               {totalDiscount > 0 && (
                 <div className="flex justify-between text-green-400">
                   <span>Скидка</span>
-                  <span>-{totalDiscount.toLocaleString()} ₽</span>
+                  <span>-{totalDiscount.toLocaleString()} Br</span>
                 </div>
               )}
 
               <div className="flex justify-between text-xl font-bold text-white border-t border-white/10 pt-2">
                 <span>Итого</span>
-                <span>{totalPrice.toLocaleString()} ₽</span>
+                <span>{totalPrice.toLocaleString()} Br</span>
               </div>
             </div>
 

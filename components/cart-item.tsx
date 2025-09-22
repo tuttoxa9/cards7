@@ -76,11 +76,11 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
 
             {/* Price */}
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-foreground">{item.price.toLocaleString()} ₽</span>
+              <span className="text-lg font-bold text-foreground">{item.price.toLocaleString()} Br</span>
               {item.originalPrice && (
                 <>
                   <span className="text-sm text-muted-foreground line-through">
-                    {item.originalPrice.toLocaleString()} ₽
+                    {item.originalPrice.toLocaleString()} Br
                   </span>
                   <Badge variant="destructive" className="bg-red-600 text-xs">
                     -{item.discount}%
@@ -117,7 +117,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
 
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Итого:</p>
-                <p className="text-lg font-bold text-foreground">{totalPrice.toLocaleString()} ₽</p>
+                <p className="text-lg font-bold text-foreground">{totalPrice.toLocaleString()} Br</p>
               </div>
             </div>
 
