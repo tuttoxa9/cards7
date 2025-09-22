@@ -46,7 +46,7 @@ export function Header() {
 
             <Link href="/" className="flex items-center">
               <img
-                src="/uploads/logocards.svg"
+                src="/logocards.png"
                 alt="GOLO CARDS"
                 className="h-12 w-auto"
                 onError={(e) => {
