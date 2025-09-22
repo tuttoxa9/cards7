@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 
 interface Card {
   id: string;
@@ -143,36 +145,29 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setUploadProgress(0);
 
     try {
-      // Создаем data URL из файла
-      const reader = new FileReader();
+      // Создаем уникальное имя файла
+      const fileName = `cards/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, fileName);
 
-      reader.onloadstart = () => setUploadProgress(10);
-      reader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = Math.round((event.loaded / event.total) * 90);
-          setUploadProgress(progress);
-        }
-      };
+      setUploadProgress(30);
 
-      reader.onload = () => {
-        setUploadProgress(100);
-        const dataUrl = reader.result as string;
-        setFormData(prev => ({
-          ...prev,
-          image: dataUrl,
-          imageUrl: dataUrl
-        }));
-        setIsUploading(false);
-      };
+      // Загружаем файл в Firebase Storage
+      const snapshot = await uploadBytes(storageRef, file);
 
-      reader.onerror = () => {
-        console.error('Ошибка чтения файла');
-        setIsUploading(false);
-        setUploadProgress(0);
-        alert('Ошибка загрузки файла');
-      };
+      setUploadProgress(80);
 
-      reader.readAsDataURL(file);
+      // Получаем URL загруженного файла
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      setUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        image: downloadURL,
+        imageUrl: downloadURL
+      }));
+
+      setIsUploading(false);
 
     } catch (error) {
       console.error('Ошибка загрузки файла:', error);
@@ -190,35 +185,28 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setBannerUploadProgress(0);
 
     try {
-      // Создаем data URL из файла
-      const reader = new FileReader();
+      // Создаем уникальное имя файла для баннера
+      const fileName = `banners/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, fileName);
 
-      reader.onloadstart = () => setBannerUploadProgress(10);
-      reader.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const progress = Math.round((event.loaded / event.total) * 90);
-          setBannerUploadProgress(progress);
-        }
-      };
+      setBannerUploadProgress(30);
 
-      reader.onload = () => {
-        setBannerUploadProgress(100);
-        const dataUrl = reader.result as string;
-        setFormData(prev => ({
-          ...prev,
-          bannerImageUrl: dataUrl
-        }));
-        setIsUploadingBanner(false);
-      };
+      // Загружаем файл в Firebase Storage
+      const snapshot = await uploadBytes(storageRef, file);
 
-      reader.onerror = () => {
-        console.error('Ошибка чтения файла баннера');
-        setIsUploadingBanner(false);
-        setBannerUploadProgress(0);
-        alert('Ошибка загрузки баннера');
-      };
+      setBannerUploadProgress(80);
 
-      reader.readAsDataURL(file);
+      // Получаем URL загруженного файла
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      setBannerUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        bannerImageUrl: downloadURL
+      }));
+
+      setIsUploadingBanner(false);
 
     } catch (error) {
       console.error('Ошибка загрузки баннера:', error);
