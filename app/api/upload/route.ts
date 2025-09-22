@@ -26,14 +26,25 @@ export async function POST(request: NextRequest) {
     let contentType = 'image/webp';
 
     try {
-      // Конвертируем изображение в WebP с оптимизацией
-      processedBuffer = await sharp(Buffer.from(fileBuffer))
-        .webp({
-          quality: 85, // высокое качество
-          effort: 4,   // средний уровень сжатия
-          lossless: false
-        })
-        .toBuffer();
+      // Проверяем, является ли файл уже WebP
+      const isWebp = file.type === 'image/webp' || file.name.toLowerCase().endsWith('.webp');
+
+      if (isWebp) {
+        // Если файл уже WebP, используем как есть (без повторной конвертации)
+        console.log('Файл уже в формате WebP, пропускаем конвертацию');
+        processedBuffer = Buffer.from(fileBuffer);
+        contentType = 'image/webp';
+      } else {
+        // Конвертируем изображение в WebP с оптимизацией
+        console.log(`Конвертируем ${file.type} в WebP`);
+        processedBuffer = await sharp(Buffer.from(fileBuffer))
+          .webp({
+            quality: 85, // высокое качество
+            effort: 4,   // средний уровень сжатия
+            lossless: false
+          })
+          .toBuffer();
+      }
     } catch (error) {
       console.log('Ошибка конвертации в WebP, используем оригинальный файл:', error);
       // Fallback: используем оригинальный файл если конвертация не удалась
