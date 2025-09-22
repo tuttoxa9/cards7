@@ -58,7 +58,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
       {/* Cart Content */}
       <div className={cn(
-        "relative ml-auto w-1/3 h-full flex flex-col bg-gradient-to-br from-slate-950/95 via-purple-950/30 to-slate-900/95 backdrop-blur-md transition-transform duration-500",
+        "relative ml-auto w-1/3 h-full flex flex-col bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 transition-all duration-700 ease-in-out",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Header */}
@@ -77,7 +77,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:text-red-400 hover:bg-white/10 w-12 h-12 rounded-full transition-all duration-300 hover:scale-110"
+            className="text-white hover:text-red-400 hover:bg-slate-700 w-12 h-12 rounded-full transition-all duration-300 hover:scale-110"
           >
             <X className="w-6 h-6" />
           </Button>
@@ -101,7 +101,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             </div>
           ) : (
             cartItems.map((item) => (
-              <Card key={item.id} className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 rounded-2xl overflow-hidden">
+              <Card key={item.id} className="bg-slate-800 border-slate-600 hover:bg-slate-700 transition-all duration-300 rounded-2xl overflow-hidden shadow-lg">
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {/* Image */}
@@ -134,7 +134,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveItem(item.id)}
-                          className="text-white/60 hover:text-red-400 hover:bg-red-500/20 w-8 h-8 rounded-lg"
+                          className="text-gray-400 hover:text-red-400 hover:bg-red-600 w-8 h-8 rounded-lg"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -164,7 +164,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                            className="w-8 h-8 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
                           >
                             <Minus className="w-4 h-4" />
                           </Button>
@@ -177,7 +177,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                            className="w-8 h-8 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
                           >
                             <Plus className="w-4 h-4" />
                           </Button>
