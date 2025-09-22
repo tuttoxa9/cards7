@@ -170,16 +170,16 @@ export function HeroBanner() {
       </div>
 
       {/* Анимированные карточки в правом нижнем углу */}
-      <div className="absolute bottom-16 right-12 z-10 pointer-events-none">
+      <div className="absolute bottom-8 right-1/4 z-10 pointer-events-none">
         <div
           key={`animated-cards-${activeCard}`}
-          className="relative w-64 h-80 animate-in slide-in-from-bottom-8 fade-in duration-1000"
+          className="relative w-96 h-[32rem] animate-in slide-in-from-bottom-8 fade-in duration-1000"
         >
-          {/* Оборотная сторона карточки (задняя, под наклоном) */}
+          {/* Оборотная сторона карточки (задняя, под наклоном влево) */}
           <div
-            className="absolute w-52 h-72 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            className="absolute w-80 h-[28rem] rounded-3xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
-              transform: 'rotate(15deg) translate(-30px, 20px)',
+              transform: 'rotate(-12deg) translate(-40px, 30px)',
               zIndex: 1
             }}
           >
@@ -195,7 +195,7 @@ export function HeroBanner() {
 
           {/* Лицевая сторона карточки (основная, ровная) */}
           <div
-            className="absolute w-52 h-72 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            className="absolute w-80 h-[28rem] rounded-3xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
               transform: 'rotate(0deg) translate(0px, 0px)',
               zIndex: 2
