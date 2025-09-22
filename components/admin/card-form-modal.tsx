@@ -9,8 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2";
+
 
 interface Card {
   id: string;
@@ -145,35 +144,39 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setUploadProgress(0);
 
     try {
-      // Создаем уникальное имя файла
-      const fileName = `cards/${Date.now()}_${file.name}`;
+      setUploadProgress(20);
 
-      setUploadProgress(30);
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'card');
 
-      // Конвертируем файл в ArrayBuffer
-      const fileBuffer = await file.arrayBuffer();
+      setUploadProgress(40);
 
-      // Загружаем файл в Cloudflare R2
-      const putCommand = new PutObjectCommand({
-        Bucket: R2_BUCKET_NAME,
-        Key: fileName,
-        Body: new Uint8Array(fileBuffer),
-        ContentType: file.type,
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
       });
-
-      await r2Client.send(putCommand);
 
       setUploadProgress(80);
 
-      // Формируем публичный URL для файла
-      const downloadURL = `${R2_PUBLIC_URL}/${fileName}`;
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке файла');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке файла');
+      }
 
       setUploadProgress(100);
 
       setFormData(prev => ({
         ...prev,
-        image: downloadURL,
-        imageUrl: downloadURL
+        image: result.url,
+        imageUrl: result.url
       }));
 
       setIsUploading(false);
@@ -194,34 +197,38 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     setBannerUploadProgress(0);
 
     try {
-      // Создаем уникальное имя файла для баннера
-      const fileName = `banners/${Date.now()}_${file.name}`;
+      setBannerUploadProgress(20);
 
-      setBannerUploadProgress(30);
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'banner');
 
-      // Конвертируем файл в ArrayBuffer
-      const fileBuffer = await file.arrayBuffer();
+      setBannerUploadProgress(40);
 
-      // Загружаем файл в Cloudflare R2
-      const putCommand = new PutObjectCommand({
-        Bucket: R2_BUCKET_NAME,
-        Key: fileName,
-        Body: new Uint8Array(fileBuffer),
-        ContentType: file.type,
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
       });
-
-      await r2Client.send(putCommand);
 
       setBannerUploadProgress(80);
 
-      // Формируем публичный URL для файла
-      const downloadURL = `${R2_PUBLIC_URL}/${fileName}`;
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке баннера');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке баннера');
+      }
 
       setBannerUploadProgress(100);
 
       setFormData(prev => ({
         ...prev,
-        bannerImageUrl: downloadURL
+        bannerImageUrl: result.url
       }));
 
       setIsUploadingBanner(false);
