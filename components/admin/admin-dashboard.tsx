@@ -5,9 +5,10 @@ import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardsManagement } from "./cards-management";
 import { SectionsManagement } from "./sections-management";
+import { ImagesManagement } from "./images-management";
 import { Separator } from "@/components/ui/separator";
 
-type ActiveTab = "cards" | "sections" | "offers" | "orders";
+type ActiveTab = "cards" | "sections" | "images" | "offers" | "orders";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -22,6 +23,8 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
         return <CardsManagement />;
       case "sections":
         return <SectionsManagement />;
+      case "images":
+        return <ImagesManagement />;
       case "offers":
         return (
           <div className="text-center text-zinc-400 py-20">
@@ -47,6 +50,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <h1 className="text-xl font-bold text-white">
             {activeTab === "cards" && "Карточки товаров"}
             {activeTab === "sections" && "Секции главной страницы"}
+            {activeTab === "images" && "Изображения"}
             {activeTab === "offers" && "Предложения"}
             {activeTab === "orders" && "Заказы"}
           </h1>
@@ -73,6 +77,16 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 }`}
               >
                 Секции
+              </button>
+              <button
+                onClick={() => setActiveTab("images")}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === "images"
+                    ? "bg-[#27272A] text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                Изображения
               </button>
               <button
                 onClick={() => setActiveTab("offers")}

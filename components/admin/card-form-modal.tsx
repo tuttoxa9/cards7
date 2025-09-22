@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 
 interface Card {
@@ -22,6 +24,7 @@ interface Card {
   image: string;
   imageUrl: string;
   bannerImageUrl?: string;
+  cardBackImageUrl?: string;
   isFeatured: boolean;
   category: string;
   description: string;
@@ -49,6 +52,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     image: "",
     imageUrl: "",
     bannerImageUrl: "",
+    cardBackImageUrl: "",
     isFeatured: false,
     category: "",
     description: "",
@@ -62,6 +66,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [bannerUploadProgress, setBannerUploadProgress] = useState(0);
+  const [backgroundImages, setBackgroundImages] = useState<Array<{id: string, name: string, imageUrl: string}>>([]);
 
   useEffect(() => {
     if (editingCard) {
@@ -74,6 +79,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         image: editingCard.image || "",
         imageUrl: editingCard.imageUrl || "",
         bannerImageUrl: editingCard.bannerImageUrl || "",
+        cardBackImageUrl: editingCard.cardBackImageUrl || "",
         isFeatured: editingCard.isFeatured || false,
         category: editingCard.category,
         description: editingCard.description,
@@ -93,6 +99,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         image: "",
         imageUrl: "",
         bannerImageUrl: "",
+        cardBackImageUrl: "",
         isFeatured: false,
         category: "",
         description: "",
@@ -104,6 +111,34 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       });
     }
   }, [editingCard, isOpen]);
+
+  // Загрузка фоновых изображений
+  useEffect(() => {
+    const loadBackgroundImages = async () => {
+      try {
+        const q = query(collection(db, "backgroundImages"), where("isActive", "==", true));
+        const querySnapshot = await getDocs(q);
+        const images: Array<{id: string, name: string, imageUrl: string}> = [];
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          images.push({
+            id: doc.id,
+            name: data.name,
+            imageUrl: data.imageUrl
+          });
+        });
+
+        setBackgroundImages(images);
+      } catch (error) {
+        console.error("Ошибка загрузки фоновых изображений:", error);
+      }
+    };
+
+    if (isOpen) {
+      loadBackgroundImages();
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +152,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       image: formData.image,
       imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
       bannerImageUrl: formData.bannerImageUrl || undefined,
+      cardBackImageUrl: formData.cardBackImageUrl || undefined,
       isFeatured: formData.isFeatured,
       category: formData.category,
       description: formData.description,
@@ -442,7 +478,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
           {/* Изображения */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Изображения</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               {/* Изображение карточки */}
               <div className="space-y-2">
                 <Label className="text-xs text-zinc-300">Изображение карточки</Label>
@@ -529,6 +565,55 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                         onChange={handleBannerUpload}
                         className="bg-[#18181B] border-zinc-600 text-white file:text-white text-xs h-7"
                       />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Задник карточки */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Задник карточки (опционально)</Label>
+                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
+                  {formData.cardBackImageUrl ? (
+                    <div className="space-y-2">
+                      <img
+                        src={formData.cardBackImageUrl}
+                        alt="Card Back Preview"
+                        className="w-16 h-20 object-cover rounded mx-auto"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.jpg";
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setFormData(prev => ({ ...prev, cardBackImageUrl: "" }))}
+                        className="text-zinc-400 hover:text-white text-xs h-6"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Убрать
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-xs text-zinc-400">Выбрать задник</p>
+                      <p className="text-xs text-zinc-500">Для оборотной стороны</p>
+                      <Select value={formData.cardBackImageUrl} onValueChange={(value) => setFormData(prev => ({ ...prev, cardBackImageUrl: value }))}>
+                        <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-7 text-xs">
+                          <SelectValue placeholder="Выберите задник" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#27272A] border-zinc-600">
+                          <SelectItem value="" className="text-white hover:bg-[#18181B] text-xs">
+                            Без задника
+                          </SelectItem>
+                          {backgroundImages.map((image) => (
+                            <SelectItem key={image.id} value={image.imageUrl} className="text-white hover:bg-[#18181B] text-xs">
+                              {image.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                 </div>

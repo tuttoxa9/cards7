@@ -23,6 +23,7 @@ interface Card {
   image: string;
   imageUrl: string;
   bannerImageUrl?: string;
+  cardBackImageUrl?: string;
   isFeatured: boolean;
   category: string;
   description: string;

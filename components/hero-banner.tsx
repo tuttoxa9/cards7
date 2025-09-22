@@ -21,6 +21,7 @@ interface FeaturedCard {
   discount?: number;
   imageUrl: string;
   bannerImageUrl?: string;
+  cardBackImageUrl?: string;
 }
 
 export function HeroBanner() {
@@ -51,7 +52,8 @@ export function HeroBanner() {
             originalPrice: data.originalPrice,
             discount: data.discount,
             imageUrl: data.imageUrl || data.image,
-            bannerImageUrl: data.bannerImageUrl
+            bannerImageUrl: data.bannerImageUrl,
+            cardBackImageUrl: data.cardBackImageUrl
           })
         })
 
@@ -184,7 +186,7 @@ export function HeroBanner() {
             }}
           >
             <img
-              src={CARD_BACK_IMAGE_URL}
+              src={currentCard.cardBackImageUrl || CARD_BACK_IMAGE_URL}
               alt="Оборотная сторона карточки"
               className="w-full h-full object-cover"
               onError={(e) => {

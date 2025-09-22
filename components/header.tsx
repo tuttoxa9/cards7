@@ -45,7 +45,17 @@ export function Header() {
             <MobileNav />
 
             <Link href="/" className="flex items-center">
-              <span className="text-3xl font-bold">
+              <img
+                src="/uploads/logocards.svg"
+                alt="GOLO CARDS"
+                className="h-12 w-auto"
+                onError={(e) => {
+                  // Fallback to text logo if image fails to load
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.style.setProperty('display', 'block');
+                }}
+              />
+              <span className="text-3xl font-bold hidden">
                 <span className="text-red-500">CARD</span>
                 <span className="text-white">.GG</span>
               </span>
