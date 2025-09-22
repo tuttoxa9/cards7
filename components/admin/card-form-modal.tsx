@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2";
 
 interface Card {
   id: string;
@@ -147,17 +147,23 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     try {
       // Создаем уникальное имя файла
       const fileName = `cards/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, fileName);
 
       setUploadProgress(30);
 
-      // Загружаем файл в Firebase Storage
-      const snapshot = await uploadBytes(storageRef, file);
+      // Загружаем файл в Cloudflare R2
+      const putCommand = new PutObjectCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
+      });
+
+      await r2Client.send(putCommand);
 
       setUploadProgress(80);
 
-      // Получаем URL загруженного файла
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      // Формируем публичный URL для файла
+      const downloadURL = `${R2_PUBLIC_URL}/${fileName}`;
 
       setUploadProgress(100);
 
@@ -187,17 +193,23 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     try {
       // Создаем уникальное имя файла для баннера
       const fileName = `banners/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, fileName);
 
       setBannerUploadProgress(30);
 
-      // Загружаем файл в Firebase Storage
-      const snapshot = await uploadBytes(storageRef, file);
+      // Загружаем файл в Cloudflare R2
+      const putCommand = new PutObjectCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
+      });
+
+      await r2Client.send(putCommand);
 
       setBannerUploadProgress(80);
 
-      // Получаем URL загруженного файла
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      // Формируем публичный URL для файла
+      const downloadURL = `${R2_PUBLIC_URL}/${fileName}`;
 
       setBannerUploadProgress(100);
 
