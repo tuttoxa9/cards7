@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
+import { Mail, Phone, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
 import Link from "next/link"
 
 export function Footer() {
@@ -18,7 +18,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
-              Лучшие коллекционные карточки со всего мира. Покемон, MTG, Yu-Gi-Oh! и многое другое для истинных коллекционеров.
+              Широкий выбор качественных коллекционных карточек. Находите редкие экземпляры и пополняйте свою коллекцию.
             </p>
             <div className="flex space-x-3">
               <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
@@ -44,19 +44,16 @@ export function Footer() {
                 href="/catalog"
                 className="block text-sm text-white/60 hover:text-red-400 transition-colors"
               >
-                Pokemon TCG
+                Весь каталог
               </Link>
               <Link href="/media" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
-                Magic: The Gathering
+                Медиа
               </Link>
               <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
-                Yu-Gi-Oh!
+                Новинки
               </Link>
               <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
-                Аниме карточки
-              </Link>
-              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
-                Disney Lorcana
+                Популярные
               </Link>
             </nav>
           </div>
@@ -103,16 +100,13 @@ export function Footer() {
           <div className="flex items-center space-x-6 text-sm text-white/60">
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4" />
-              <span>+7 (800) 123-45-67</span>
+              <span>+375 (29) 123-45-67</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4" />
               <span>info@card.gg</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <MapPin className="w-4 h-4" />
-              <span>Москва, Россия</span>
-            </div>
+
           </div>
 
           <div className="flex items-center space-x-6 text-sm text-white/60">
