@@ -22,6 +22,7 @@ interface FeaturedCard {
   imageUrl: string;
   bannerImageUrl?: string;
   cardBackImageUrl?: string;
+  carouselImageUrl?: string;
 }
 
 export function HeroBanner() {
@@ -53,7 +54,8 @@ export function HeroBanner() {
             discount: data.discount,
             imageUrl: data.imageUrl || data.image,
             bannerImageUrl: data.bannerImageUrl,
-            cardBackImageUrl: data.cardBackImageUrl
+            cardBackImageUrl: data.cardBackImageUrl,
+            carouselImageUrl: data.carouselImageUrl
           })
         })
 
@@ -141,7 +143,7 @@ export function HeroBanner() {
                   }}
                 >
                   <img
-                    src={card.imageUrl || "/placeholder.svg"}
+                    src={card.carouselImageUrl || card.imageUrl || "/placeholder.svg"}
                     alt={card.name}
                     className="w-full h-full object-cover"
                   />

@@ -24,6 +24,7 @@ interface Card {
   imageUrl: string;
   bannerImageUrl?: string;
   cardBackImageUrl?: string;
+  carouselImageUrl?: string;
   isFeatured: boolean;
   category: string;
   description: string;

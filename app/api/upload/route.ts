@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Создаем уникальное имя файла с расширением .webp
     const timestamp = Date.now();
-    const folder = type === 'banner' ? 'banners' : type === 'background' ? 'backgrounds' : 'cards';
+    const folder = type === 'banner' ? 'banners' : type === 'background' ? 'backgrounds' : type === 'carousel' ? 'carousel' : 'cards';
     const originalName = file.name.split('.')[0]; // убираем расширение
     const fileName = `${folder}/${timestamp}_${originalName}.webp`;
 

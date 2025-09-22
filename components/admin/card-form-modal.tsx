@@ -26,6 +26,7 @@ interface Card {
   imageUrl: string;
   bannerImageUrl?: string;
   cardBackImageUrl?: string;
+  carouselImageUrl?: string;
   isFeatured: boolean;
   category: string;
   description: string;
@@ -54,6 +55,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     imageUrl: "",
     bannerImageUrl: "",
     cardBackImageUrl: "none",
+    carouselImageUrl: "",
     isFeatured: false,
     category: "",
     description: "",
@@ -65,8 +67,10 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [bannerUploadProgress, setBannerUploadProgress] = useState(0);
+  const [carouselUploadProgress, setCarouselUploadProgress] = useState(0);
   const [backgroundImages, setBackgroundImages] = useState<Array<{id: string, name: string, imageUrl: string}>>([]);
 
   useEffect(() => {
@@ -81,6 +85,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         imageUrl: editingCard.imageUrl || "",
         bannerImageUrl: editingCard.bannerImageUrl || "",
         cardBackImageUrl: editingCard.cardBackImageUrl || "none",
+        carouselImageUrl: editingCard.carouselImageUrl || "",
         isFeatured: editingCard.isFeatured || false,
         category: editingCard.category,
         description: editingCard.description,
@@ -101,6 +106,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         imageUrl: "",
         bannerImageUrl: "",
         cardBackImageUrl: "none",
+        carouselImageUrl: "",
         isFeatured: false,
         category: "",
         description: "",
@@ -154,6 +160,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
       bannerImageUrl: formData.bannerImageUrl || undefined,
       cardBackImageUrl: formData.cardBackImageUrl === "none" ? undefined : formData.cardBackImageUrl,
+      carouselImageUrl: formData.carouselImageUrl || undefined,
       isFeatured: formData.isFeatured,
       category: formData.category,
       description: formData.description,
@@ -267,6 +274,56 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       setIsUploadingBanner(false);
       setBannerUploadProgress(0);
       alert('Ошибка загрузки баннера');
+    }
+  };
+
+  const handleCarouselImageUpload = async (file: File) => {
+
+    setIsUploadingCarousel(true);
+    setCarouselUploadProgress(0);
+
+    try {
+      setCarouselUploadProgress(20);
+
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'carousel');
+
+      setCarouselUploadProgress(40);
+
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      setCarouselUploadProgress(80);
+
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке изображения карусели');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке изображения карусели');
+      }
+
+      setCarouselUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        carouselImageUrl: result.url
+      }));
+
+      setIsUploadingCarousel(false);
+
+    } catch (error) {
+      console.error('Ошибка загрузки изображения карусели:', error);
+      setIsUploadingCarousel(false);
+      setCarouselUploadProgress(0);
+      alert('Ошибка загрузки изображения карусели');
     }
   };
 
@@ -475,7 +532,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
           {/* Изображения */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Изображения</h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               {/* Изображение карточки */}
               <div className="space-y-2">
                 <Label className="text-xs text-zinc-300">Изображение карточки</Label>
@@ -501,6 +558,21 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   isUploading={isUploadingBanner}
                   uploadProgress={bannerUploadProgress}
                   placeholder="Перетащите баннер сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
+              </div>
+
+              {/* Изображение для карусели */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Картинка в карусели (опционально)</Label>
+                <DragDropUpload
+                  onUpload={handleCarouselImageUpload}
+                  currentFile={formData.carouselImageUrl}
+                  onRemove={() => setFormData(prev => ({ ...prev, carouselImageUrl: "" }))}
+                  isUploading={isUploadingCarousel}
+                  uploadProgress={carouselUploadProgress}
+                  placeholder="Перетащите картинку для карусели сюда или нажмите для выбора"
                   accept="image/*"
                   maxSize={10}
                 />
@@ -570,7 +642,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
             <Button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 h-8 px-4"
-              disabled={isUploading || isUploadingBanner}
+              disabled={isUploading || isUploadingBanner || isUploadingCarousel}
             >
               {editingCard ? "Сохранить" : "Добавить"}
             </Button>
