@@ -52,7 +52,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     image: "",
     imageUrl: "",
     bannerImageUrl: "",
-    cardBackImageUrl: "",
+    cardBackImageUrl: "none",
     isFeatured: false,
     category: "",
     description: "",
@@ -79,7 +79,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         image: editingCard.image || "",
         imageUrl: editingCard.imageUrl || "",
         bannerImageUrl: editingCard.bannerImageUrl || "",
-        cardBackImageUrl: editingCard.cardBackImageUrl || "",
+        cardBackImageUrl: editingCard.cardBackImageUrl || "none",
         isFeatured: editingCard.isFeatured || false,
         category: editingCard.category,
         description: editingCard.description,
@@ -99,7 +99,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         image: "",
         imageUrl: "",
         bannerImageUrl: "",
-        cardBackImageUrl: "",
+        cardBackImageUrl: "none",
         isFeatured: false,
         category: "",
         description: "",
@@ -152,7 +152,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       image: formData.image,
       imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
       bannerImageUrl: formData.bannerImageUrl || undefined,
-      cardBackImageUrl: formData.cardBackImageUrl || undefined,
+      cardBackImageUrl: formData.cardBackImageUrl === "none" ? undefined : formData.cardBackImageUrl,
       isFeatured: formData.isFeatured,
       category: formData.category,
       description: formData.description,
@@ -574,7 +574,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
               <div className="space-y-2">
                 <Label className="text-xs text-zinc-300">Задник карточки (опционально)</Label>
                 <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
-                  {formData.cardBackImageUrl ? (
+                  {formData.cardBackImageUrl && formData.cardBackImageUrl !== "none" ? (
                     <div className="space-y-2">
                       <img
                         src={formData.cardBackImageUrl}
@@ -588,7 +588,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => setFormData(prev => ({ ...prev, cardBackImageUrl: "" }))}
+                        onClick={() => setFormData(prev => ({ ...prev, cardBackImageUrl: "none" }))}
                         className="text-zinc-400 hover:text-white text-xs h-6"
                       >
                         <X className="h-3 w-3 mr-1" />
@@ -604,7 +604,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                           <SelectValue placeholder="Выберите задник" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#27272A] border-zinc-600">
-                          <SelectItem value="" className="text-white hover:bg-[#18181B] text-xs">
+                          <SelectItem value="none" className="text-white hover:bg-[#18181B] text-xs">
                             Без задника
                           </SelectItem>
                           {backgroundImages.map((image) => (
