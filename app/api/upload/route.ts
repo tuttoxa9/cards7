@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from '@/lib/r2';
+import sharp from 'sharp';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,20 +13,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Файл не найден' }, { status: 400 });
     }
 
-    // Создаем уникальное имя файла
+    // Создаем уникальное имя файла с расширением .webp
     const timestamp = Date.now();
-    const folder = type === 'banner' ? 'banners' : 'cards';
-    const fileName = `${folder}/${timestamp}_${file.name}`;
+    const folder = type === 'banner' ? 'banners' : type === 'background' ? 'backgrounds' : 'cards';
+    const originalName = file.name.split('.')[0]; // убираем расширение
+    const fileName = `${folder}/${timestamp}_${originalName}.webp`;
 
     // Конвертируем файл в ArrayBuffer
     const fileBuffer = await file.arrayBuffer();
+
+    let processedBuffer: Buffer;
+    let contentType = 'image/webp';
+
+    try {
+      // Конвертируем изображение в WebP с оптимизацией
+      processedBuffer = await sharp(Buffer.from(fileBuffer))
+        .webp({
+          quality: 85, // высокое качество
+          effort: 4,   // средний уровень сжатия
+          lossless: false
+        })
+        .toBuffer();
+    } catch (error) {
+      console.log('Ошибка конвертации в WebP, используем оригинальный файл:', error);
+      // Fallback: используем оригинальный файл если конвертация не удалась
+      processedBuffer = Buffer.from(fileBuffer);
+      contentType = file.type;
+    }
 
     // Загружаем файл в Cloudflare R2
     const putCommand = new PutObjectCommand({
       Bucket: R2_BUCKET_NAME,
       Key: fileName,
-      Body: new Uint8Array(fileBuffer),
-      ContentType: file.type,
+      Body: processedBuffer,
+      ContentType: contentType,
     });
 
     await r2Client.send(putCommand);
