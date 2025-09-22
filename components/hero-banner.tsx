@@ -203,7 +203,7 @@ export function HeroBanner() {
             style={{
               transform: 'rotate(0deg) translate(0px, 0px)',
               zIndex: 2,
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+              boxShadow: '0 40px 100px -10px rgba(0, 0, 0, 0.9), 0 20px 60px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1)'
             }}
           >
             <img
