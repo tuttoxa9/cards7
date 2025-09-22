@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Star, TrendingUp, Clock, Zap, ShoppingCart, Flame, Heart } from "lucide-react"
 import { collection, getDocs, doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { useCart } from "@/lib/cart-context"
+import { toast } from "sonner"
 
 interface CardData {
   id: string;
@@ -30,6 +32,23 @@ export function FeaturedSections() {
   const [newArrivals, setNewArrivals] = useState<CardData[]>([]);
   const [categories, setCategories] = useState<string[]>(["Все"]);
   const [isLoading, setIsLoading] = useState(true);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (card: CardData) => {
+    addToCart({
+      id: card.id,
+      title: card.title,
+      image: card.image,
+      imageUrl: card.imageUrl,
+      price: card.price,
+      originalPrice: card.originalPrice,
+      discount: card.discount,
+      category: card.category,
+      rarity: "Обычная", // можно добавить поле rarity в CardData
+      inStock: true
+    });
+    toast.success(`${card.title} добавлена в корзину!`);
+  };
 
   // Функция для получения карточек по их ID
   const getCardsByIds = async (cardIds: string[]): Promise<CardData[]> => {
@@ -182,7 +201,11 @@ export function FeaturedSections() {
 
                   {/* Hover icons with glass blur effect */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
+                    <Button
+                      size="icon"
+                      onClick={() => handleAddToCart(card)}
+                      className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl"
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill w-7 h-7" viewBox="0 0 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                       </svg>
@@ -285,7 +308,11 @@ export function FeaturedSections() {
 
                 {/* Hover icons with glass blur effect */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <Button size="icon" className="w-10 h-10 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
+                  <Button
+                    size="icon"
+                    onClick={() => handleAddToCart(card)}
+                    className="w-10 h-10 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-cart-fill w-6 h-6" viewBox="0 0 16 16">
                       <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                     </svg>
@@ -375,7 +402,11 @@ export function FeaturedSections() {
 
                   {/* Hover icons with glass blur effect */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <Button size="icon" className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl">
+                    <Button
+                      size="icon"
+                      onClick={() => handleAddToCart(card)}
+                      className="w-12 h-12 bg-white/10 backdrop-blur-2xl border border-white/20 hover:bg-white/20 text-white rounded-full shadow-2xl"
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill w-7 h-7" viewBox="0 0 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                       </svg>

@@ -6,6 +6,7 @@ import { Nunito } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster } from "@/components/ui/sonner"
+import { CartProvider } from "@/lib/cart-context"
 import "./globals.css"
 
 const nunito = Nunito({
@@ -31,9 +32,11 @@ export default function RootLayout({
       <body
         className={`bg-[#06080A] font-sans ${GeistSans.variable} ${GeistMono.variable} ${nunito.variable}`}
       >
-        <Suspense fallback={null}>{children}</Suspense>
-        <Analytics />
-        <Toaster />
+        <CartProvider>
+          <Suspense fallback={null}>{children}</Suspense>
+          <Analytics />
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   )

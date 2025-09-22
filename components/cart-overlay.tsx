@@ -1,71 +1,20 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus, Minus, ShoppingBag, CreditCard, Trash2 } from "lucide-react"
+import { X, Plus, Minus, CreditCard, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-interface CartItem {
-  id: number
-  title: string
-  image: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  category: string
-  rarity: string
-  quantity: number
-  inStock: boolean
-}
+import { useCart } from "@/lib/cart-context"
 
 interface CartOverlayProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const mockCartItems: CartItem[] = [
-  {
-    id: 1,
-    title: "Spider-Man Multiverse Legendary",
-    image: "/spider-man-multiverse-trading-card-web-design.jpg",
-    price: 2499,
-    originalPrice: 3299,
-    discount: 24,
-    category: "Супергерои",
-    rarity: "Легендарные",
-    quantity: 1,
-    inStock: true,
-  },
-  {
-    id: 2,
-    title: "Cyberpunk GT-R",
-    image: "/futuristic-cyberpunk-car-trading-card-neon.jpg",
-    price: 1899,
-    originalPrice: null,
-    discount: null,
-    category: "Автомобили",
-    rarity: "Эпические",
-    quantity: 2,
-    inStock: true,
-  },
-  {
-    id: 3,
-    title: "Batman Dark Knight",
-    image: "/batman-dark-knight-trading-card-gothic.jpg",
-    price: 2799,
-    originalPrice: 3499,
-    discount: 20,
-    category: "Супергерои",
-    rarity: "Легендарные",
-    quantity: 1,
-    inStock: true,
-  },
-]
-
 export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
-  const [cartItems, setCartItems] = useState<CartItem[]>(mockCartItems)
+  const { cartItems, updateQuantity, removeFromCart, totalPrice } = useCart()
 
   useEffect(() => {
     if (isOpen) {
@@ -79,23 +28,16 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
     }
   }, [isOpen])
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      setCartItems(cartItems.filter(item => item.id !== id))
-    } else {
-      setCartItems(cartItems.map(item =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      ))
-    }
+  const handleUpdateQuantity = (id: string, newQuantity: number) => {
+    updateQuantity(id, newQuantity)
   }
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id))
+  const handleRemoveItem = (id: string) => {
+    removeFromCart(id)
   }
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const totalDiscount = cartItems.reduce((sum, item) => {
-    if (item.originalPrice && item.discount) {
+    if (item.originalPrice && item.originalPrice > item.price) {
       return sum + ((item.originalPrice - item.price) * item.quantity)
     }
     return sum
@@ -116,7 +58,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
       {/* Cart Content */}
       <div className={cn(
-        "relative w-full h-full flex flex-col bg-gradient-to-br from-slate-950/95 via-purple-950/30 to-slate-900/95 backdrop-blur-md transition-transform duration-500",
+        "relative ml-auto w-1/3 h-full flex flex-col bg-gradient-to-br from-slate-950/95 via-purple-950/30 to-slate-900/95 backdrop-blur-md transition-transform duration-500",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Header */}
@@ -165,7 +107,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                     {/* Image */}
                     <div className="w-24 h-32 rounded-xl overflow-hidden flex-shrink-0">
                       <img
-                        src={item.image}
+                        src={item.imageUrl || item.image}
                         alt={item.title}
                         className="w-full h-full object-cover"
                       />
@@ -191,7 +133,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => handleRemoveItem(item.id)}
                           className="text-white/60 hover:text-red-400 hover:bg-red-500/20 w-8 h-8 rounded-lg"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -221,7 +163,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white"
                           >
                             <Minus className="w-4 h-4" />
@@ -234,7 +176,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white"
                           >
                             <Plus className="w-4 h-4" />
