@@ -150,11 +150,14 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
 
       setUploadProgress(30);
 
+      // Конвертируем файл в ArrayBuffer
+      const fileBuffer = await file.arrayBuffer();
+
       // Загружаем файл в Cloudflare R2
       const putCommand = new PutObjectCommand({
         Bucket: R2_BUCKET_NAME,
         Key: fileName,
-        Body: file,
+        Body: new Uint8Array(fileBuffer),
         ContentType: file.type,
       });
 
@@ -196,11 +199,14 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
 
       setBannerUploadProgress(30);
 
+      // Конвертируем файл в ArrayBuffer
+      const fileBuffer = await file.arrayBuffer();
+
       // Загружаем файл в Cloudflare R2
       const putCommand = new PutObjectCommand({
         Bucket: R2_BUCKET_NAME,
         Key: fileName,
-        Body: file,
+        Body: new Uint8Array(fileBuffer),
         ContentType: file.type,
       });
 
