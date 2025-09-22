@@ -11,4 +11,4 @@ export const r2Client = new S3Client({
 });
 
 export const R2_BUCKET_NAME = "cards";
-export const R2_PUBLIC_URL = `https://pub-2d16ebaf34d96e6d891d5b0a20364b20.r2.dev`;
+export const R2_PUBLIC_URL = `https://pub-f4c677382cef430f9372c49ceb7d3535.r2.dev`;
