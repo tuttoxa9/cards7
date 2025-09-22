@@ -147,15 +147,19 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} ₽
+                          {card.price.toLocaleString()} Br
                         </span>
-                        <span className="text-sm text-red-400 line-through">
-                          {card.originalPrice?.toLocaleString()} ₽
-                        </span>
+                        {card.originalPrice && (
+                          <span className="text-sm text-red-400 line-through">
+                            {card.originalPrice.toLocaleString()} Br
+                          </span>
+                        )}
                       </div>
-                      <Badge className="bg-red-600 text-white text-xs font-bold">
-                        -{card.discount}%
-                      </Badge>
+                      {card.originalPrice && card.originalPrice > card.price && (
+                        <Badge className="bg-red-600 text-white text-xs font-bold">
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
@@ -246,15 +250,19 @@ export function FeaturedSections() {
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-bold text-white">
-                        {card.price} ₽
+                        {card.price} Br
                       </span>
-                      <span className="text-xs text-orange-400 line-through">
-                        {card.originalPrice} ₽
-                      </span>
+                      {card.originalPrice && (
+                        <span className="text-xs text-orange-400 line-through">
+                          {card.originalPrice} Br
+                        </span>
+                      )}
                     </div>
-                    <Badge className="bg-orange-600 text-white text-xs font-bold px-2 py-1">
-                      -{card.discount}%
-                    </Badge>
+                    {card.originalPrice && card.originalPrice > card.price && (
+                      <Badge className="bg-orange-600 text-white text-xs font-bold px-2 py-1">
+                        -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
@@ -332,15 +340,19 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} ₽
+                          {card.price.toLocaleString()} Br
                         </span>
-                        <span className="text-sm text-blue-400 line-through">
-                          {card.originalPrice?.toLocaleString()} ₽
-                        </span>
+                        {card.originalPrice && (
+                          <span className="text-sm text-blue-400 line-through">
+                            {card.originalPrice.toLocaleString()} Br
+                          </span>
+                        )}
                       </div>
-                      <Badge className="bg-blue-600 text-white text-xs font-bold">
-                        -{card.discount}%
-                      </Badge>
+                      {card.originalPrice && card.originalPrice > card.price && (
+                        <Badge className="bg-blue-600 text-white text-xs font-bold">
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                        </Badge>
+                      )}
                     </div>
                   </div>
 

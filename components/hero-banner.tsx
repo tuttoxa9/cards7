@@ -7,6 +7,9 @@ import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Info } from "lucide-rea
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
+// URL для оборотной стороны карточек (глобальная переменная)
+const CARD_BACK_IMAGE_URL = "/placeholder-card-back.jpg"
+
 interface FeaturedCard {
   id: string;
   name: string;
@@ -166,6 +169,47 @@ export function HeroBanner() {
         </div>
       </div>
 
+      {/* Анимированные карточки в правом нижнем углу */}
+      <div className="absolute bottom-20 right-8 z-10 pointer-events-none">
+        <div
+          key={`animated-cards-${activeCard}`}
+          className="relative w-32 h-40 animate-in slide-in-from-bottom-8 fade-in duration-1000"
+        >
+          {/* Оборотная сторона карточки */}
+          <div
+            className="absolute w-28 h-36 rounded-xl overflow-hidden shadow-2xl transition-all duration-1000"
+            style={{
+              transform: 'rotate(10deg) translate(-20px, 10px)',
+              zIndex: 1
+            }}
+          >
+            <img
+              src={CARD_BACK_IMAGE_URL}
+              alt="Оборотная сторона карточки"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/placeholder.svg";
+              }}
+            />
+          </div>
+
+          {/* Лицевая сторона карточки */}
+          <div
+            className="absolute w-28 h-36 rounded-xl overflow-hidden shadow-2xl transition-all duration-1000"
+            style={{
+              transform: 'rotate(-5deg) translate(8px, -5px)',
+              zIndex: 2
+            }}
+          >
+            <img
+              src={currentCard.imageUrl || currentCard.bannerImageUrl || "/placeholder.svg"}
+              alt={currentCard.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="absolute bottom-10 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-8">
           <div className="max-w-2xl pointer-events-auto">
@@ -187,15 +231,15 @@ export function HeroBanner() {
 
               <div className="flex items-center gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
+                  <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} Br</span>
                   {currentCard.originalPrice && (
                     <span className="text-lg text-gray-400 line-through">
-                      {currentCard.originalPrice.toLocaleString()} ₽
+                      {currentCard.originalPrice.toLocaleString()} Br
                     </span>
                   )}
-                  {currentCard.discount && (
+                  {currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
                     <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
-                      -{currentCard.discount}%
+                      -{Math.round(((currentCard.originalPrice - currentCard.price) / currentCard.originalPrice) * 100)}%
                     </Badge>
                   )}
                 </div>

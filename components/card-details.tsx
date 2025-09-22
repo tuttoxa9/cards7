@@ -71,20 +71,20 @@ export function CardDetails({ card }: CardDetailsProps) {
       {/* Price */}
       <div className="space-y-2">
         <div className="flex items-center space-x-3">
-          <span className="text-3xl font-bold text-foreground">{card.price.toLocaleString()} ₽</span>
+          <span className="text-3xl font-bold text-foreground">{card.price.toLocaleString()} Br</span>
           {card.originalPrice && (
             <>
               <span className="text-xl text-muted-foreground line-through">
-                {card.originalPrice.toLocaleString()} ₽
+                {card.originalPrice.toLocaleString()} Br
               </span>
               <Badge variant="destructive" className="bg-red-600">
-                -{card.discount}%
+                -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
               </Badge>
             </>
           )}
         </div>
         {card.originalPrice && (
-          <p className="text-sm text-green-600">Вы экономите {(card.originalPrice - card.price).toLocaleString()} ₽</p>
+          <p className="text-sm text-green-600">Вы экономите {(card.originalPrice - card.price).toLocaleString()} Br</p>
         )}
       </div>
 

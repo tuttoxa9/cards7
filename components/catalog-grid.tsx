@@ -134,14 +134,14 @@ export function CatalogGrid() {
                 <div className="absolute bottom-4 left-4">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-white">{card.price} ₽</span>
+                      <span className="text-xl font-bold text-white">{card.price} Br</span>
                       {card.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} ₽</span>
+                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} Br</span>
                       )}
                     </div>
-                    {card.discount && (
+                    {card.originalPrice && card.originalPrice > card.price && (
                       <Badge variant="destructive" className="bg-red-600 text-white text-xs">
-                        -{card.discount}%
+                        -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                       </Badge>
                     )}
                   </div>

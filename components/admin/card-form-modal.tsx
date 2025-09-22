@@ -45,7 +45,6 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     title: "",
     price: "",
     originalPrice: "",
-    discount: "",
     rarity: "common" as const,
     image: "",
     imageUrl: "",
@@ -71,7 +70,6 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         title: editingCard.title || "",
         price: editingCard.price.toString(),
         originalPrice: editingCard.originalPrice?.toString() || "",
-        discount: editingCard.discount?.toString() || "",
         rarity: editingCard.rarity,
         image: editingCard.image || "",
         imageUrl: editingCard.imageUrl || "",
@@ -91,7 +89,6 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         title: "",
         price: "",
         originalPrice: "",
-        discount: "",
         rarity: "common",
         image: "",
         imageUrl: "",
@@ -116,7 +113,6 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       title: formData.title,
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
-      discount: formData.discount ? Number(formData.discount) : undefined,
       rarity: formData.rarity,
       image: formData.image,
       imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
@@ -319,9 +315,9 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
           {/* Цены и скидки */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Цены и скидки</h3>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (₽)</Label>
+                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (Br)</Label>
                 <Input
                   id="price"
                   type="number"
@@ -334,7 +330,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (₽)</Label>
+                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (Br)</Label>
                 <Input
                   id="originalPrice"
                   type="number"
@@ -343,19 +339,6 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   className="bg-[#18181B] border-zinc-600 text-white h-8"
                   placeholder="0"
                   min="0"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="discount" className="text-xs text-zinc-300">Скидка (%)</Label>
-                <Input
-                  id="discount"
-                  type="number"
-                  value={formData.discount}
-                  onChange={(e) => setFormData(prev => ({ ...prev, discount: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-8"
-                  placeholder="0"
-                  min="0"
-                  max="100"
                 />
               </div>
               <div className="space-y-1">
