@@ -32,9 +32,6 @@ interface Card {
   description: string;
   inStock: boolean;
   isHot: boolean;
-  rating?: number;
-  reviews?: number;
-  tag?: string;
 }
 
 interface CardFormModalProps {
@@ -60,10 +57,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     category: "",
     description: "",
     inStock: true,
-    isHot: false,
-    rating: "",
-    reviews: "",
-    tag: ""
+    isHot: false
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
@@ -72,6 +66,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
   const [bannerUploadProgress, setBannerUploadProgress] = useState(0);
   const [carouselUploadProgress, setCarouselUploadProgress] = useState(0);
   const [backgroundImages, setBackgroundImages] = useState<Array<{id: string, name: string, imageUrl: string}>>([]);
+  const [categories, setCategories] = useState<Array<{id: string, name: string}>>([]);
 
   useEffect(() => {
     if (editingCard) {
@@ -90,10 +85,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         category: editingCard.category,
         description: editingCard.description,
         inStock: editingCard.inStock,
-        isHot: editingCard.isHot,
-        rating: editingCard.rating?.toString() || "",
-        reviews: editingCard.reviews?.toString() || "",
-        tag: editingCard.tag || ""
+        isHot: editingCard.isHot
       });
     } else {
       setFormData({
@@ -111,15 +103,12 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
         category: "",
         description: "",
         inStock: true,
-        isHot: false,
-        rating: "",
-        reviews: "",
-        tag: ""
+        isHot: false
       });
     }
   }, [editingCard, isOpen]);
 
-  // Загрузка фоновых изображений
+  // Загрузка фоновых изображений и категорий
   useEffect(() => {
     const loadBackgroundImages = async () => {
       try {
@@ -142,8 +131,29 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       }
     };
 
+    const loadCategories = async () => {
+      try {
+        const q = query(collection(db, "categories"));
+        const querySnapshot = await getDocs(q);
+        const categoriesData: Array<{id: string, name: string}> = [];
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          categoriesData.push({
+            id: doc.id,
+            name: data.name
+          });
+        });
+
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Ошибка загрузки категорий:", error);
+      }
+    };
+
     if (isOpen) {
       loadBackgroundImages();
+      loadCategories();
     }
   }, [isOpen]);
 
@@ -165,10 +175,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
       category: formData.category,
       description: formData.description,
       inStock: formData.inStock,
-      isHot: formData.isHot,
-      rating: formData.rating ? Number(formData.rating) : undefined,
-      reviews: formData.reviews ? Number(formData.reviews) : undefined,
-      tag: formData.tag || undefined
+      isHot: formData.isHot
     };
 
     onSave(cardData);
@@ -327,18 +334,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
     }
   };
 
-  const categories = [
-    "Покемон",
-    "MTG",
-    "Yu-Gi-Oh!",
-    "Аниме",
-    "Disney",
-    "Marvel",
-    "Фэнтези",
-    "Автомобили",
-    "Супергерои",
-    "Спорт"
-  ];
+
 
   const rarities = [
     { value: "common", label: "Обычная" },
@@ -380,8 +376,8 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                   </SelectTrigger>
                   <SelectContent className="bg-[#27272A] border-zinc-600">
                     {categories.map((category) => (
-                      <SelectItem key={category} value={category} className="text-white hover:bg-[#18181B]">
-                        {category}
+                      <SelectItem key={category.id} value={category.name} className="text-white hover:bg-[#18181B]">
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -449,48 +445,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
             </div>
           </div>
 
-          {/* Дополнительные параметры */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Дополнительные параметры</h3>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-1">
-                <Label htmlFor="tag" className="text-xs text-zinc-300">Тег</Label>
-                <Input
-                  id="tag"
-                  value={formData.tag}
-                  onChange={(e) => setFormData(prev => ({ ...prev, tag: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-8"
-                  placeholder="Хит продаж, Новинка"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="rating" className="text-xs text-zinc-300">Рейтинг (1-5)</Label>
-                <Input
-                  id="rating"
-                  type="number"
-                  value={formData.rating}
-                  onChange={(e) => setFormData(prev => ({ ...prev, rating: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-8"
-                  placeholder="4.8"
-                  min="1"
-                  max="5"
-                  step="0.1"
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="reviews" className="text-xs text-zinc-300">Отзывы</Label>
-                <Input
-                  id="reviews"
-                  type="number"
-                  value={formData.reviews}
-                  onChange={(e) => setFormData(prev => ({ ...prev, reviews: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-8"
-                  placeholder="150"
-                  min="0"
-                />
-              </div>
-            </div>
-          </div>
+
 
           {/* Настройки отображения */}
           <div className="space-y-3">
