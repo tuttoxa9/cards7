@@ -1,0 +1,654 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DragDropUpload } from "@/components/ui/drag-drop-upload";
+import { Progress } from "@/components/ui/progress";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+
+interface Card {
+  id: string;
+  name: string;
+  title: string;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  rarity: "common" | "rare" | "epic" | "legendary";
+  image: string;
+  imageUrl: string;
+  bannerImageUrl?: string;
+  cardBackImageUrl?: string;
+  carouselImageUrl?: string;
+  isFeatured: boolean;
+  category: string;
+  description: string;
+  inStock: boolean;
+  isHot: boolean;
+  rating?: number;
+  reviews?: number;
+  tag?: string;
+}
+
+interface CardFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (card: Omit<Card, "id">) => void;
+  editingCard?: Card | null;
+}
+
+export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardFormModalProps) {
+  const [formData, setFormData] = useState({
+    name: "",
+    title: "",
+    price: "",
+    originalPrice: "",
+    rarity: "common" as const,
+    image: "",
+    imageUrl: "",
+    bannerImageUrl: "",
+    cardBackImageUrl: "none",
+    carouselImageUrl: "",
+    isFeatured: false,
+    category: "",
+    description: "",
+    inStock: true,
+    isHot: false,
+    rating: "",
+    reviews: "",
+    tag: ""
+  });
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [isUploadingCarousel, setIsUploadingCarousel] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [bannerUploadProgress, setBannerUploadProgress] = useState(0);
+  const [carouselUploadProgress, setCarouselUploadProgress] = useState(0);
+  const [backgroundImages, setBackgroundImages] = useState<Array<{id: string, name: string, imageUrl: string}>>([]);
+
+  useEffect(() => {
+    if (editingCard) {
+      setFormData({
+        name: editingCard.name || "",
+        title: editingCard.title || "",
+        price: editingCard.price.toString(),
+        originalPrice: editingCard.originalPrice?.toString() || "",
+        rarity: editingCard.rarity,
+        image: editingCard.image || "",
+        imageUrl: editingCard.imageUrl || "",
+        bannerImageUrl: editingCard.bannerImageUrl || "",
+        cardBackImageUrl: editingCard.cardBackImageUrl || "none",
+        carouselImageUrl: editingCard.carouselImageUrl || "",
+        isFeatured: editingCard.isFeatured || false,
+        category: editingCard.category,
+        description: editingCard.description,
+        inStock: editingCard.inStock,
+        isHot: editingCard.isHot,
+        rating: editingCard.rating?.toString() || "",
+        reviews: editingCard.reviews?.toString() || "",
+        tag: editingCard.tag || ""
+      });
+    } else {
+      setFormData({
+        name: "",
+        title: "",
+        price: "",
+        originalPrice: "",
+        rarity: "common",
+        image: "",
+        imageUrl: "",
+        bannerImageUrl: "",
+        cardBackImageUrl: "none",
+        carouselImageUrl: "",
+        isFeatured: false,
+        category: "",
+        description: "",
+        inStock: true,
+        isHot: false,
+        rating: "",
+        reviews: "",
+        tag: ""
+      });
+    }
+  }, [editingCard, isOpen]);
+
+  // Загрузка фоновых изображений
+  useEffect(() => {
+    const loadBackgroundImages = async () => {
+      try {
+        const q = query(collection(db, "backgroundImages"), where("isActive", "==", true));
+        const querySnapshot = await getDocs(q);
+        const images: Array<{id: string, name: string, imageUrl: string}> = [];
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          images.push({
+            id: doc.id,
+            name: data.name,
+            imageUrl: data.imageUrl
+          });
+        });
+
+        setBackgroundImages(images);
+      } catch (error) {
+        console.error("Ошибка загрузки фоновых изображений:", error);
+      }
+    };
+
+    if (isOpen) {
+      loadBackgroundImages();
+    }
+  }, [isOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const cardData = {
+      name: formData.name,
+      title: formData.title,
+      price: Number(formData.price),
+      originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
+      rarity: formData.rarity,
+      image: formData.image,
+      imageUrl: formData.imageUrl || formData.image || "/placeholder.jpg",
+      bannerImageUrl: formData.bannerImageUrl || undefined,
+      cardBackImageUrl: formData.cardBackImageUrl === "none" ? undefined : formData.cardBackImageUrl,
+      carouselImageUrl: formData.carouselImageUrl || undefined,
+      isFeatured: formData.isFeatured,
+      category: formData.category,
+      description: formData.description,
+      inStock: formData.inStock,
+      isHot: formData.isHot,
+      rating: formData.rating ? Number(formData.rating) : undefined,
+      reviews: formData.reviews ? Number(formData.reviews) : undefined,
+      tag: formData.tag || undefined
+    };
+
+    onSave(cardData);
+  };
+
+
+
+  const handleCardImageUpload = async (file: File) => {
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      setUploadProgress(20);
+
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'card');
+
+      setUploadProgress(40);
+
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      setUploadProgress(80);
+
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке файла');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке файла');
+      }
+
+      setUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        image: result.url,
+        imageUrl: result.url
+      }));
+
+      setIsUploading(false);
+
+    } catch (error) {
+      console.error('Ошибка загрузки файла:', error);
+      setIsUploading(false);
+      setUploadProgress(0);
+      alert('Ошибка загрузки файла');
+    }
+  };
+
+  const handleBannerImageUpload = async (file: File) => {
+
+    setIsUploadingBanner(true);
+    setBannerUploadProgress(0);
+
+    try {
+      setBannerUploadProgress(20);
+
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'banner');
+
+      setBannerUploadProgress(40);
+
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      setBannerUploadProgress(80);
+
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке баннера');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке баннера');
+      }
+
+      setBannerUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        bannerImageUrl: result.url
+      }));
+
+      setIsUploadingBanner(false);
+
+    } catch (error) {
+      console.error('Ошибка загрузки баннера:', error);
+      setIsUploadingBanner(false);
+      setBannerUploadProgress(0);
+      alert('Ошибка загрузки баннера');
+    }
+  };
+
+  const handleCarouselImageUpload = async (file: File) => {
+
+    setIsUploadingCarousel(true);
+    setCarouselUploadProgress(0);
+
+    try {
+      setCarouselUploadProgress(20);
+
+      // Создаем FormData для отправки файла
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'carousel');
+
+      setCarouselUploadProgress(40);
+
+      // Отправляем файл на наш API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      setCarouselUploadProgress(80);
+
+      if (!response.ok) {
+        throw new Error('Ошибка при загрузке изображения карусели');
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ошибка при загрузке изображения карусели');
+      }
+
+      setCarouselUploadProgress(100);
+
+      setFormData(prev => ({
+        ...prev,
+        carouselImageUrl: result.url
+      }));
+
+      setIsUploadingCarousel(false);
+
+    } catch (error) {
+      console.error('Ошибка загрузки изображения карусели:', error);
+      setIsUploadingCarousel(false);
+      setCarouselUploadProgress(0);
+      alert('Ошибка загрузки изображения карусели');
+    }
+  };
+
+  const categories = [
+    "Покемон",
+    "MTG",
+    "Yu-Gi-Oh!",
+    "Аниме",
+    "Disney",
+    "Marvel",
+    "Фэнтези",
+    "Автомобили",
+    "Супергерои",
+    "Спорт"
+  ];
+
+  const rarities = [
+    { value: "common", label: "Обычная" },
+    { value: "rare", label: "Редкая" },
+    { value: "epic", label: "Эпическая" },
+    { value: "legendary", label: "Легендарная" }
+  ];
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] bg-[#27272A] border-zinc-700 text-white overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">
+            {editingCard ? "Редактировать карточку" : "Добавить новую карточку"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Основная информация */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Основная информация</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="title" className="text-xs text-zinc-300">Название карточки</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value, name: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="Введите название"
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-300">Категория</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                  <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-8">
+                    <SelectValue placeholder="Выберите категорию" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#27272A] border-zinc-600">
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category} className="text-white hover:bg-[#18181B]">
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="description" className="text-xs text-zinc-300">Описание</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="bg-[#18181B] border-zinc-600 text-white min-h-[60px] text-sm"
+                placeholder="Введите описание карточки"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Цены и скидки */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Цены и скидки</h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (BYN)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="0"
+                  required
+                  min="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (BYN)</Label>
+                <Input
+                  id="originalPrice"
+                  type="number"
+                  value={formData.originalPrice}
+                  onChange={(e) => setFormData(prev => ({ ...prev, originalPrice: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-300">Редкость</Label>
+                <Select value={formData.rarity} onValueChange={(value: any) => setFormData(prev => ({ ...prev, rarity: value }))}>
+                  <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-8">
+                    <SelectValue placeholder="Редкость" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#27272A] border-zinc-600">
+                    {rarities.map((rarity) => (
+                      <SelectItem key={rarity.value} value={rarity.value} className="text-white hover:bg-[#18181B]">
+                        {rarity.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Дополнительные параметры */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Дополнительные параметры</h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="tag" className="text-xs text-zinc-300">Тег</Label>
+                <Input
+                  id="tag"
+                  value={formData.tag}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tag: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="Хит продаж, Новинка"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="rating" className="text-xs text-zinc-300">Рейтинг (1-5)</Label>
+                <Input
+                  id="rating"
+                  type="number"
+                  value={formData.rating}
+                  onChange={(e) => setFormData(prev => ({ ...prev, rating: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="4.8"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="reviews" className="text-xs text-zinc-300">Отзывы</Label>
+                <Input
+                  id="reviews"
+                  type="number"
+                  value={formData.reviews}
+                  onChange={(e) => setFormData(prev => ({ ...prev, reviews: e.target.value }))}
+                  className="bg-[#18181B] border-zinc-600 text-white h-8"
+                  placeholder="150"
+                  min="0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Настройки отображения */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Настройки отображения</h3>
+            <div className="grid grid-cols-3 gap-6">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="inStock"
+                  checked={formData.inStock}
+                  onChange={(e) => setFormData(prev => ({ ...prev, inStock: e.target.checked }))}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <Label htmlFor="inStock" className="text-sm text-white">В наличии</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isHot"
+                  checked={formData.isHot}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isHot: e.target.checked }))}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <Label htmlFor="isHot" className="text-sm text-white">Хит продаж</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <Label htmlFor="isFeatured" className="text-sm text-white">На главной</Label>
+              </div>
+            </div>
+          </div>
+
+          {/* Изображения */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Изображения</h3>
+            <div className="grid grid-cols-4 gap-4">
+              {/* Изображение карточки */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Изображение карточки</Label>
+                <DragDropUpload
+                  onUpload={handleCardImageUpload}
+                  currentFile={formData.imageUrl || formData.image}
+                  onRemove={() => setFormData(prev => ({ ...prev, image: "", imageUrl: "" }))}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
+                  placeholder="Перетащите изображение карточки сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
+              </div>
+
+              {/* Изображение баннера */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Баннер для главной (опционально)</Label>
+                <DragDropUpload
+                  onUpload={handleBannerImageUpload}
+                  currentFile={formData.bannerImageUrl}
+                  onRemove={() => setFormData(prev => ({ ...prev, bannerImageUrl: "" }))}
+                  isUploading={isUploadingBanner}
+                  uploadProgress={bannerUploadProgress}
+                  placeholder="Перетащите баннер сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
+              </div>
+
+              {/* Изображение для карусели */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Картинка в карусели (опционально)</Label>
+                <DragDropUpload
+                  onUpload={handleCarouselImageUpload}
+                  currentFile={formData.carouselImageUrl}
+                  onRemove={() => setFormData(prev => ({ ...prev, carouselImageUrl: "" }))}
+                  isUploading={isUploadingCarousel}
+                  uploadProgress={carouselUploadProgress}
+                  placeholder="Перетащите картинку для карусели сюда или нажмите для выбора"
+                  accept="image/*"
+                  maxSize={10}
+                />
+              </div>
+
+              {/* Задник карточки */}
+              <div className="space-y-2">
+                <Label className="text-xs text-zinc-300">Задник карточки (опционально)</Label>
+                <div className="border-2 border-dashed border-zinc-600 rounded-lg p-3 text-center">
+                  {formData.cardBackImageUrl && formData.cardBackImageUrl !== "none" ? (
+                    <div className="space-y-2">
+                      <img
+                        src={formData.cardBackImageUrl}
+                        alt="Card Back Preview"
+                        className="w-16 h-20 object-cover rounded mx-auto"
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.jpg";
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setFormData(prev => ({ ...prev, cardBackImageUrl: "none" }))}
+                        className="text-zinc-400 hover:text-white text-xs h-6"
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Убрать
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-xs text-zinc-400">Выбрать задник</p>
+                      <p className="text-xs text-zinc-500">Для оборотной стороны</p>
+                      <Select value={formData.cardBackImageUrl} onValueChange={(value) => setFormData(prev => ({ ...prev, cardBackImageUrl: value }))}>
+                        <SelectTrigger className="bg-[#18181B] border-zinc-600 text-white h-7 text-xs">
+                          <SelectValue placeholder="Выберите задник" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#27272A] border-zinc-600">
+                          <SelectItem value="none" className="text-white hover:bg-[#18181B] text-xs">
+                            Без задника
+                          </SelectItem>
+                          {backgroundImages.map((image) => (
+                            <SelectItem key={image.id} value={image.imageUrl} className="text-white hover:bg-[#18181B] text-xs">
+                              {image.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Кнопки */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-zinc-600">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="border-zinc-600 text-zinc-400 hover:text-white h-8 px-4"
+            >
+              Отмена
+            </Button>
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 h-8 px-4"
+              disabled={isUploading || isUploadingBanner || isUploadingCarousel}
+            >
+              {editingCard ? "Сохранить" : "Добавить"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
