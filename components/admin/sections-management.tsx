@@ -192,7 +192,7 @@ export function SectionsManagement() {
                   />
                   <div>
                     <p className="text-white font-medium">{card.title}</p>
-                    <p className="text-zinc-400 text-sm">{card.price.toLocaleString()} Br</p>
+                    <p className="text-zinc-400 text-sm">{card.price.toLocaleString()} BYN</p>
                   </div>
                 </div>
                 <Button
@@ -228,7 +228,7 @@ export function SectionsManagement() {
                   />
                   <div>
                     <p className="text-white font-medium">{card.title}</p>
-                    <p className="text-zinc-400 text-sm">{card.price.toLocaleString()} Br • {card.category}</p>
+                    <p className="text-zinc-400 text-sm">{card.price.toLocaleString()} BYN • {card.category}</p>
                   </div>
                 </div>
                 <Button

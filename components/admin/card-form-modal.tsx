@@ -407,7 +407,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
             <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-600 pb-1">Цены и скидки</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (Br)</Label>
+                <Label htmlFor="price" className="text-xs text-zinc-300">Цена (BYN)</Label>
                 <Input
                   id="price"
                   type="number"
@@ -420,7 +420,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (Br)</Label>
+                <Label htmlFor="originalPrice" className="text-xs text-zinc-300">Старая цена (BYN)</Label>
                 <Input
                   id="originalPrice"
                   type="number"

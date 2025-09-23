@@ -44,13 +44,11 @@ export function Header() {
       <div className="relative container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center space-x-8">
-            <MobileNav />
-
             <Link href="/" className="flex items-center">
               <img
                 src="/logocards.png"
                 alt="GOLO CARDS"
-                className="h-28 w-auto"
+                className="h-28 w-auto scale-x-125"
                 onError={(e) => {
                   // Fallback to text logo if image fails to load
                   e.currentTarget.style.display = 'none';
@@ -58,8 +56,8 @@ export function Header() {
                 }}
               />
               <span className="text-3xl font-bold hidden">
-                <span className="text-red-500">CARD</span>
-                <span className="text-white">.GG</span>
+                <span className="text-red-500">GOLO</span>
+                <span className="text-white"> CARDS</span>
               </span>
             </Link>
 
@@ -100,15 +98,26 @@ export function Header() {
               />
             </div>
 
-            {/* Login/Profile Button */}
-            <Button variant="ghost" className="text-white hover:text-white rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 h-12">
-              <span className="text-lg font-medium">Войти</span>
+            {/* Cart Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm relative"
+              onClick={() => setIsCartOpen(true)}
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {totalItems > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-red-500 text-white border-none">
+                  {totalItems}
+                </Badge>
+              )}
             </Button>
           </div>
         </div>
       </div>
 
       <CartOverlay isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <MobileNav />
     </header>
   )
 }

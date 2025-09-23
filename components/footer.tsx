@@ -104,7 +104,7 @@ export function Footer() {
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4" />
-              <span>info@card.gg</span>
+              <span>info@golo-cards.by</span>
             </div>
 
           </div>

@@ -210,7 +210,7 @@ export function CardsManagement() {
                   />
                 </TableCell>
                 <TableCell className="text-white font-medium">{card.title || card.name}</TableCell>
-                <TableCell className="text-white">{card.price.toLocaleString()} Br</TableCell>
+                <TableCell className="text-white">{card.price.toLocaleString()} BYN</TableCell>
                 <TableCell>
                   <Badge className={`${getRarityColor(card.rarity)} text-white`}>
                     {getRarityText(card.rarity)}
