@@ -176,17 +176,22 @@ export function HeroBanner() {
 
       {/* Card Selector - Mobile (Top) */}
       <div className="absolute inset-x-0 top-20 z-10 md:hidden">
-        <div className="px-4 py-4">
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="px-4 py-4 carousel-container">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide carousel-item">
             {featuredCards.map((card, index) => (
               <button
                 key={card.id}
                 onClick={() => setActiveCard(index)}
                 className={`relative flex-shrink-0 transition-all duration-300 ${
                   index === activeCard
-                    ? "w-20 h-24 ring-2 ring-purple-400 shadow-lg scale-110 z-10"
+                    ? "w-20 h-24 ring-2 ring-blue-500 shadow-lg scale-110 z-10"
                     : "w-16 h-20 opacity-60"
                 } rounded-xl overflow-hidden`}
+                style={{
+                  boxShadow: index === activeCard
+                    ? '0 0 0 2px transparent, 0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 25px -5px rgba(59, 130, 246, 0.3)'
+                    : ''
+                }}
                 style={{
                   marginLeft: index > 0 && index === activeCard ? "4px" : "0px",
                   marginRight: index < featuredCards.length - 1 && index === activeCard ? "4px" : "0px",
@@ -245,7 +250,7 @@ export function HeroBanner() {
         </div>
       </div>
 
-      <div className="absolute bottom-16 md:bottom-10 left-0 right-0 z-10 pointer-events-none">
+      <div className="absolute bottom-24 md:bottom-10 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">

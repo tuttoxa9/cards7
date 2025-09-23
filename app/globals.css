@@ -152,3 +152,13 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
+/* Стили для карусели карточек - предотвращение обрезания обводки */
+.carousel-container {
+  overflow: visible !important;
+  padding: 8px;
+}
+
+.carousel-item {
+  overflow: visible !important;
+}
