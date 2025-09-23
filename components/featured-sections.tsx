@@ -132,21 +132,22 @@ export function FeaturedSections() {
     <div className="space-y-16">
       {/* Weekly Deals Section */}
       <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Flame className="w-8 h-8 text-red-500" />
-            <h2 className="text-4xl font-bold text-white">Предложения недели</h2>
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <Flame className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
+            <h2 className="text-2xl md:text-4xl font-bold text-white">Предложения недели</h2>
           </div>
           <Button
             variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            className="text-red-400 hover:text-red-300 text-sm md:text-lg font-semibold"
           >
             Смотреть все
           </Button>
         </div>
 
         <div className="relative">
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          {/* Desktop horizontal cards */}
+          <div className="hidden md:flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {isLoading ? (
               // Скелетоны загрузки
               [...Array(5)].map((_, i) => (
@@ -183,11 +184,11 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} Br
+                          {card.price.toLocaleString()} ₽
                         </span>
                         {card.originalPrice && (
                           <span className="text-sm text-red-400 line-through">
-                            {card.originalPrice.toLocaleString()} Br
+                            {card.originalPrice.toLocaleString()} ₽
                           </span>
                         )}
                       </div>
@@ -221,26 +222,102 @@ export function FeaturedSections() {
               ))
             )}
           </div>
+
+          {/* Mobile vertical list */}
+          <div className="md:hidden space-y-4">
+            {isLoading ? (
+              // Скелетоны загрузки
+              [...Array(3)].map((_, i) => (
+                <div key={i} className="flex gap-4 p-4 bg-gray-800/50 rounded-2xl animate-pulse">
+                  <div className="w-20 h-24 bg-gray-700 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-700 rounded w-3/4" />
+                    <div className="h-3 bg-gray-700 rounded w-1/2" />
+                    <div className="h-6 bg-gray-700 rounded w-1/3" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              weeklyDeals.map((card) => (
+                <div
+                  key={card.id}
+                  className="flex gap-4 p-4 bg-black/40 backdrop-blur-sm rounded-2xl border border-gray-800/50"
+                >
+                  <div className="relative">
+                    {/* Discount badge */}
+                    <div className="absolute -top-2 -left-2 z-10">
+                      <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
+                        Акция
+                      </Badge>
+                    </div>
+                    <div className="absolute -top-2 -right-2 z-10">
+                      <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs px-2 py-1 rounded-full">
+                        29.09.2025
+                      </Badge>
+                    </div>
+                    <img
+                      src={card.imageUrl || card.image}
+                      alt={card.title}
+                      className="w-20 h-28 object-cover rounded-xl"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{card.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-400 text-xs line-through">
+                          {card.originalPrice?.toLocaleString() || '5 479'} ₽
+                        </span>
+                        <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
+                          -{card.discount || '79'}%
+                        </Badge>
+                      </div>
+                      <div className="text-white font-bold text-lg mb-2">
+                        {card.price.toLocaleString()} ₽
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(card)}
+                        className="bg-red-500 hover:bg-red-600 text-white flex-1 rounded-full text-xs font-semibold"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-cart-fill mr-1" viewBox="0 0 16 16">
+                          <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                        Купить
+                      </Button>
+                      <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
+                          <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                        </svg>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </section>
 
       {/* Best Sellers Section */}
       <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <TrendingUp className="w-8 h-8 text-orange-500" />
-            <h2 className="text-4xl font-bold text-white">Лидеры продаж</h2>
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-orange-500" />
+            <h2 className="text-2xl md:text-4xl font-bold text-white">Лидеры продаж</h2>
           </div>
           <Button
             variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            className="text-red-400 hover:text-red-300 text-sm md:text-lg font-semibold"
           >
             Смотреть все
           </Button>
         </div>
 
-        {/* Category filters */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        {/* Category filters - только на десктопе */}
+        <div className="hidden md:flex flex-wrap gap-3 mb-8">
           {categories.map((category) => (
             <Button
               key={category}
@@ -256,7 +333,8 @@ export function FeaturedSections() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {/* Desktop grid */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {isLoading ? (
             // Скелетоны загрузки
             [...Array(3)].map((_, i) => (
@@ -290,11 +368,11 @@ export function FeaturedSections() {
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-bold text-white">
-                        {card.price} Br
+                        {card.price} ₽
                       </span>
                       {card.originalPrice && (
                         <span className="text-xs text-orange-400 line-through">
-                          {card.originalPrice} Br
+                          {card.originalPrice} ₽
                         </span>
                       )}
                     </div>
@@ -328,25 +406,97 @@ export function FeaturedSections() {
             ))
           )}
         </div>
+
+        {/* Mobile vertical list */}
+        <div className="md:hidden space-y-4">
+          {isLoading ? (
+            // Скелетоны загрузки
+            [...Array(3)].map((_, i) => (
+              <div key={i} className="flex gap-4 p-4 bg-gray-800/50 rounded-2xl animate-pulse">
+                <div className="w-20 h-24 bg-gray-700 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-700 rounded w-3/4" />
+                  <div className="h-3 bg-gray-700 rounded w-1/2" />
+                  <div className="h-6 bg-gray-700 rounded w-1/3" />
+                </div>
+              </div>
+            ))
+          ) : (
+            bestSellers.slice(0, 4).map((card) => (
+              <div
+                key={card.id}
+                className="flex gap-4 p-4 bg-black/40 backdrop-blur-sm rounded-2xl border border-gray-800/50"
+              >
+                <div className="relative">
+                  {/* Premium discount badge */}
+                  <div className="absolute -top-2 -left-2 z-10">
+                    <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs px-2 py-1 rounded-full">
+                      Премиум скидка по подписке
+                    </Badge>
+                  </div>
+                  <img
+                    src={card.imageUrl || card.image}
+                    alt={card.title}
+                    className="w-20 h-28 object-cover rounded-xl"
+                  />
+                </div>
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-gray-400 text-xs line-through">
+                        {card.originalPrice?.toLocaleString() || '3 499'} ₽
+                      </span>
+                      <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
+                        -{card.discount || '80'}%
+                      </Badge>
+                    </div>
+                    <div className="text-white font-bold text-lg mb-2">
+                      {Math.round(card.price * 0.2).toLocaleString()} ₽
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleAddToCart(card)}
+                      className="bg-red-500 hover:bg-red-600 text-white flex-1 rounded-full text-xs font-semibold"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-cart-fill mr-1" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                      </svg>
+                      Купить
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white p-2 rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </section>
 
       {/* New in Catalog Section */}
       <section>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Zap className="w-8 h-8 text-blue-500" />
-            <h2 className="text-4xl font-bold text-white">Новое в каталоге</h2>
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <Zap className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
+            <h2 className="text-2xl md:text-4xl font-bold text-white">Новое в каталоге</h2>
           </div>
           <Button
             variant="ghost"
-            className="text-red-400 hover:text-red-300 text-lg font-semibold"
+            className="text-red-400 hover:text-red-300 text-sm md:text-lg font-semibold"
           >
             Смотреть все
           </Button>
         </div>
 
         <div className="relative">
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          {/* Desktop horizontal cards */}
+          <div className="hidden md:flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {isLoading ? (
               // Скелетоны загрузки
               [...Array(5)].map((_, i) => (
@@ -384,11 +534,11 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} Br
+                          {card.price.toLocaleString()} ₽
                         </span>
                         {card.originalPrice && (
                           <span className="text-sm text-blue-400 line-through">
-                            {card.originalPrice.toLocaleString()} Br
+                            {card.originalPrice.toLocaleString()} ₽
                           </span>
                         )}
                       </div>
@@ -419,6 +569,82 @@ export function FeaturedSections() {
                   </div>
                 </div>
               </Card>
+              ))
+            )}
+          </div>
+
+          {/* Mobile vertical list */}
+          <div className="md:hidden space-y-4">
+            {isLoading ? (
+              // Скелетоны загрузки
+              [...Array(4)].map((_, i) => (
+                <div key={i} className="flex gap-4 p-4 bg-gray-800/50 rounded-2xl animate-pulse">
+                  <div className="w-20 h-24 bg-gray-700 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-700 rounded w-3/4" />
+                    <div className="h-3 bg-gray-700 rounded w-1/2" />
+                    <div className="h-6 bg-gray-700 rounded w-1/3" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              newArrivals.slice(0, 4).map((card) => (
+                <div
+                  key={card.id}
+                  className="flex gap-4 p-4 bg-black/40 backdrop-blur-sm rounded-2xl border border-gray-800/50"
+                >
+                  <div className="relative">
+                    {/* Action badge */}
+                    <div className="absolute -top-2 -left-2 z-10">
+                      <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
+                        Акция
+                      </Badge>
+                    </div>
+                    <div className="absolute -top-2 -right-2 z-10">
+                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-xs px-2 py-1 rounded-full">
+                        29.09.2025
+                      </Badge>
+                    </div>
+                    <img
+                      src={card.imageUrl || card.image}
+                      alt={card.title}
+                      className="w-20 h-28 object-cover rounded-xl"
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-gray-400 text-xs line-through">
+                          {card.originalPrice?.toLocaleString() || '599'} ₽
+                        </span>
+                        <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
+                          -{card.discount || '68'}%
+                        </Badge>
+                      </div>
+                      <div className="text-white font-bold text-lg mb-2">
+                        193 ₽
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleAddToCart(card)}
+                        className="bg-red-500 hover:bg-red-600 text-white flex-1 rounded-full text-xs font-semibold"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-cart-fill mr-1" viewBox="0 0 16 16">
+                          <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                        Купить
+                      </Button>
+                      <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white p-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
+                          <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+                        </svg>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               ))
             )}
           </div>

@@ -11,7 +11,7 @@ export default function HomePage() {
       <main>
         <HeroBanner />
 
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-16 pb-24 md:pb-16">
           <FeaturedSections />
         </div>
       </main>

@@ -86,28 +86,12 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="icon" className="text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart-fill w-5 h-5" viewBox="0 0 16 16">
-                <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-              </svg>
+            {/* Mobile Search Button */}
+            <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm">
+              <Search className="w-5 h-5" />
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCartOpen(true)}
-              className="relative text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-cart-fill w-5 h-5" viewBox="0 0 16 16">
-                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-              </svg>
-              {totalItems > 0 && (
-                <Badge className="absolute -top-1 -right-1 w-6 h-6 flex items-center justify-center p-0 bg-red-500 text-white text-sm rounded-full">
-                  {totalItems}
-                </Badge>
-              )}
-            </Button>
-
+            {/* Desktop Search */}
             <div className="relative hidden md:block">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 pointer-events-none" />
               <Input
@@ -115,6 +99,11 @@ export function Header() {
                 className="pl-12 pr-4 h-12 w-80 border-white/20 rounded-3xl text-white placeholder:text-white/60 text-lg focus:border-white/40 bg-white/10 backdrop-blur-sm"
               />
             </div>
+
+            {/* Login/Profile Button */}
+            <Button variant="ghost" className="text-white hover:text-white rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 h-12">
+              <span className="text-lg font-medium">Войти</span>
+            </Button>
           </div>
         </div>
       </div>

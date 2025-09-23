@@ -120,7 +120,8 @@ export function HeroBanner() {
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#06080A] to-transparent" />
       </div>
 
-      <div className="absolute inset-x-0 top-32 z-10">
+      {/* Card Selector - Desktop */}
+      <div className="absolute inset-x-0 top-32 z-10 hidden md:block">
         <div className="container mx-auto px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center justify-start gap-2 h-32 overflow-visible">
@@ -173,8 +174,33 @@ export function HeroBanner() {
         </div>
       </div>
 
-      {/* Анимированные карточки в правом нижнем углу */}
-      <div className="absolute bottom-8 right-1/4 z-10 pointer-events-none">
+      {/* Card Selector - Mobile (Top) */}
+      <div className="absolute inset-x-0 top-20 z-10 md:hidden">
+        <div className="px-4 py-4">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {featuredCards.map((card, index) => (
+              <button
+                key={card.id}
+                onClick={() => setActiveCard(index)}
+                className={`relative flex-shrink-0 w-16 h-20 rounded-xl overflow-hidden transition-all duration-300 ${
+                  index === activeCard
+                    ? "ring-2 ring-purple-400 shadow-lg"
+                    : "opacity-60"
+                }`}
+              >
+                <img
+                  src={card.carouselImageUrl || card.imageUrl || "/placeholder.svg"}
+                  alt={card.name}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Анимированные карточки в правом нижнем углу - только на десктопе */}
+      <div className="absolute bottom-8 right-1/4 z-10 pointer-events-none hidden md:block">
         <div
           key={`animated-cards-${activeCard}`}
           className="relative w-96 h-[32rem] animate-in slide-in-from-bottom-8 fade-in duration-1000"
@@ -216,64 +242,70 @@ export function HeroBanner() {
       </div>
 
       <div className="absolute bottom-10 left-0 right-0 z-10 pointer-events-none">
-        <div className="container mx-auto px-8">
+        <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
-              <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
-                {currentCard.category}
-              </Badge>
-              <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
-                Избранное
-              </Badge>
+              {/* Новинка бейдж на мобильных */}
+              <div className="md:hidden bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+                <span className="text-white text-sm font-medium">Новинка</span>
+              </div>
+
+              {/* Бейджи на десктопе */}
+              <div className="hidden md:flex items-center gap-3">
+                <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
+                  {currentCard.category}
+                </Badge>
+                <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
+                  Избранное
+                </Badge>
+              </div>
             </div>
 
             <div key={`content-${activeCard}`} className="animate-in fade-in slide-in-from-left-4 duration-700">
-              <h1 className="text-4xl font-bold text-white mb-4 leading-tight text-balance">{currentCard.name}</h1>
+              <h1 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4 leading-tight text-balance">{currentCard.name}</h1>
 
-              <p className="text-gray-300 mb-6 text-lg leading-relaxed max-w-lg text-pretty">
+              <p className="text-gray-300 mb-4 md:mb-6 text-sm md:text-lg leading-relaxed max-w-lg text-pretty">
                 {currentCard.description}
               </p>
 
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-white">{currentCard.price.toLocaleString()} Br</span>
+              <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-xl md:text-3xl font-bold text-white">{currentCard.price.toLocaleString()} ₽</span>
                   {currentCard.originalPrice && (
-                    <span className="text-lg text-gray-400 line-through">
-                      {currentCard.originalPrice.toLocaleString()} Br
+                    <span className="text-sm md:text-lg text-gray-400 line-through">
+                      {currentCard.originalPrice.toLocaleString()} ₽
                     </span>
                   )}
                   {currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
-                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-3 py-1 text-sm font-bold rounded-full">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
                       -{Math.round(((currentCard.originalPrice - currentCard.price) / currentCard.originalPrice) * 100)}%
                     </Badge>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 md:gap-4">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 px-8 py-3 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex-1 md:flex-none"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-5 h-5 mr-2" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-4 h-4 md:w-5 md:h-5 mr-2" viewBox="0 0 16 16">
                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                   </svg>
                   Купить
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
-                  className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-6 py-3 text-lg rounded-full"
+                  className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full"
                 >
-                  <Info className="w-5 h-5 mr-2" />
                   Подробнее
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-12 h-12"
+                  className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 md:w-12 md:h-12"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-6 h-6" viewBox="0 0 16 16">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-5 h-5 md:w-6 md:h-6" viewBox="0 0 16 16">
                     <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                   </svg>
                 </Button>
