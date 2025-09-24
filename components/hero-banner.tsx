@@ -175,7 +175,7 @@ export function HeroBanner() {
       </div>
 
       {/* Card Selector - Mobile (Top) */}
-      <div className="absolute inset-x-0 top-24 z-10 md:hidden">
+      <div className="absolute inset-x-0 top-32 z-10 md:hidden">
         <div className="px-4 py-4 carousel-container">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide carousel-item">
             {featuredCards.map((card, index) => (
