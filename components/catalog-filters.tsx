@@ -13,26 +13,15 @@ import { db } from "@/lib/firebase"
 interface FilterState {
   priceRange: [number, number]
   categories: string[]
-  rarity: string[]
-  productType: string[]
-  year: string[]
-  inStock: boolean
 }
 
 export function CatalogFilters() {
   const [categories, setCategories] = useState<string[]>([])
-  const [rarityLevels, setRarityLevels] = useState<string[]>([])
-  const [productTypes, setProductTypes] = useState<string[]>([])
-  const [years, setYears] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const [filters, setFilters] = useState<FilterState>({
     priceRange: [0, 5000],
     categories: [],
-    rarity: [],
-    productType: [],
-    year: [],
-    inStock: false,
   })
 
   const [activeFiltersCount, setActiveFiltersCount] = useState(0)
@@ -50,40 +39,10 @@ export function CatalogFilters() {
           setCategories(data.list || [])
         }
 
-        // Загрузка уровней редкости
-        const rarityDoc = await getDoc(doc(db, "settings", "rarity"))
-        if (rarityDoc.exists()) {
-          const data = rarityDoc.data()
-          setRarityLevels(data.list || ["Обычные", "Редкие", "Голографические", "Секретные", "Ультраредкие"])
-        } else {
-          setRarityLevels(["Обычные", "Редкие", "Голографические", "Секретные", "Ультраредкие"])
-        }
-
-        // Загрузка типов продуктов
-        const productTypesDoc = await getDoc(doc(db, "settings", "productTypes"))
-        if (productTypesDoc.exists()) {
-          const data = productTypesDoc.data()
-          setProductTypes(data.list || ["Бустерпак", "Стартовый набор", "Коллекционный набор", "Одиночные карты", "Структурная колода"])
-        } else {
-          setProductTypes(["Бустерпак", "Стартовый набор", "Коллекционный набор", "Одиночные карты", "Структурная колода"])
-        }
-
-        // Загрузка годов
-        const yearsDoc = await getDoc(doc(db, "settings", "years"))
-        if (yearsDoc.exists()) {
-          const data = yearsDoc.data()
-          setYears(data.list || ["2024", "2023", "2022", "2021", "2020"])
-        } else {
-          setYears(["2024", "2023", "2022", "2021", "2020"])
-        }
-
       } catch (error) {
         console.error("Ошибка загрузки данных фильтров:", error)
         // Fallback к базовым значениям при ошибке
         setCategories([])
-        setRarityLevels(["Обычные", "Редкие", "Голографические", "Секретные", "Ультраредкие"])
-        setProductTypes(["Бустерпак", "Стартовый набор", "Коллекционный набор", "Одиночные карты", "Структурная колода"])
-        setYears(["2024", "2023", "2022", "2021", "2020"])
       } finally {
         setIsLoading(false)
       }
@@ -99,35 +58,10 @@ export function CatalogFilters() {
     }))
   }
 
-  const handleRarityChange = (rarity: string, checked: boolean) => {
-    setFilters((prev) => ({
-      ...prev,
-      rarity: checked ? [...prev.rarity, rarity] : prev.rarity.filter((r) => r !== rarity),
-    }))
-  }
-
-  const handleProductTypeChange = (type: string, checked: boolean) => {
-    setFilters((prev) => ({
-      ...prev,
-      productType: checked ? [...prev.productType, type] : prev.productType.filter((t) => t !== type),
-    }))
-  }
-
-  const handleYearChange = (year: string, checked: boolean) => {
-    setFilters((prev) => ({
-      ...prev,
-      year: checked ? [...prev.year, year] : prev.year.filter((y) => y !== year),
-    }))
-  }
-
   const clearAllFilters = () => {
     setFilters({
       priceRange: [0, 5000],
       categories: [],
-      rarity: [],
-      productType: [],
-      year: [],
-      inStock: false,
     })
     setActiveFiltersCount(0)
   }
@@ -209,111 +143,7 @@ export function CatalogFilters() {
         </CardContent>
       </Card>
 
-      {/* Rarity */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-card-foreground">Редкость</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {isLoading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-300 rounded animate-pulse" />
-                <div className="h-4 bg-gray-300 rounded animate-pulse flex-1" />
-              </div>
-            ))
-          ) : (
-            rarityLevels.map((rarity) => (
-              <div key={rarity} className="flex items-center space-x-2">
-                <Checkbox
-                  id={rarity}
-                  checked={filters.rarity.includes(rarity)}
-                  onCheckedChange={(checked) => handleRarityChange(rarity, checked as boolean)}
-                />
-                <label htmlFor={rarity} className="text-sm text-card-foreground cursor-pointer flex-1">
-                  {rarity}
-                </label>
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
 
-      {/* Product Type */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-card-foreground">Тип продукта</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {isLoading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-300 rounded animate-pulse" />
-                <div className="h-4 bg-gray-300 rounded animate-pulse flex-1" />
-              </div>
-            ))
-          ) : (
-            productTypes.map((type) => (
-              <div key={type} className="flex items-center space-x-2">
-                <Checkbox
-                  id={type}
-                  checked={filters.productType.includes(type)}
-                  onCheckedChange={(checked) => handleProductTypeChange(type, checked as boolean)}
-                />
-                <label htmlFor={type} className="text-sm text-card-foreground cursor-pointer flex-1">
-                  {type}
-                </label>
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Year */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-card-foreground">Год выпуска</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {isLoading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-300 rounded animate-pulse" />
-                <div className="h-4 bg-gray-300 rounded animate-pulse flex-1" />
-              </div>
-            ))
-          ) : (
-            years.map((year) => (
-              <div key={year} className="flex items-center space-x-2">
-                <Checkbox
-                  id={year}
-                  checked={filters.year.includes(year)}
-                  onCheckedChange={(checked) => handleYearChange(year, checked as boolean)}
-                />
-                <label htmlFor={year} className="text-sm text-card-foreground cursor-pointer flex-1">
-                  {year}
-                </label>
-              </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      {/* In Stock */}
-      <Card className="bg-card border-border">
-        <CardContent className="pt-6">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="inStock"
-              checked={filters.inStock}
-              onCheckedChange={(checked) => setFilters((prev) => ({ ...prev, inStock: checked as boolean }))}
-            />
-            <label htmlFor="inStock" className="text-sm text-card-foreground cursor-pointer flex-1">
-              Только в наличии
-            </label>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

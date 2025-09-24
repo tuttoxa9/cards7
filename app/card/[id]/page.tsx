@@ -53,12 +53,13 @@ export default function CardPage({ params }: PageProps) {
 
       <GradualBlur
         preset="page-header"
-        strength={5}
+        strength={2}
+        divCount={5}
         height="8rem"
         animated="scroll"
         curve="bezier"
         exponential={true}
-        opacity={0.9}
+        opacity={1}
         zIndex={40}
       />
 

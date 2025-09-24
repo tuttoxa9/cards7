@@ -5,6 +5,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { AdminLogin } from "@/components/admin/admin-login";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
+import GradualBlur from "@/components/GradualBlur";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,5 +41,20 @@ export default function AdminPage() {
     return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
   }
 
-  return <AdminDashboard onLogout={handleLogout} />;
+  return (
+    <div className="min-h-screen">
+      <GradualBlur
+        preset="page-header"
+        strength={2}
+        divCount={5}
+        height="8rem"
+        animated="scroll"
+        curve="bezier"
+        exponential={true}
+        opacity={1}
+        zIndex={40}
+      />
+      <AdminDashboard onLogout={handleLogout} />
+    </div>
+  );
 }

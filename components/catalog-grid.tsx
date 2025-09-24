@@ -27,7 +27,11 @@ interface CardData {
   tag?: string;
 }
 
-export function CatalogGrid() {
+interface CatalogGridProps {
+  onCardsCountChange?: (count: number) => void;
+}
+
+export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -52,6 +56,7 @@ export function CatalogGrid() {
         });
 
         setCards(cardsData);
+        onCardsCountChange?.(cardsData.length);
       } catch (error) {
         console.error("Ошибка загрузки карточек:", error);
       } finally {
@@ -87,8 +92,6 @@ export function CatalogGrid() {
               <SelectItem value="popular">Популярности</SelectItem>
               <SelectItem value="price-asc">Цене: по возрастанию</SelectItem>
               <SelectItem value="price-desc">Цене: по убыванию</SelectItem>
-              <SelectItem value="rating">Рейтингу</SelectItem>
-              <SelectItem value="newest">Новинкам</SelectItem>
             </SelectContent>
           </Select>
         </div>
