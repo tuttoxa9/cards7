@@ -10,12 +10,14 @@ export default function HomePage() {
       <Header />
 
       <GradualBlur
-        position="bottom"
-        strength={2}
-        height="4rem"
-        zIndex={10}
-        target="parent"
-        opacity={0.7}
+        preset="page-header"
+        strength={3}
+        height="8rem"
+        animated="scroll"
+        curve="bezier"
+        exponential={true}
+        opacity={0.9}
+        zIndex={40}
       />
 
       <main>
