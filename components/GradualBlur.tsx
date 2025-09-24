@@ -1,3 +1,5 @@
+"use client"
+
 import React, { CSSProperties, useEffect, useRef, useState, useMemo, PropsWithChildren } from 'react';
 import * as math from 'mathjs';
 
