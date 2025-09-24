@@ -129,7 +129,7 @@ export function FeaturedSections() {
     loadSections();
   }, []);
   return (
-    <div className="space-y-16">
+    <div className="space-y-24 mt-24">
       {/* Weekly Deals Section */}
       <section>
         <div className="flex items-center justify-between mb-6 md:mb-8">

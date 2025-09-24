@@ -121,7 +121,7 @@ export function HeroBanner() {
       </div>
 
       {/* Card Selector - Desktop */}
-      <div className="absolute inset-x-0 top-32 z-10 hidden md:block">
+      <div className="absolute inset-x-0 top-36 z-10 hidden md:block">
         <div className="container mx-auto px-8">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center justify-start gap-2 h-32 overflow-visible">
@@ -175,7 +175,7 @@ export function HeroBanner() {
       </div>
 
       {/* Card Selector - Mobile (Top) */}
-      <div className="absolute inset-x-0 top-20 z-10 md:hidden">
+      <div className="absolute inset-x-0 top-24 z-10 md:hidden">
         <div className="px-4 py-4 carousel-container">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide carousel-item">
             {featuredCards.map((card, index) => (
@@ -209,7 +209,7 @@ export function HeroBanner() {
       </div>
 
       {/* Анимированные карточки в правом нижнем углу - только на десктопе */}
-      <div className="absolute bottom-8 right-1/4 z-10 pointer-events-none hidden md:block">
+      <div className="absolute bottom-24 right-1/4 z-10 pointer-events-none hidden md:block">
         <div
           key={`animated-cards-${activeCard}`}
           className="relative w-96 h-[32rem] animate-in slide-in-from-bottom-8 fade-in duration-1000"
@@ -250,7 +250,7 @@ export function HeroBanner() {
         </div>
       </div>
 
-      <div className="absolute bottom-32 md:bottom-10 left-0 right-0 z-10 pointer-events-none">
+      <div className="absolute bottom-48 md:bottom-32 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
