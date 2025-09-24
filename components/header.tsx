@@ -32,7 +32,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 transition-colors duration-300",
+        "sticky top-0 z-[1200] transition-colors duration-300",
         isScrolled ? "bg-gradient-to-b from-black/95 to-transparent" : "bg-transparent"
       )}
     >
