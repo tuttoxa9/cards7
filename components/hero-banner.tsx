@@ -250,7 +250,7 @@ export function HeroBanner() {
         </div>
       </div>
 
-      <div className="absolute bottom-24 md:bottom-10 left-0 right-0 z-10 pointer-events-none">
+      <div className="absolute bottom-32 md:bottom-10 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
@@ -263,9 +263,6 @@ export function HeroBanner() {
               <div className="hidden md:flex items-center gap-3">
                 <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
                   {currentCard.category}
-                </Badge>
-                <Badge className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">
-                  Избранное
                 </Badge>
               </div>
             </div>
@@ -305,6 +302,7 @@ export function HeroBanner() {
                 </Button>
                 <Button
                   variant="outline"
+                  size="lg"
                   className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full"
                 >
                   Подробнее
