@@ -7,6 +7,7 @@ import { CartSummary } from "@/components/cart-summary"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ShoppingBag } from "lucide-react"
 import Link from "next/link"
+import GradualBlur from "@/components/GradualBlur"
 
 // Mock cart data
 const initialCartItems = [
@@ -76,6 +77,17 @@ export default function CartPage() {
       <div className="min-h-screen bg-background">
         <Header />
 
+        <GradualBlur
+          preset="page-header"
+          strength={5}
+          height="8rem"
+          animated="scroll"
+          curve="bezier"
+          exponential={true}
+          opacity={0.9}
+          zIndex={40}
+        />
+
         <main className="container mx-auto px-4 py-16">
           <div className="text-center space-y-6">
             <div className="w-24 h-24 mx-auto bg-muted rounded-full flex items-center justify-center">
@@ -101,6 +113,17 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+
+      <GradualBlur
+        preset="page-header"
+        strength={5}
+        height="8rem"
+        animated="scroll"
+        curve="bezier"
+        exponential={true}
+        opacity={0.9}
+        zIndex={40}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}

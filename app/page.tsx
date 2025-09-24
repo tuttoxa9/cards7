@@ -11,7 +11,7 @@ export default function HomePage() {
 
       <GradualBlur
         preset="page-header"
-        strength={3}
+        strength={5}
         height="8rem"
         animated="scroll"
         curve="bezier"

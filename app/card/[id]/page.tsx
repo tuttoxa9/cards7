@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
+import GradualBlur from "@/components/GradualBlur"
 
 // Mock data for the card
 const mockCard = {
@@ -49,6 +50,17 @@ export default function CardPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+
+      <GradualBlur
+        preset="page-header"
+        strength={5}
+        height="8rem"
+        animated="scroll"
+        curve="bezier"
+        exponential={true}
+        opacity={0.9}
+        zIndex={40}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}

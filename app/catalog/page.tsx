@@ -2,11 +2,23 @@ import { Header } from "@/components/header"
 import { CatalogFilters } from "@/components/catalog-filters"
 import { CatalogGrid } from "@/components/catalog-grid"
 import { Footer } from "@/components/footer"
+import GradualBlur from "@/components/GradualBlur"
 
 export default function CatalogPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-900">
       <Header />
+
+      <GradualBlur
+        preset="page-header"
+        strength={5}
+        height="8rem"
+        animated="scroll"
+        curve="bezier"
+        exponential={true}
+        opacity={0.9}
+        zIndex={40}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Page Header */}

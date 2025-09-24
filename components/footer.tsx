@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Mail, Phone, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
+import { Phone, Instagram, Youtube } from "lucide-react"
 import Link from "next/link"
 
 export function Footer() {
@@ -13,20 +13,14 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center">
               <span className="text-2xl font-bold">
-                <span className="text-red-500">CARD</span>
-                <span className="text-white">.GG</span>
+                <span className="text-red-500">GOLO</span>
+                <span className="text-white"> CARDS</span>
               </span>
             </div>
             <p className="text-sm text-white/60 leading-relaxed">
               Широкий выбор качественных коллекционных карточек. Находите редкие экземпляры и пополняйте свою коллекцию.
             </p>
             <div className="flex space-x-3">
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
-                <Facebook className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
-                <Twitter className="w-4 h-4" />
-              </Button>
               <Button variant="ghost" size="icon" className="text-white/60 hover:text-red-400 w-10 h-10 rounded-full bg-white/5 hover:bg-white/10">
                 <Instagram className="w-4 h-4" />
               </Button>
@@ -72,9 +66,6 @@ export function Footer() {
                 Возврат товара
               </Link>
               <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
-                Аутентичность карт
-              </Link>
-              <Link href="#" className="block text-sm text-white/60 hover:text-red-400 transition-colors">
                 Контакты
               </Link>
             </nav>
@@ -102,11 +93,6 @@ export function Footer() {
               <Phone className="w-4 h-4" />
               <span>+375 (29) 123-45-67</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Mail className="w-4 h-4" />
-              <span>info@golo-cards.by</span>
-            </div>
-
           </div>
 
           <div className="flex items-center space-x-6 text-sm text-white/60">
@@ -116,7 +102,7 @@ export function Footer() {
             <Link href="#" className="hover:text-red-400 transition-colors">
               Условия использования
             </Link>
-            <span>&copy; 2024 CARD.GG. Все права защищены.</span>
+            <span>&copy; Все права защищены.</span>
           </div>
         </div>
       </div>
