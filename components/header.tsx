@@ -1,13 +1,13 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Search, ShoppingCart, Heart, Grid3X3, Folder } from "lucide-react"
+import { ShoppingCart, Heart, Grid3X3, Folder } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { MobileNav } from "@/components/mobile-nav"
 import { CartOverlay } from "@/components/cart-overlay"
-import { SearchModal } from "@/components/search-modal"
+
 import { useCart } from "@/lib/cart-context"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+
   const { totalItems } = useCart()
 
   useEffect(() => {
@@ -86,25 +86,9 @@ export function Header() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* Mobile Search Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-white hover:text-white w-12 h-12 rounded-3xl bg-white/10 hover:bg-white/20 backdrop-blur-sm"
-              onClick={() => setIsSearchOpen(true)}
-            >
-              <Search className="w-5 h-5" />
-            </Button>
 
-            {/* Desktop Search */}
-            <div className="relative hidden md:block cursor-pointer" onClick={() => setIsSearchOpen(true)}>
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 pointer-events-none" />
-              <Input
-                placeholder="Поиск"
-                className="pl-12 pr-4 h-12 w-80 border-white/20 rounded-3xl text-white placeholder:text-white/60 text-lg focus:border-white/40 bg-white/10 backdrop-blur-sm cursor-pointer"
-                readOnly
-              />
-            </div>
+
+
 
             {/* Cart Button */}
             <Button
@@ -125,7 +109,7 @@ export function Header() {
       </div>
 
       <CartOverlay isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
       <MobileNav />
     </header>
   )

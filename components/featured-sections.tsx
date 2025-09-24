@@ -129,7 +129,7 @@ export function FeaturedSections() {
     loadSections();
   }, []);
   return (
-    <div className="space-y-24 mt-24">
+    <div className="space-y-24 mt-8">
       {/* Weekly Deals Section */}
       <section>
         <div className="flex items-center justify-between mb-6 md:mb-8">
@@ -250,11 +250,7 @@ export function FeaturedSections() {
                         Акция
                       </Badge>
                     </div>
-                    <div className="absolute -top-2 -right-2 z-10">
-                      <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs px-2 py-1 rounded-full">
-                        29.09.2025
-                      </Badge>
-                    </div>
+
                     <img
                       src={card.imageUrl || card.image}
                       alt={card.title}
@@ -428,12 +424,7 @@ export function FeaturedSections() {
                 className="flex gap-4 p-4 bg-black/40 backdrop-blur-sm rounded-2xl border border-gray-800/50"
               >
                 <div className="relative">
-                  {/* Premium discount badge */}
-                  <div className="absolute -top-2 -left-2 z-10">
-                    <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-xs px-2 py-1 rounded-full">
-                      Премиум скидка по подписке
-                    </Badge>
-                  </div>
+
                   <img
                     src={card.imageUrl || card.image}
                     alt={card.title}
@@ -600,11 +591,7 @@ export function FeaturedSections() {
                         Акция
                       </Badge>
                     </div>
-                    <div className="absolute -top-2 -right-2 z-10">
-                      <Badge className="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-xs px-2 py-1 rounded-full">
-                        29.09.2025
-                      </Badge>
-                    </div>
+
                     <img
                       src={card.imageUrl || card.image}
                       alt={card.title}
