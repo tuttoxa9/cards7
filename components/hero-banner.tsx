@@ -303,19 +303,11 @@ export function HeroBanner() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-gray-600 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full"
+                  className="border-white/30 bg-white/10 backdrop-blur-lg text-white hover:bg-white/20 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full"
                 >
                   Подробнее
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full w-10 h-10 md:w-12 md:h-12"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill w-5 h-5 md:w-6 md:h-6" viewBox="0 0 16 16">
-                    <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                  </svg>
-                </Button>
+
               </div>
             </div>
           </div>
