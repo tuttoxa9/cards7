@@ -8,20 +8,20 @@ import { Star, Heart, Share2, ShoppingCart, Minus, Plus, Shield, Truck, RotateCc
 
 interface CardDetailsProps {
   card: {
-    id: number
+    id: string
     title: string
     price: number
     originalPrice?: number
     discount?: number
-    rating: number
-    reviews: number
+    rating?: number
+    reviews?: number
     category: string
-    rarity: string
-    year: string
+    rarity?: string
+    year?: string
     description: string
-    features: string[]
+    features?: string[]
     inStock: boolean
-    stockCount: number
+    stockCount?: number
   }
 }
 
@@ -30,7 +30,8 @@ export function CardDetails({ card }: CardDetailsProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
 
   const increaseQuantity = () => {
-    if (quantity < card.stockCount) {
+    const maxStock = card.stockCount || 999
+    if (quantity < maxStock) {
       setQuantity((prev) => prev + 1)
     }
   }
@@ -55,18 +56,20 @@ export function CardDetails({ card }: CardDetailsProps) {
       </div>
 
       {/* Rating and Reviews */}
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-4 h-4 ${i < Math.floor(card.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-            />
-          ))}
-          <span className="text-sm font-medium text-foreground ml-2">{card.rating}</span>
+      {(card.rating && card.rating > 0) && (
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${i < Math.floor(card.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+              />
+            ))}
+            <span className="text-sm font-medium text-foreground ml-2">{card.rating}</span>
+          </div>
+          <span className="text-sm text-muted-foreground">({card.reviews || 0} отзывов)</span>
         </div>
-        <span className="text-sm text-muted-foreground">({card.reviews} отзывов)</span>
-      </div>
+      )}
 
       {/* Price */}
       <div className="space-y-2">
@@ -89,17 +92,19 @@ export function CardDetails({ card }: CardDetailsProps) {
       </div>
 
       {/* Rarity and Stock */}
-      <Card className="bg-card border-border">
+      <Card className="bg-gradient-to-br from-card to-card/50 border-border shadow-lg">
         <CardContent className="pt-6">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Редкость</p>
-              <p className="font-semibold text-card-foreground">{card.rarity}</p>
-            </div>
-            <div>
+            {card.rarity && (
+              <div>
+                <p className="text-sm text-muted-foreground">Редкость</p>
+                <p className="font-semibold text-card-foreground">{card.rarity}</p>
+              </div>
+            )}
+            <div className={card.rarity ? "" : "col-span-2"}>
               <p className="text-sm text-muted-foreground">В наличии</p>
               <p className={`font-semibold ${card.inStock ? "text-green-600" : "text-red-600"}`}>
-                {card.inStock ? `${card.stockCount} шт.` : "Нет в наличии"}
+                {card.inStock ? (card.stockCount ? `${card.stockCount} шт.` : "В наличии") : "Нет в наличии"}
               </p>
             </div>
           </div>
@@ -126,7 +131,7 @@ export function CardDetails({ card }: CardDetailsProps) {
                 variant="ghost"
                 size="icon"
                 onClick={increaseQuantity}
-                disabled={quantity >= card.stockCount}
+                disabled={quantity >= (card.stockCount || 999)}
                 className="h-10 w-10"
               >
                 <Plus className="w-4 h-4" />
@@ -159,52 +164,63 @@ export function CardDetails({ card }: CardDetailsProps) {
       )}
 
       {/* Description */}
-      <Card className="bg-card border-border">
+      <Card className="bg-gradient-to-br from-card to-card/50 border-border shadow-lg">
         <CardHeader>
-          <CardTitle className="text-lg text-card-foreground">Описание</CardTitle>
+          <CardTitle className="text-lg text-card-foreground flex items-center gap-2">
+            <div className="w-2 h-6 bg-primary rounded-full" />
+            Описание
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-card-foreground leading-relaxed">{card.description}</p>
+          <p className="text-card-foreground leading-relaxed text-pretty">{card.description}</p>
         </CardContent>
       </Card>
 
       {/* Features */}
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle className="text-lg text-card-foreground">Особенности</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            {card.features.map((feature, index) => (
-              <li key={index} className="flex items-center space-x-2 text-card-foreground">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                <span>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {card.features && card.features.length > 0 && (
+        <Card className="bg-gradient-to-br from-card to-card/50 border-border shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg text-card-foreground">Особенности</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3">
+              {card.features.map((feature, index) => (
+                <li key={index} className="flex items-start space-x-3 text-card-foreground">
+                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                  <span className="leading-relaxed">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Guarantees */}
-      <Card className="bg-card border-border">
+      <Card className="bg-gradient-to-br from-card to-card/50 border-border shadow-lg">
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-5 h-5 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
               <div>
                 <p className="text-sm font-medium text-card-foreground">Гарантия качества</p>
                 <p className="text-xs text-muted-foreground">100% оригинал</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Truck className="w-5 h-5 text-primary" />
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-green-500/5 border border-green-500/20">
+              <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                <Truck className="w-5 h-5 text-green-600" />
+              </div>
               <div>
                 <p className="text-sm font-medium text-card-foreground">Быстрая доставка</p>
                 <p className="text-xs text-muted-foreground">1-3 рабочих дня</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <RotateCcw className="w-5 h-5 text-primary" />
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-blue-500/5 border border-blue-500/20">
+              <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <RotateCcw className="w-5 h-5 text-blue-600" />
+              </div>
               <div>
                 <p className="text-sm font-medium text-card-foreground">Возврат 14 дней</p>
                 <p className="text-xs text-muted-foreground">Без вопросов</p>

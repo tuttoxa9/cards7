@@ -220,7 +220,20 @@ export function Header() {
                 <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden z-50 max-h-96 overflow-y-auto">
                   {isLoading ? (
                     <div className="p-4 text-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mx-auto"></div>
+                      <div className="spinner center">
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                        <div className="spinner-blade"></div>
+                      </div>
                     </div>
                   ) : searchQuery.trim() === "" ? (
                     <div className="p-4 text-center">
@@ -328,7 +341,20 @@ export function Header() {
             <div className="max-h-[60vh] overflow-y-auto">
               {isLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+                  <div className="spinner center">
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                    <div className="spinner-blade"></div>
+                  </div>
                 </div>
               ) : searchQuery.trim() === "" ? (
                 <div className="text-center py-8">
