@@ -254,10 +254,10 @@ export function Header() {
                             <h4 className="text-white font-medium text-sm truncate">{card.title}</h4>
                             <p className="text-white/60 text-xs truncate">{card.category}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-white font-bold text-sm">{card.price.toLocaleString()} ₽</span>
+                              <span className="text-white font-bold text-sm">{card.price.toLocaleString()} BYN</span>
                               {card.originalPrice && card.originalPrice > card.price && (
                                 <span className="text-white/50 text-xs line-through">
-                                  {card.originalPrice.toLocaleString()} ₽
+                                  {card.originalPrice.toLocaleString()} BYN
                                 </span>
                               )}
                             </div>
@@ -359,10 +359,10 @@ export function Header() {
                         <h4 className="text-white font-medium mb-1 line-clamp-1">{card.title}</h4>
                         <p className="text-white/60 text-sm mb-2">{card.category}</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-bold">{card.price.toLocaleString()} ₽</span>
+                          <span className="text-white font-bold">{card.price.toLocaleString()} BYN</span>
                           {card.originalPrice && card.originalPrice > card.price && (
                             <span className="text-white/50 text-sm line-through">
-                              {card.originalPrice.toLocaleString()} ₽
+                              {card.originalPrice.toLocaleString()} BYN
                             </span>
                           )}
                         </div>

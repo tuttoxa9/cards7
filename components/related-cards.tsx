@@ -77,9 +77,9 @@ export function RelatedCards() {
               <div className="absolute bottom-4 left-4">
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-lg font-bold text-white">{card.price} Br</span>
+                    <span className="text-lg font-bold text-white">{card.price} BYN</span>
                     {card.originalPrice && (
-                      <span className="text-sm text-gray-400 line-through">{card.originalPrice} Br</span>
+                      <span className="text-sm text-gray-400 line-through">{card.originalPrice} BYN</span>
                     )}
                   </div>
                   {card.discount && (

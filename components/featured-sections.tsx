@@ -184,11 +184,11 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} ₽
+                          {card.price.toLocaleString()} BYN
                         </span>
                         {card.originalPrice && (
                           <span className="text-sm text-red-400 line-through">
-                            {card.originalPrice.toLocaleString()} ₽
+                            {card.originalPrice.toLocaleString()} BYN
                           </span>
                         )}
                       </div>
@@ -262,14 +262,14 @@ export function FeaturedSections() {
                       <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{card.title}</h3>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-gray-400 text-xs line-through">
-                          {card.originalPrice?.toLocaleString() || '5 479'} ₽
+                          {card.originalPrice?.toLocaleString() || '5 479'} BYN
                         </span>
                         <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
                           -{card.discount || '79'}%
                         </Badge>
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
-                        {card.price.toLocaleString()} ₽
+                        {card.price.toLocaleString()} BYN
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -364,11 +364,11 @@ export function FeaturedSections() {
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm font-bold text-white">
-                        {card.price} ₽
+                        {card.price} BYN
                       </span>
                       {card.originalPrice && (
                         <span className="text-xs text-orange-400 line-through">
-                          {card.originalPrice} ₽
+                          {card.originalPrice} BYN
                         </span>
                       )}
                     </div>
@@ -436,14 +436,14 @@ export function FeaturedSections() {
                     <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-gray-400 text-xs line-through">
-                        {card.originalPrice?.toLocaleString() || '3 499'} ₽
+                        {card.originalPrice?.toLocaleString() || '3 499'} BYN
                       </span>
                       <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
                         -{card.discount || '80'}%
                       </Badge>
                     </div>
                     <div className="text-white font-bold text-lg mb-2">
-                      {Math.round(card.price * 0.2).toLocaleString()} ₽
+                      {Math.round(card.price * 0.2).toLocaleString()} BYN
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -525,11 +525,11 @@ export function FeaturedSections() {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-2xl font-bold text-white">
-                          {card.price.toLocaleString()} ₽
+                          {card.price.toLocaleString()} BYN
                         </span>
                         {card.originalPrice && (
                           <span className="text-sm text-blue-400 line-through">
-                            {card.originalPrice.toLocaleString()} ₽
+                            {card.originalPrice.toLocaleString()} BYN
                           </span>
                         )}
                       </div>
@@ -603,14 +603,14 @@ export function FeaturedSections() {
                       <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-gray-400 text-xs line-through">
-                          {card.originalPrice?.toLocaleString() || '599'} ₽
+                          {card.originalPrice?.toLocaleString() || '599'} BYN
                         </span>
                         <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
                           -{card.discount || '68'}%
                         </Badge>
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
-                        193 ₽
+                        193 BYN
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
