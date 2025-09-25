@@ -98,8 +98,21 @@ export function HeroBanner() {
     return (
       <div className="relative h-screen overflow-hidden -mt-20 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Загрузка...</p>
+          <div className="spinner center">
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+          </div>
+          <p className="text-gray-400 mt-4">Загрузка...</p>
         </div>
       </div>
     )

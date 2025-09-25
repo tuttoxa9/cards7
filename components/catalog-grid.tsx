@@ -99,10 +99,21 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
 
       {/* Loading State */}
       {isLoading ? (
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="aspect-square bg-gray-800 rounded-3xl animate-pulse" />
-          ))}
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="spinner center">
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+            <div className="spinner-blade"></div>
+          </div>
         </div>
       ) : (
         <>
@@ -137,9 +148,9 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
                 <div className="absolute bottom-4 left-4">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-white">{card.price} Br</span>
+                      <span className="text-xl font-bold text-white">{card.price} BYN</span>
                       {card.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} Br</span>
+                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} BYN</span>
                       )}
                     </div>
                     {card.originalPrice && card.originalPrice > card.price && (
@@ -178,28 +189,7 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
         </>
       )}
 
-      {/* Pagination */}
-      <div className="flex items-center justify-center space-x-2 pt-8">
-        <Button variant="outline" size="sm" disabled>
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <Button variant="default" size="sm">
-          1
-        </Button>
-        <Button variant="outline" size="sm">
-          2
-        </Button>
-        <Button variant="outline" size="sm">
-          3
-        </Button>
-        <span className="text-muted-foreground">...</span>
-        <Button variant="outline" size="sm">
-          12
-        </Button>
-        <Button variant="outline" size="sm">
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-      </div>
+
     </div>
   )
 }

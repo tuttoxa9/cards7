@@ -25,26 +25,26 @@ export function CartSummary({ subtotal, discount, shipping, total, itemCount }: 
         <CardContent className="space-y-4">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Товары ({itemCount}):</span>
-            <span className="text-foreground">{subtotal.toLocaleString()} Br</span>
+            <span className="text-foreground">{subtotal.toLocaleString()} BYN</span>
           </div>
 
           {discount > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Скидка:</span>
-              <span className="text-green-600">-{discount.toLocaleString()} Br</span>
+              <span className="text-green-600">-{discount.toLocaleString()} BYN</span>
             </div>
           )}
 
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Доставка:</span>
-            <span className="text-foreground">{shipping === 0 ? "Бесплатно" : `${shipping.toLocaleString()} Br`}</span>
+            <span className="text-foreground">{shipping === 0 ? "Бесплатно" : `${shipping.toLocaleString()} BYN`}</span>
           </div>
 
           <Separator />
 
           <div className="flex justify-between text-lg font-bold">
             <span className="text-foreground">Итого:</span>
-            <span className="text-foreground">{total.toLocaleString()} Br</span>
+            <span className="text-foreground">{total.toLocaleString()} BYN</span>
           </div>
 
           <Button size="lg" className="w-full bg-primary hover:bg-primary/90">
@@ -65,7 +65,7 @@ export function CartSummary({ subtotal, discount, shipping, total, itemCount }: 
               <Truck className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-sm font-medium text-card-foreground">Быстрая доставка</p>
-                <p className="text-xs text-muted-foreground">1-3 рабочих дня по России</p>
+                <p className="text-xs text-muted-foreground">1-3 рабочих дня по Беларуси</p>
               </div>
             </div>
 
@@ -114,7 +114,7 @@ export function CartSummary({ subtotal, discount, shipping, total, itemCount }: 
             <div className="text-center space-y-2">
               <Badge className="bg-primary text-primary-foreground">Бесплатная доставка</Badge>
               <p className="text-sm text-foreground">
-                Добавьте товаров на {(3000 - subtotal).toLocaleString()} Br для бесплатной доставки
+                Добавьте товаров на {(3000 - subtotal).toLocaleString()} BYN для бесплатной доставки
               </p>
               <div className="w-full bg-border rounded-full h-2">
                 <div
