@@ -39,7 +39,7 @@ export default function CatalogPage() {
                 Каталог <span className="text-red-500">карточек</span>
               </h1>
               <p className="text-white/70">
-                {cardsCount !== null ? `${cardsCount} товаров` : "Загрузка..."}
+                {cardsCount !== null ? `${cardsCount} товаров` : ""}
               </p>
             </div>
           </div>

@@ -112,7 +112,6 @@ export function HeroBanner() {
             <div className="spinner-blade"></div>
             <div className="spinner-blade"></div>
           </div>
-          <p className="text-gray-400 mt-4">Загрузка...</p>
         </div>
       </div>
     )
