@@ -9,6 +9,8 @@ import { ImagesManagement } from "./images-management";
 import { CategoriesManagement } from "./categories-management";
 import { ReviewsManagement } from "./reviews-management";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Drawer } from "@/components/ui/drawer";
+import { useDrawer } from "@/hooks/use-drawer";
 
 type ActiveTab = "cards" | "sections" | "images" | "categories" | "reviews" | "offers" | "orders";
 
@@ -18,6 +20,8 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("cards");
+  const { isOpen, closeDrawer, Component, props, size, title } = useDrawer();
+
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -92,6 +96,14 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
           {renderTabContent()}
         </div>
       </div>
+      <Drawer
+        isOpen={isOpen}
+        onClose={closeDrawer}
+        title={title}
+        size={size}
+      >
+        {Component && <Component {...props} />}
+      </Drawer>
     </div>
   );
 }
