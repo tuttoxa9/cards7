@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 const reviewSchema = z.object({
   authorName: z.string().min(1, "Имя автора обязательно"),
-  authorAvatar: z.string().url("Некорректный URL").or(z.literal("")).optional(),
+  authorAvatar: z.string().url("Некорректный URL").optional().or(z.literal('')),
   rating: z.preprocess(
     (a) => parseInt(z.string().parse(a), 10),
     z.number().min(1, "Рейтинг не может быть ниже 1").max(5, "Рейтинг не может быть выше 5")
