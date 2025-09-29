@@ -88,7 +88,7 @@ export function ReviewForm({ onSave, onCancel, editingReview }: ReviewFormProps)
           render={({ field }) => (
             <FormItem>
               <FormLabel>Рейтинг</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+              <Select onValueChange={field.onChange} value={String(field.value)}>
                 <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                 <SelectContent>
                   {[5, 4, 3, 2, 1].map(r => <SelectItem key={r} value={String(r)}>{r} звезд</SelectItem>)}
