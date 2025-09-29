@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { MoreHorizontal, Plus, Edit, Trash2, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MoreHorizontal, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -13,11 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { CardFormModal } from "./card-form-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { useDrawer } from "@/hooks/use-drawer";
+import { CardForm } from "./card-form";
+import { DrawerCardActions } from "./drawer-card-actions";
+import { DrawerDeleteConfirmation } from "./drawer-delete-confirmation";
 
 interface Card {
   id: string;
@@ -46,24 +49,19 @@ export function CardsManagement() {
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCard, setEditingCard] = useState<Card | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof Card; direction: 'ascending' | 'descending' }>({ key: 'name', direction: 'ascending' });
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { openDrawer, closeDrawer } = useDrawer();
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        // Загрузка карточек
         const cardsQuerySnapshot = await getDocs(collection(db, "cards"));
         const cardsData: Card[] = cardsQuerySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Card));
         setCards(cardsData);
 
-        // Загрузка категорий
         const categoriesQuerySnapshot = await getDocs(collection(db, "categories"));
         const categoriesData: string[] = categoriesQuerySnapshot.docs.map(doc => doc.data().name);
         setCategories(categoriesData);
@@ -79,20 +77,6 @@ export function CardsManagement() {
     loadData();
   }, []);
 
-  // Закрытие dropdown при клике вне области
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpenDropdown(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const sortedAndFilteredCards = [...cards]
     .filter(card => {
       const searchTermLower = searchTerm.toLowerCase();
@@ -103,16 +87,13 @@ export function CardsManagement() {
     .sort((a, b) => {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
-
       if (aValue === undefined || bValue === undefined) return 0;
-
       let comparison = 0;
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         comparison = aValue - bValue;
       } else if (typeof aValue === 'string' && typeof bValue === 'string') {
         comparison = aValue.localeCompare(bValue);
       }
-
       return sortConfig.direction === 'ascending' ? comparison : -comparison;
     });
 
@@ -124,29 +105,83 @@ export function CardsManagement() {
     setSortConfig({ key, direction });
   };
 
+  const handleSaveCard = async (cardData: Omit<Card, "id">, editingCardId?: string) => {
+    try {
+      if (editingCardId) {
+        await updateDoc(doc(db, "cards", editingCardId), cardData);
+        setCards(cards.map(card =>
+          card.id === editingCardId ? { ...cardData, id: editingCardId } : card
+        ));
+        toast.success("Карточка успешно обновлена");
+      } else {
+        const docRef = await addDoc(collection(db, "cards"), cardData);
+        const newCard: Card = { ...cardData, id: docRef.id };
+        setCards([...cards, newCard]);
+        toast.success("Карточка успешно добавлена");
+      }
+      closeDrawer();
+    } catch (error) {
+      console.error("Ошибка сохранения карточки:", error);
+      toast.error("Ошибка сохранения карточки");
+    }
+  };
 
-  const toggleDropdown = (cardId: string) => {
-    setOpenDropdown(openDropdown === cardId ? null : cardId);
+  const handleAdd = () => {
+    openDrawer(
+      CardForm,
+      {
+        onSave: (cardData: Omit<Card, "id">) => handleSaveCard(cardData),
+        onCancel: closeDrawer,
+      },
+      { size: "wide", title: "Создание новой карточки" }
+    );
   };
 
   const handleEdit = (card: Card) => {
-    setEditingCard(card);
-    setIsModalOpen(true);
-    setOpenDropdown(null);
+    openDrawer(
+      CardForm,
+      {
+        editingCard: card,
+        onSave: (cardData: Omit<Card, "id">) => handleSaveCard(cardData, card.id),
+        onCancel: closeDrawer,
+      },
+      { size: "wide", title: `Редактирование: ${card.title}` }
+    );
   };
 
   const handleDelete = async (cardId: string) => {
-    setOpenDropdown(null);
-    if (window.confirm("Вы уверены, что хотите удалить эту карточку?")) {
-      try {
-        await deleteDoc(doc(db, "cards", cardId));
-        setCards(cards.filter(card => card.id !== cardId));
-        toast.success("Карточка успешно удалена");
-      } catch (error) {
-        console.error("Ошибка удаления карточки:", error);
-        toast.error("Ошибка удаления карточки");
-      }
+    try {
+      await deleteDoc(doc(db, "cards", cardId));
+      setCards(cards.filter(card => card.id !== cardId));
+      toast.success("Карточка успешно удалена");
+      closeDrawer();
+    } catch (error) {
+      console.error("Ошибка удаления карточки:", error);
+      toast.error("Ошибка удаления карточки");
     }
+  };
+
+  const openDeleteConfirmation = (card: Card) => {
+    openDrawer(
+      DrawerDeleteConfirmation,
+      {
+        cardName: card.title,
+        onConfirm: () => handleDelete(card.id),
+        onCancel: () => openActionsDrawer(card), // Go back to actions
+      },
+      { size: "default", title: "Подтверждение удаления" }
+    );
+  };
+
+  const openActionsDrawer = (card: Card) => {
+    openDrawer(
+      DrawerCardActions,
+      {
+        onEdit: () => handleEdit(card),
+        onDelete: () => openDeleteConfirmation(card),
+      },
+      { size: "default", title: `Действия: ${card.title}` }
+    );
   };
 
   const handleToggleFeatured = async (cardId: string, isFeatured: boolean) => {
@@ -160,40 +195,6 @@ export function CardsManagement() {
     } catch (error) {
       console.error("Ошибка обновления статуса 'На главной':", error);
       toast.error("Не удалось обновить статус");
-    }
-  };
-
-  const handleAdd = () => {
-    setEditingCard(null);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveCard = async (cardData: Omit<Card, "id">) => {
-    try {
-      if (editingCard) {
-        // Редактирование
-        await updateDoc(doc(db, "cards", editingCard.id), cardData);
-        setCards(cards.map(card =>
-          card.id === editingCard.id
-            ? { ...cardData, id: editingCard.id }
-            : card
-        ));
-        toast.success("Карточка успешно обновлена");
-      } else {
-        // Добавление
-        const docRef = await addDoc(collection(db, "cards"), cardData);
-        const newCard: Card = {
-          ...cardData,
-          id: docRef.id
-        };
-        setCards([...cards, newCard]);
-        toast.success("Карточка успешно добавлена");
-      }
-      setIsModalOpen(false);
-      setEditingCard(null);
-    } catch (error) {
-      console.error("Ошибка сохранения карточки:", error);
-      toast.error("Ошибка сохранения карточки");
     }
   };
 
@@ -215,9 +216,7 @@ export function CardsManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Панель действий */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        {/* Левая часть: Поиск и фильтр */}
         <div className="flex flex-col sm:flex-row gap-4 flex-1 min-w-0">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 h-4 w-4" />
@@ -242,8 +241,6 @@ export function CardsManagement() {
             </SelectContent>
           </Select>
         </div>
-
-        {/* Правая часть: Кнопка добавления */}
         <div className="flex-shrink-0">
           <Button onClick={handleAdd} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
             <Plus className="h-4 w-4 mr-2" />
@@ -252,7 +249,6 @@ export function CardsManagement() {
         </div>
       </div>
 
-      {/* Таблица карточек */}
       <div className="rounded-lg border border-zinc-700 bg-[#18181B]/50">
         <Table>
           <TableHeader>
@@ -273,9 +269,7 @@ export function CardsManagement() {
                     src={card.imageUrl || card.image}
                     alt={card.title || card.name}
                     className="w-10 h-[60px] object-cover rounded-sm"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.jpg";
-                    }}
+                    onError={(e) => { e.currentTarget.src = "/placeholder.jpg"; }}
                   />
                 </TableCell>
                 <TableCell className="py-3 px-4 text-white font-medium">{card.title || card.name}</TableCell>
@@ -288,38 +282,15 @@ export function CardsManagement() {
                     className="data-[state=checked]:bg-blue-600"
                   />
                 </TableCell>
-                <TableCell className="py-3 px-4 text-right relative">
-                  <div className="relative" ref={dropdownRef}>
-                    <Button
-                      variant="ghost"
-                      className="h-8 w-8 p-0 hover:bg-zinc-700"
-                      onClick={() => toggleDropdown(card.id)}
-                    >
-                      <span className="sr-only">Открыть меню</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-
-                    {openDropdown === card.id && (
-                      <div
-                        className="absolute right-0 top-full mt-1 w-48 bg-zinc-900 border border-zinc-700 rounded-md shadow-lg z-[9999] py-1"
-                      >
-                        <button
-                          onClick={() => handleEdit(card)}
-                          className="w-full px-3 py-2 text-left text-zinc-300 hover:bg-zinc-700 hover:text-white flex items-center"
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Редактировать
-                        </button>
-                        <button
-                          onClick={() => handleDelete(card.id)}
-                          className="w-full px-3 py-2 text-left text-red-400 hover:bg-red-900/50 hover:text-red-300 flex items-center"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Удалить
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                <TableCell className="py-3 px-4 text-right">
+                  <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0 hover:bg-zinc-700"
+                    onClick={() => openActionsDrawer(card)}
+                  >
+                    <span className="sr-only">Открыть меню</span>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -332,14 +303,6 @@ export function CardsManagement() {
           {searchTerm || selectedCategory !== 'all' ? "Карточки не найдены" : "Нет карточек для отображения"}
         </div>
       )}
-
-      {/* Модальное окно для добавления/редактирования карточки */}
-      <CardFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveCard}
-        editingCard={editingCard}
-      />
     </div>
   );
 }
