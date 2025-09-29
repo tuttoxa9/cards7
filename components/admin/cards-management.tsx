@@ -272,20 +272,42 @@ export function CardsManagement() {
                     className="data-[state=checked]:bg-blue-600"
                   />
                 </TableCell>
-                <TableCell className="py-3 px-4 text-right">
-                  <DropdownMenu>
+                <TableCell className="py-3 px-4 text-right relative">
+                  <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-700">
+                      <Button
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-zinc-700 data-[state=open]:bg-zinc-700 relative z-10"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <span className="sr-only">Открыть меню</span>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-[#27272A] border-zinc-700 text-zinc-300">
-                      <DropdownMenuItem onClick={() => handleEdit(card)} className="cursor-pointer focus:bg-zinc-700 focus:text-white">
+                    <DropdownMenuContent
+                      align="end"
+                      side="bottom"
+                      className="w-48 bg-zinc-900 border border-zinc-700 text-zinc-300 shadow-lg rounded-md p-1"
+                      style={{ zIndex: 9999 }}
+                      sideOffset={5}
+                    >
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(card);
+                        }}
+                        className="cursor-pointer hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white px-2 py-2 rounded-sm"
+                      >
                         <Edit className="mr-2 h-4 w-4" />
                         Редактировать
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(card.id)} className="cursor-pointer focus:bg-red-900/50 focus:text-red-400 text-red-400">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(card.id);
+                        }}
+                        className="cursor-pointer hover:bg-red-900/50 hover:text-red-400 focus:bg-red-900/50 focus:text-red-400 text-red-400 px-2 py-2 rounded-sm"
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Удалить
                       </DropdownMenuItem>
