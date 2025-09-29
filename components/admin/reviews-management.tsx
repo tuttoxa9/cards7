@@ -8,10 +8,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { MoreHorizontal, Plus, Edit, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDrawer } from "@/hooks/use-drawer";
 import { ReviewForm } from "./review-form";
+import { DrawerCardActions } from "./drawer-card-actions";
 
 // --- Вспомогательный компонент для отображения звезд ---
 function StarRating({ rating }: { rating: number }) {
@@ -33,17 +34,14 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 // --- Типы данных ---
-type ReviewStatus = "Опубликован" | "Ожидает модерации" | "Отклонен";
-
 interface Review {
   id: string;
   authorName: string;
-  authorEmail: string;
   authorAvatar?: string;
   rating: number;
   text: string;
   createdAt: any; // Firestore timestamp
-  status: ReviewStatus;
+  status: "Опубликован"; // Статус теперь всегда такой
 }
 
 // --- Основной компонент ---
@@ -79,19 +77,78 @@ export function ReviewsManagement() {
     loadReviews();
   }, []);
 
-  const handleSave = async (data: any) => {
+  const handleSave = async (data: any, reviewId?: string) => {
     try {
-      await addDoc(collection(db, "reviews"), {
-        ...data,
-        createdAt: new Date(),
-      });
-      toast.success("Отзыв успешно добавлен");
+      if (reviewId) {
+        // Обновление
+        await updateDoc(doc(db, "reviews", reviewId), data);
+        toast.success("Отзыв успешно обновлен");
+      } else {
+        // Создание
+        await addDoc(collection(db, "reviews"), {
+          ...data,
+          status: "Опубликован",
+          createdAt: new Date(),
+        });
+        toast.success("Отзыв успешно добавлен");
+      }
+      closeDrawer();
+      loadReviews(); // Перезагружаем список в обоих случаях
+    } catch (error) {
+      console.error("Ошибка сохранения отзыва:", error);
+      toast.error("Не удалось сохранить отзыв");
+    }
+  };
+
+  const handleEdit = (review: Review) => {
+    openDrawer(
+      ReviewForm,
+      {
+        editingReview: review,
+        onSave: (data: any) => handleSave(data, review.id),
+        onCancel: closeDrawer
+      },
+      { size: "wide", title: "Редактирование отзыва" }
+    );
+  };
+
+  const handleDelete = async (reviewId: string) => {
+    try {
+      await deleteDoc(doc(db, "reviews", reviewId));
+      toast.success("Отзыв удален");
       closeDrawer();
       loadReviews();
     } catch (error) {
-      console.error("Ошибка добавления отзыва:", error);
-      toast.error("Не удалось добавить отзыв");
+      console.error("Ошибка удаления отзыва:", error);
+      toast.error("Не удалось удалить отзыв");
     }
+  };
+
+  const openDeleteConfirmation = (review: Review) => {
+    openDrawer(
+      () => (
+        <div className="text-center space-y-4">
+          <p>Вы уверены, что хотите удалить отзыв от <span className="font-bold">{review.authorName}</span>?</p>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" onClick={() => openActionsDrawer(review)}>Отмена</Button>
+            <Button variant="destructive" onClick={() => handleDelete(review.id)}>Удалить</Button>
+          </div>
+        </div>
+      ),
+      {},
+      { size: "default", title: "Подтверждение удаления" }
+    );
+  };
+
+  const openActionsDrawer = (review: Review) => {
+    openDrawer(
+      DrawerCardActions,
+      {
+        onEdit: () => handleEdit(review),
+        onDelete: () => openDeleteConfirmation(review),
+      },
+      { size: "default", title: `Действия с отзывом` }
+    );
   };
 
   const openAddForm = () => {
@@ -102,31 +159,6 @@ export function ReviewsManagement() {
     );
   };
 
-  const getStatusBadgeVariant = (status: ReviewStatus) => {
-    switch (status) {
-      case "Опубликован":
-        return "default"; // Зеленый
-      case "Ожидает модерации":
-        return "secondary"; // Желтый/Серый
-      case "Отклонен":
-        return "destructive"; // Красный
-      default:
-        return "outline";
-    }
-  };
-
-  const getStatusBadgeClassName = (status: ReviewStatus) => {
-     switch (status) {
-      case "Опубликован":
-        return "bg-green-600/80 border-green-600";
-      case "Ожидает модерации":
-        return "bg-yellow-500/80 border-yellow-500 text-yellow-950";
-      case "Отклонен":
-        return "bg-red-600/80 border-red-600";
-      default:
-        return "";
-    }
-  }
 
   if (isLoading) {
     return (
@@ -151,7 +183,6 @@ export function ReviewsManagement() {
         <Table>
           <TableHeader>
             <TableRow className="border-b-zinc-700 hover:bg-transparent">
-              <TableHead className="w-[150px] text-zinc-300 px-4 py-3">Статус</TableHead>
               <TableHead className="min-w-[200px] text-zinc-300 px-4 py-3">Автор</TableHead>
               <TableHead className="w-[120px] text-zinc-300 px-4 py-3">Рейтинг</TableHead>
               <TableHead className="text-zinc-300 px-4 py-3">Отзыв</TableHead>
@@ -162,11 +193,6 @@ export function ReviewsManagement() {
           <TableBody>
             {reviews.map((review) => (
               <TableRow key={review.id} className="border-zinc-800 hover:bg-[#27272A]/50">
-                <TableCell className="px-4 py-3">
-                  <Badge variant={getStatusBadgeVariant(review.status)} className={getStatusBadgeClassName(review.status)}>
-                    {review.status}
-                  </Badge>
-                </TableCell>
                 <TableCell className="px-4 py-3 font-medium text-white">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
@@ -175,7 +201,6 @@ export function ReviewsManagement() {
                     </Avatar>
                     <div>
                       <div>{review.authorName}</div>
-                      <div className="text-xs text-zinc-400">{review.authorEmail}</div>
                     </div>
                   </div>
                 </TableCell>
@@ -189,7 +214,7 @@ export function ReviewsManagement() {
                   {new Date(review.createdAt).toLocaleString()}
                 </TableCell>
                 <TableCell className="px-4 py-3 text-right">
-                  <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-700">
+                  <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-700" onClick={() => openActionsDrawer(review)}>
                     <span className="sr-only">Открыть меню</span>
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>

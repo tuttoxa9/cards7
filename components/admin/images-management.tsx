@@ -6,36 +6,19 @@ import { db } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import { MoreHorizontal, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDrawer } from "@/hooks/use-drawer";
 import { BackgroundImageForm } from "./background-image-form";
+import { DrawerCardActions } from "./drawer-card-actions";
 
 // --- Типы данных ---
 interface BackgroundImage {
   id: string;
   name: string;
+  description?: string;
   imageUrl: string;
   isActive: boolean;
-}
-
-// --- Компонент для подтверждения удаления ---
-function DeleteConfirmation({ onConfirm, onCancel }: { onConfirm: () => void, onCancel: () => void }) {
-  return (
-    <div className="space-y-4 text-center">
-      <p className="text-sm text-zinc-300">
-        Вы уверены, что хотите удалить этот задник?
-      </p>
-      <div className="flex justify-center gap-3">
-        <Button variant="outline" onClick={onCancel}>
-          Отмена
-        </Button>
-        <Button variant="destructive" onClick={onConfirm}>
-          Удалить
-        </Button>
-      </div>
-    </div>
-  );
 }
 
 // --- Основной компонент ---
@@ -65,16 +48,33 @@ export function ImagesManagement() {
     loadImages();
   }, []);
 
-  const handleSave = async (data: Omit<BackgroundImage, "id">) => {
+  const handleSave = async (data: Omit<BackgroundImage, "id">, imageId?: string) => {
     try {
-      await addDoc(collection(db, "backgroundImages"), data);
-      toast.success("Задник успешно добавлен");
+      if (imageId) {
+        await updateDoc(doc(db, "backgroundImages", imageId), data);
+        toast.success("Задник успешно обновлен");
+      } else {
+        await addDoc(collection(db, "backgroundImages"), data);
+        toast.success("Задник успешно добавлен");
+      }
       closeDrawer();
-      loadImages(); // Перезагружаем список
+      loadImages();
     } catch (error) {
       console.error("Ошибка сохранения задника:", error);
       toast.error("Не удалось сохранить задник");
     }
+  };
+
+  const handleEdit = (image: BackgroundImage) => {
+     openDrawer(
+      BackgroundImageForm,
+      {
+        editingImage: image,
+        onSave: (data: any) => handleSave(data, image.id),
+        onCancel: closeDrawer
+      },
+      { size: "default", title: "Редактировать задник" }
+    );
   };
 
   const handleDelete = async (id: string) => {
@@ -82,7 +82,7 @@ export function ImagesManagement() {
       await deleteDoc(doc(db, "backgroundImages", id));
       toast.success("Задник успешно удален");
       closeDrawer();
-      loadImages(); // Перезагружаем список
+      loadImages();
     } catch (error) {
       console.error("Ошибка удаления задника:", error);
       toast.error("Не удалось удалить задник");
@@ -99,12 +99,28 @@ export function ImagesManagement() {
 
   const openDeleteConfirmation = (image: BackgroundImage) => {
     openDrawer(
-      DeleteConfirmation,
-      {
-        onConfirm: () => handleDelete(image.id),
-        onCancel: closeDrawer,
-      },
+       () => (
+        <div className="text-center space-y-4">
+          <p>Вы уверены, что хотите удалить задник <span className="font-bold">{image.name}</span>?</p>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" onClick={() => openActionsDrawer(image)}>Отмена</Button>
+            <Button variant="destructive" onClick={() => handleDelete(image.id)}>Удалить</Button>
+          </div>
+        </div>
+      ),
+      {},
       { size: "default", title: "Подтверждение удаления" }
+    );
+  };
+
+  const openActionsDrawer = (image: BackgroundImage) => {
+    openDrawer(
+      DrawerCardActions,
+      {
+        onEdit: () => handleEdit(image),
+        onDelete: () => openDeleteConfirmation(image),
+      },
+      { size: "default", title: `Действия с задником` }
     );
   };
 
@@ -131,6 +147,7 @@ export function ImagesManagement() {
               <TableRow className="border-b-zinc-700 hover:bg-transparent">
                 <TableHead className="w-[100px]">Превью</TableHead>
                 <TableHead>Название</TableHead>
+                <TableHead>Описание</TableHead>
                 <TableHead className="text-right w-[80px]">Действия</TableHead>
               </TableRow>
             </TableHeader>
@@ -141,14 +158,15 @@ export function ImagesManagement() {
                     <img src={image.imageUrl} alt={image.name} className="h-12 w-20 object-cover rounded-sm" />
                   </TableCell>
                   <TableCell className="font-medium text-white">{image.name}</TableCell>
+                  <TableCell className="text-sm text-zinc-400">{image.description || "-"}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 p-0 hover:bg-zinc-700"
-                      onClick={() => openDeleteConfirmation(image)}
+                      onClick={() => openActionsDrawer(image)}
                     >
-                      <Trash2 className="h-4 w-4 text-red-400" />
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
