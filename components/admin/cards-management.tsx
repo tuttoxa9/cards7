@@ -1,11 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { MoreHorizontal, Plus, Edit, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { CardFormModal } from "./card-form-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -41,59 +54,66 @@ export function CardsManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<Card | null>(null);
-
-  // Загрузка карточек из Firestore
-  const loadCards = async () => {
-    try {
-      setIsLoading(true);
-      const querySnapshot = await getDocs(collection(db, "cards"));
-      const cardsData: Card[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        cardsData.push({
-          id: doc.id,
-          ...data,
-        } as Card);
-      });
-
-      setCards(cardsData);
-    } catch (error) {
-      console.error("Ошибка загрузки карточек:", error);
-      toast.error("Ошибка загрузки карточек");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Card; direction: 'ascending' | 'descending' }>({ key: 'name', direction: 'ascending' });
 
   useEffect(() => {
-    loadCards();
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        // Загрузка карточек
+        const cardsQuerySnapshot = await getDocs(collection(db, "cards"));
+        const cardsData: Card[] = cardsQuerySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Card));
+        setCards(cardsData);
+
+        // Загрузка категорий
+        const categoriesQuerySnapshot = await getDocs(collection(db, "categories"));
+        const categoriesData: string[] = categoriesQuerySnapshot.docs.map(doc => doc.data().name);
+        setCategories(categoriesData);
+
+      } catch (error) {
+        console.error("Ошибка загрузки данных:", error);
+        toast.error("Ошибка загрузки данных");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  const filteredCards = cards.filter(card =>
-    card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    card.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const sortedAndFilteredCards = [...cards]
+    .filter(card => {
+      const searchTermLower = searchTerm.toLowerCase();
+      const categoryMatch = selectedCategory === 'all' || card.category === selectedCategory;
+      const searchMatch = card.name.toLowerCase().includes(searchTermLower) || card.category.toLowerCase().includes(searchTermLower);
+      return categoryMatch && searchMatch;
+    })
+    .sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case "common": return "bg-gray-500";
-      case "rare": return "bg-blue-500";
-      case "epic": return "bg-purple-500";
-      case "legendary": return "bg-orange-500";
-      default: return "bg-gray-500";
+      if (aValue === undefined || bValue === undefined) return 0;
+
+      let comparison = 0;
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        comparison = aValue - bValue;
+      } else if (typeof aValue === 'string' && typeof bValue === 'string') {
+        comparison = aValue.localeCompare(bValue);
+      }
+
+      return sortConfig.direction === 'ascending' ? comparison : -comparison;
+    });
+
+  const requestSort = (key: keyof Card) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
     }
+    setSortConfig({ key, direction });
   };
 
-  const getRarityText = (rarity: string) => {
-    switch (rarity) {
-      case "common": return "Обычная";
-      case "rare": return "Редкая";
-      case "epic": return "Эпическая";
-      case "legendary": return "Легендарная";
-      default: return "Неизвестно";
-    }
-  };
 
   const handleEdit = (card: Card) => {
     setEditingCard(card);
@@ -110,6 +130,20 @@ export function CardsManagement() {
         console.error("Ошибка удаления карточки:", error);
         toast.error("Ошибка удаления карточки");
       }
+    }
+  };
+
+  const handleToggleFeatured = async (cardId: string, isFeatured: boolean) => {
+    try {
+      const cardRef = doc(db, "cards", cardId);
+      await updateDoc(cardRef, { isFeatured });
+      setCards(cards.map(card =>
+        card.id === cardId ? { ...card, isFeatured } : card
+      ));
+      toast.success(`Карточка ${isFeatured ? "добавлена на главную" : "убрана с главной"}`);
+    } catch (error) {
+      console.error("Ошибка обновления статуса 'На главной':", error);
+      toast.error("Не удалось обновить статус");
     }
   };
 
@@ -165,88 +199,98 @@ export function CardsManagement() {
 
   return (
     <div className="space-y-6">
-      {/* Заголовок и поиск */}
-      <div className="flex justify-between items-center">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 h-4 w-4" />
-          <Input
-            placeholder="Поиск карточек..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-64 bg-[#18181B] border-zinc-600 text-white"
-          />
+      {/* Панель действий */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Левая часть: Поиск и фильтр */}
+        <div className="flex flex-col sm:flex-row gap-4 flex-1 min-w-0">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 h-4 w-4" />
+            <Input
+              placeholder="Поиск карточек..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-full bg-[#18181B] border-zinc-600 text-white"
+            />
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-[180px] bg-[#18181B] border-zinc-600 text-white">
+              <SelectValue placeholder="Фильтр по категории" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#27272A] border-zinc-700 text-zinc-300">
+              <SelectItem value="all" className="cursor-pointer focus:bg-zinc-700 focus:text-white">Все категории</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category} value={category} className="cursor-pointer focus:bg-zinc-700 focus:text-white">
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <Button onClick={handleAdd} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Добавить карточку
-        </Button>
+
+        {/* Правая часть: Кнопка добавления */}
+        <div className="flex-shrink-0">
+          <Button onClick={handleAdd} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            Добавить карточку
+          </Button>
+        </div>
       </div>
 
       {/* Таблица карточек */}
-      <div className="rounded-lg border border-zinc-700 bg-[#18181B]">
+      <div className="rounded-lg border border-zinc-700 bg-[#18181B]/50">
         <Table>
           <TableHeader>
-            <TableRow className="border-zinc-700">
-              <TableHead className="text-zinc-300">Изображение</TableHead>
-              <TableHead className="text-zinc-300">Название</TableHead>
-              <TableHead className="text-zinc-300">Цена</TableHead>
-              <TableHead className="text-zinc-300">Редкость</TableHead>
-              <TableHead className="text-zinc-300">Категория</TableHead>
-              <TableHead className="text-zinc-300">На главной</TableHead>
-              <TableHead className="text-zinc-300">Действия</TableHead>
+            <TableRow className="border-b-zinc-700 hover:bg-transparent">
+              <TableHead className="text-zinc-300 w-[76px] p-2">Изображение</TableHead>
+              <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('name')}>Название</TableHead>
+              <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('category')}>Категория</TableHead>
+              <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('price')}>Цена (BYN)</TableHead>
+              <TableHead className="text-zinc-300 px-4 py-3">На главной</TableHead>
+              <TableHead className="text-zinc-300 text-right w-[80px] px-4 py-3">Действия</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredCards.map((card) => (
-              <TableRow key={card.id} className="border-zinc-700 hover:bg-[#27272A]">
-                <TableCell>
+            {sortedAndFilteredCards.map((card) => (
+              <TableRow key={card.id} className="border-zinc-800 hover:bg-[#27272A]/50 data-[state=selected]:bg-[#27272A]">
+                <TableCell className="p-2">
                   <img
                     src={card.imageUrl || card.image}
                     alt={card.title || card.name}
-                    className="w-12 h-16 object-cover rounded"
+                    className="w-10 h-[60px] object-cover rounded-sm"
                     onError={(e) => {
                       e.currentTarget.src = "/placeholder.jpg";
                     }}
                   />
                 </TableCell>
-                <TableCell className="text-white font-medium">{card.title || card.name}</TableCell>
-                <TableCell className="text-white">{card.price.toLocaleString()} BYN</TableCell>
-                <TableCell>
-                  <Badge className={`${getRarityColor(card.rarity)} text-white`}>
-                    {getRarityText(card.rarity)}
-                  </Badge>
+                <TableCell className="py-3 px-4 text-white font-medium">{card.title || card.name}</TableCell>
+                <TableCell className="py-3 px-4 text-zinc-400">{card.category}</TableCell>
+                <TableCell className="py-3 px-4 text-white">{card.price.toLocaleString()}</TableCell>
+                <TableCell className="py-3 px-4">
+                  <Switch
+                    checked={card.isFeatured}
+                    onCheckedChange={(isFeatured) => handleToggleFeatured(card.id, isFeatured)}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
                 </TableCell>
-                <TableCell className="text-zinc-400">{card.category}</TableCell>
-                <TableCell>
-                  {card.isFeatured ? (
-                    <Badge className="bg-green-600 text-white">
-                      Да
-                    </Badge>
-                  ) : (
-                    <Badge variant="secondary" className="bg-zinc-600 text-zinc-300">
-                      Нет
-                    </Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleEdit(card)}
-                      className="text-zinc-400 hover:text-white"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleDelete(card.id)}
-                      className="text-zinc-400 hover:text-red-400"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                <TableCell className="py-3 px-4 text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-zinc-700">
+                        <span className="sr-only">Открыть меню</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-[#27272A] border-zinc-700 text-zinc-300">
+                      <DropdownMenuItem onClick={() => handleEdit(card)} className="cursor-pointer focus:bg-zinc-700 focus:text-white">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Редактировать
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(card.id)} className="cursor-pointer focus:bg-red-900/50 focus:text-red-400 text-red-400">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Удалить
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
@@ -254,9 +298,9 @@ export function CardsManagement() {
         </Table>
       </div>
 
-      {filteredCards.length === 0 && !isLoading && (
+      {sortedAndFilteredCards.length === 0 && !isLoading && (
         <div className="text-center text-zinc-400 py-20">
-          {searchTerm ? "Карточки не найдены" : "Нет карточек для отображения"}
+          {searchTerm || selectedCategory !== 'all' ? "Карточки не найдены" : "Нет карточек для отображения"}
         </div>
       )}
 
