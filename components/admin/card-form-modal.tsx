@@ -383,7 +383,7 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
                 </SelectTrigger>
                 <SelectContent className="bg-[#222222] border-zinc-600">
                   {categories.length === 0 ? (
-                    <SelectItem value="" disabled className="text-zinc-400 hover:bg-[#1a1a1a]">
+                    <SelectItem value="no-categories" disabled className="text-zinc-400 hover:bg-[#1a1a1a]">
                       Категории не найдены
                     </SelectItem>
                   ) : (
