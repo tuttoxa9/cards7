@@ -8,8 +8,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDrawer } from "@/hooks/use-drawer";
+import { ReviewForm } from "./review-form";
 
 // --- Вспомогательный компонент для отображения звезд ---
 function StarRating({ rating }: { rating: number }) {
@@ -48,33 +50,57 @@ interface Review {
 export function ReviewsManagement() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { openDrawer, closeDrawer } = useDrawer();
+
+  const loadReviews = async () => {
+    try {
+      setIsLoading(true);
+      const reviewsQuerySnapshot = await getDocs(collection(db, "reviews"));
+      const reviewsData: Review[] = reviewsQuerySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate(), // Конвертируем Timestamp в Date
+        } as Review;
+      });
+      // Сортируем по дате, новые вверху
+      reviewsData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setReviews(reviewsData);
+    } catch (error) {
+      console.error("Ошибка загрузки отзывов:", error);
+      toast.error("Не удалось загрузить отзывы");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadReviews = async () => {
-      try {
-        setIsLoading(true);
-        const reviewsQuerySnapshot = await getDocs(collection(db, "reviews"));
-        const reviewsData: Review[] = reviewsQuerySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            createdAt: data.createdAt?.toDate(), // Конвертируем Timestamp в Date
-          } as Review;
-        });
-        // Сортируем по дате, новые вверху
-        reviewsData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        setReviews(reviewsData);
-      } catch (error) {
-        console.error("Ошибка загрузки отзывов:", error);
-        toast.error("Не удалось загрузить отзывы");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     loadReviews();
   }, []);
+
+  const handleSave = async (data: any) => {
+    try {
+      await addDoc(collection(db, "reviews"), {
+        ...data,
+        createdAt: new Date(),
+      });
+      toast.success("Отзыв успешно добавлен");
+      closeDrawer();
+      loadReviews();
+    } catch (error) {
+      console.error("Ошибка добавления отзыва:", error);
+      toast.error("Не удалось добавить отзыв");
+    }
+  };
+
+  const openAddForm = () => {
+    openDrawer(
+      ReviewForm,
+      { onSave: handleSave, onCancel: closeDrawer },
+      { size: "wide", title: "Добавить новый отзыв" }
+    );
+  };
 
   const getStatusBadgeVariant = (status: ReviewStatus) => {
     switch (status) {
@@ -114,7 +140,13 @@ export function ReviewsManagement() {
 
   return (
     <div className="space-y-6">
-       <h2 className="text-2xl font-bold text-white">Управление отзывами</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-white">Управление отзывами</h2>
+        <Button onClick={openAddForm}>
+          <Plus className="h-4 w-4 mr-2" />
+          Добавить отзыв
+        </Button>
+      </div>
       <div className="rounded-lg border border-zinc-700 bg-[#18181B]/50">
         <Table>
           <TableHeader>
