@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { User } from "firebase/auth";
 import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
+import { logActivity } from "@/lib/activity-logger";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -44,8 +46,12 @@ interface Review {
   status: "Опубликован"; // Статус теперь всегда такой
 }
 
+interface ReviewsManagementProps {
+  user: User;
+}
+
 // --- Основной компонент ---
-export function ReviewsManagement() {
+export function ReviewsManagement({ user }: ReviewsManagementProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { openDrawer, closeDrawer } = useDrawer();
@@ -81,16 +87,36 @@ export function ReviewsManagement() {
     try {
       if (reviewId) {
         // Обновление
+        const originalReview = reviews.find(r => r.id === reviewId);
         await updateDoc(doc(db, "reviews", reviewId), data);
         toast.success("Отзыв успешно обновлен");
+
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "UPDATE",
+          entityType: "Отзыв",
+          entityId: reviewId,
+          description: `Обновил отзыв от "${data.authorName}".`,
+        });
+
       } else {
         // Создание
-        await addDoc(collection(db, "reviews"), {
+        const docRef = await addDoc(collection(db, "reviews"), {
           ...data,
           status: "Опубликован",
           createdAt: new Date(),
         });
         toast.success("Отзыв успешно добавлен");
+
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "CREATE",
+          entityType: "Отзыв",
+          entityId: docRef.id,
+          description: `Создал новый отзыв от "${data.authorName}".`,
+        });
       }
       closeDrawer();
       loadReviews(); // Перезагружаем список в обоих случаях
@@ -113,9 +139,24 @@ export function ReviewsManagement() {
   };
 
   const handleDelete = async (reviewId: string) => {
+    const reviewToDelete = reviews.find(r => r.id === reviewId);
+    if (!reviewToDelete) {
+      toast.error("Отзыв для удаления не найден.");
+      return;
+    }
     try {
       await deleteDoc(doc(db, "reviews", reviewId));
       toast.success("Отзыв удален");
+
+      await logActivity({
+        userId: user.uid,
+        userName: user.email || "Неизвестный",
+        actionType: "DELETE",
+        entityType: "Отзыв",
+        entityId: reviewId,
+        description: `Удалил отзыв от "${reviewToDelete.authorName}".`,
+      });
+
       closeDrawer();
       loadReviews();
     } catch (error) {

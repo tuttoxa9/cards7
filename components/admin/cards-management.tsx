@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { User } from "firebase/auth";
 import { MoreHorizontal, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ import { toast } from "sonner";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useDrawer } from "@/hooks/use-drawer";
+import { logActivity } from "@/lib/activity-logger";
 import { CardForm } from "./card-form";
 import { DrawerCardActions } from "./drawer-card-actions";
 import { DrawerDeleteConfirmation } from "./drawer-delete-confirmation";
@@ -46,7 +48,11 @@ interface Card {
   tag?: string;
 }
 
-export function CardsManagement() {
+interface CardsManagementProps {
+  user: User;
+}
+
+export function CardsManagement({ user }: CardsManagementProps) {
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,16 +115,43 @@ export function CardsManagement() {
   const handleSaveCard = async (cardData: Omit<Card, "id">, editingCardId?: string) => {
     try {
       if (editingCardId) {
+        const originalCard = cards.find(c => c.id === editingCardId);
         await updateDoc(doc(db, "cards", editingCardId), cardData);
         setCards(cards.map(card =>
           card.id === editingCardId ? { ...cardData, id: editingCardId } : card
         ));
         toast.success("Карточка успешно обновлена");
+
+        // Логирование обновления
+        const changes = Object.keys(cardData)
+          .filter(key => originalCard && cardData[key as keyof typeof cardData] !== originalCard[key as keyof typeof originalCard])
+          .map(key => `'${key}' с '${originalCard ? originalCard[key as keyof typeof originalCard] : ''}' на '${cardData[key as keyof typeof cardData]}'`)
+          .join(', ');
+
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "UPDATE",
+          entityType: "Карточка",
+          entityId: editingCardId,
+          description: `Обновил карточку "${cardData.title}". Изменения: ${changes || 'нет данных об изменениях'}.`,
+        });
+
       } else {
         const docRef = await addDoc(collection(db, "cards"), cardData);
         const newCard: Card = { ...cardData, id: docRef.id };
         setCards([...cards, newCard]);
         toast.success("Карточка успешно добавлена");
+
+        // Логирование создания
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "CREATE",
+          entityType: "Карточка",
+          entityId: docRef.id,
+          description: `Создал новую карточку "${cardData.title}".`,
+        });
       }
       closeDrawer();
     } catch (error) {
@@ -151,10 +184,26 @@ export function CardsManagement() {
   };
 
   const handleDelete = async (cardId: string) => {
+    const cardToDelete = cards.find(card => card.id === cardId);
+    if (!cardToDelete) {
+      toast.error("Карточка для удаления не найдена.");
+      return;
+    }
     try {
       await deleteDoc(doc(db, "cards", cardId));
       setCards(cards.filter(card => card.id !== cardId));
       toast.success("Карточка успешно удалена");
+
+      // Логирование удаления
+      await logActivity({
+        userId: user.uid,
+        userName: user.email || "Неизвестный",
+        actionType: "DELETE",
+        entityType: "Карточка",
+        entityId: cardId,
+        description: `Удалил карточку "${cardToDelete.title}".`,
+      });
+
       closeDrawer();
     } catch (error) {
       console.error("Ошибка удаления карточки:", error);
@@ -186,13 +235,27 @@ export function CardsManagement() {
   };
 
   const handleToggleFeatured = async (cardId: string, isFeatured: boolean) => {
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+
     try {
       const cardRef = doc(db, "cards", cardId);
       await updateDoc(cardRef, { isFeatured });
-      setCards(cards.map(card =>
-        card.id === cardId ? { ...card, isFeatured } : card
+      setCards(cards.map(c =>
+        c.id === cardId ? { ...c, isFeatured } : c
       ));
       toast.success(`Карточка ${isFeatured ? "добавлена на главную" : "убрана с главной"}`);
+
+      // Логирование изменения статуса
+      await logActivity({
+        userId: user.uid,
+        userName: user.email || "Неизвестный",
+        actionType: "UPDATE",
+        entityType: "Карточка",
+        entityId: cardId,
+        description: `Изменил статус "На главной" для карточки "${card.title}" на "${isFeatured ? 'Да' : 'Нет'}".`,
+      });
+
     } catch (error) {
       console.error("Ошибка обновления статуса 'На главной':", error);
       toast.error("Не удалось обновить статус");

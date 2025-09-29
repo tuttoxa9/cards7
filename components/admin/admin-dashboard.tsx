@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Settings, LogOut } from "lucide-react";
+import { User } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { CardsManagement } from "./cards-management";
 import { SectionsManagement } from "./sections-management";
@@ -16,29 +17,30 @@ import { useDrawer } from "@/hooks/use-drawer";
 type ActiveTab = "cards" | "sections" | "images" | "categories" | "reviews" | "offers" | "orders";
 
 interface AdminDashboardProps {
+  user: User;
   onLogout: () => void;
 }
 
-export function AdminDashboard({ onLogout }: AdminDashboardProps) {
+export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("cards");
   const { isOpen, closeDrawer, Component, props, size, title, openDrawer } = useDrawer();
 
   const openSettingsPanel = () => {
-    openDrawer(SettingsPanel, {}, { size: "default", title: "Настройки" });
+    openDrawer(SettingsPanel, { user }, { size: "default", title: "Настройки" });
   };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "cards":
-        return <CardsManagement />;
+        return <CardsManagement user={user} />;
       case "sections":
-        return <SectionsManagement />;
+        return <SectionsManagement user={user} />;
       case "images":
-        return <ImagesManagement />;
+        return <ImagesManagement user={user} />;
       case "categories":
-        return <CategoriesManagement />;
+        return <CategoriesManagement user={user} />;
       case "reviews":
-        return <ReviewsManagement />;
+        return <ReviewsManagement user={user} />;
       case "offers":
         return (
           <div className="text-center text-zinc-400 py-20">

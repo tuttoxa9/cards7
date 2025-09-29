@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { User } from "firebase/auth";
+import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
+import { logActivity } from "@/lib/activity-logger";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Plus } from "lucide-react";
@@ -21,8 +23,12 @@ interface BackgroundImage {
   isActive: boolean;
 }
 
+interface ImagesManagementProps {
+  user: User;
+}
+
 // --- Основной компонент ---
-export function ImagesManagement() {
+export function ImagesManagement({ user }: ImagesManagementProps) {
   const [images, setImages] = useState<BackgroundImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { openDrawer, closeDrawer } = useDrawer();
@@ -53,9 +59,28 @@ export function ImagesManagement() {
       if (imageId) {
         await updateDoc(doc(db, "backgroundImages", imageId), data);
         toast.success("Задник успешно обновлен");
+
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "UPDATE",
+          entityType: "Изображение",
+          entityId: imageId,
+          description: `Обновил изображение (задник) "${data.name}".`,
+        });
+
       } else {
-        await addDoc(collection(db, "backgroundImages"), data);
+        const docRef = await addDoc(collection(db, "backgroundImages"), data);
         toast.success("Задник успешно добавлен");
+
+        await logActivity({
+          userId: user.uid,
+          userName: user.email || "Неизвестный",
+          actionType: "CREATE",
+          entityType: "Изображение",
+          entityId: docRef.id,
+          description: `Добавил новое изображение (задник) "${data.name}".`,
+        });
       }
       closeDrawer();
       loadImages();
@@ -78,9 +103,24 @@ export function ImagesManagement() {
   };
 
   const handleDelete = async (id: string) => {
+    const imageToDelete = images.find(img => img.id === id);
+    if (!imageToDelete) {
+      toast.error("Изображение для удаления не найдено.");
+      return;
+    }
     try {
       await deleteDoc(doc(db, "backgroundImages", id));
       toast.success("Задник успешно удален");
+
+      await logActivity({
+        userId: user.uid,
+        userName: user.email || "Неизвестный",
+        actionType: "DELETE",
+        entityType: "Изображение",
+        entityId: id,
+        description: `Удалил изображение (задник) "${imageToDelete.name}".`,
+      });
+
       closeDrawer();
       loadImages();
     } catch (error) {
