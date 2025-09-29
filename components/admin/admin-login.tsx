@@ -67,7 +67,6 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="Введите ваш email"
                 required
               />
             </div>
@@ -82,7 +81,6 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-[#18181B] border-zinc-600 text-white"
-                placeholder="••••••••"
                 required
               />
             </div>

@@ -7,11 +7,13 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { ImageUploader } from "../ui/image-uploader";
 import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(1, "Название обязательно"),
+  description: z.string().optional(),
   imageUrl: z.string().url("Требуется загрузить изображение"),
 });
 
@@ -20,14 +22,15 @@ type FormValues = z.infer<typeof formSchema>;
 interface BackgroundImageFormProps {
   onSave: (data: FormValues & { isActive: boolean }) => void;
   onCancel: () => void;
+  editingImage?: FormValues;
 }
 
-export function BackgroundImageForm({ onSave, onCancel }: BackgroundImageFormProps) {
+export function BackgroundImageForm({ onSave, onCancel, editingImage }: BackgroundImageFormProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", imageUrl: "" },
+    defaultValues: editingImage || { name: "", description: "", imageUrl: "" },
   });
 
   const handleImageUpload = async (file: File): Promise<string | null> => {
@@ -79,6 +82,19 @@ export function BackgroundImageForm({ onSave, onCancel }: BackgroundImageFormPro
         />
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Описание</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Краткое описание задника..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
@@ -100,7 +116,7 @@ export function BackgroundImageForm({ onSave, onCancel }: BackgroundImageFormPro
         <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-zinc-700">
           <Button type="button" variant="outline" onClick={onCancel}>Отмена</Button>
           <Button type="submit" disabled={isUploading || !form.formState.isValid}>
-            {isUploading ? "Загрузка..." : "Сохранить"}
+            {isUploading ? "Загрузка..." : (editingImage ? "Сохранить изменения" : "Сохранить")}
           </Button>
         </div>
       </form>

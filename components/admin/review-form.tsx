@@ -14,14 +14,12 @@ import { toast } from "sonner";
 
 const reviewSchema = z.object({
   authorName: z.string().min(1, "Имя автора обязательно"),
-  authorEmail: z.string().email("Некорректный email"),
-  authorAvatar: z.string().url("Требуется URL аватара").optional(),
+  authorAvatar: z.string().url("Некорректный URL").or(z.literal("")).optional(),
   rating: z.preprocess(
     (a) => parseInt(z.string().parse(a), 10),
     z.number().min(1, "Рейтинг не может быть ниже 1").max(5, "Рейтинг не может быть выше 5")
   ),
   text: z.string().min(10, "Отзыв должен содержать минимум 10 символов"),
-  status: z.enum(["Опубликован", "Ожидает модерации", "Отклонен"]),
 });
 
 type FormValues = z.infer<typeof reviewSchema>;
@@ -29,20 +27,19 @@ type FormValues = z.infer<typeof reviewSchema>;
 interface ReviewFormProps {
   onSave: (data: FormValues) => void;
   onCancel: () => void;
+  editingReview?: FormValues;
 }
 
-export function ReviewForm({ onSave, onCancel }: ReviewFormProps) {
+export function ReviewForm({ onSave, onCancel, editingReview }: ReviewFormProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: {
+    defaultValues: editingReview || {
       authorName: "",
-      authorEmail: "",
       authorAvatar: "",
       rating: 5,
       text: "",
-      status: "Опубликован",
     },
   });
 
@@ -86,17 +83,6 @@ export function ReviewForm({ onSave, onCancel }: ReviewFormProps) {
         />
         <FormField
           control={form.control}
-          name="authorEmail"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email автора</FormLabel>
-              <FormControl><Input placeholder="ivan@example.com" {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="rating"
           render={({ field }) => (
             <FormItem>
@@ -118,24 +104,6 @@ export function ReviewForm({ onSave, onCancel }: ReviewFormProps) {
             <FormItem>
               <FormLabel>Текст отзыва</FormLabel>
               <FormControl><Textarea placeholder="Ваш отзыв..." {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-         <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Статус</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                <SelectContent>
-                  <SelectItem value="Опубликован">Опубликован</SelectItem>
-                  <SelectItem value="Ожидает модерации">Ожидает модерации</SelectItem>
-                  <SelectItem value="Отклонен">Отклонен</SelectItem>
-                </SelectContent>
-              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -163,7 +131,7 @@ export function ReviewForm({ onSave, onCancel }: ReviewFormProps) {
         <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-zinc-700">
           <Button type="button" variant="outline" onClick={onCancel}>Отмена</Button>
           <Button type="submit" disabled={isUploading || !form.formState.isValid}>
-            {isUploading ? "Загрузка..." : "Сохранить отзыв"}
+            {isUploading ? "Загрузка..." : (editingReview ? "Сохранить изменения" : "Сохранить отзыв")}
           </Button>
         </div>
       </form>
