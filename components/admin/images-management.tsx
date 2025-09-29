@@ -304,82 +304,93 @@ export function ImagesManagement() {
 
       {/* Модальное окно для добавления/редактирования изображения */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] mx-2 sm:mx-auto bg-[#27272A] border-zinc-700 text-white overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-lg sm:text-xl font-bold">
+        <DialogContent className="w-full max-w-3xl max-h-[95vh] mx-2 sm:mx-auto bg-[#1a1a1a] border-zinc-700 text-white overflow-y-auto shadow-2xl">
+          <DialogHeader className="pb-4 border-b border-zinc-700">
+            <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
               {editingImage ? "Редактировать изображение" : "Добавить изображение"}
             </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSaveImage} className="space-y-4 sm:space-y-6">
+          <form onSubmit={handleSaveImage} className="space-y-5">
             {/* Основная информация */}
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <Label htmlFor="imageName" className="text-sm text-zinc-300">Название *</Label>
-                <Input
-                  id="imageName"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-9 sm:h-8"
-                  placeholder="Введите название изображения"
-                  required
-                />
+            <div className="bg-[#222222] rounded-lg p-4 space-y-4">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <div className="w-1 h-4 bg-purple-500 rounded"></div>
+                Информация об изображении
+              </h3>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="imageName" className="text-sm text-zinc-300">Название *</Label>
+                  <Input
+                    id="imageName"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    className="bg-[#1a1a1a] border-zinc-600 text-white h-10 focus:border-purple-500"
+                    placeholder="Введите название изображения"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="imageDescription" className="text-sm text-zinc-300">Описание</Label>
+                  <Input
+                    id="imageDescription"
+                    value={formData.description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    className="bg-[#1a1a1a] border-zinc-600 text-white h-10 focus:border-purple-500"
+                    placeholder="Описание изображения"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="imageDescription" className="text-sm text-zinc-300">Описание</Label>
-                <Input
-                  id="imageDescription"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  className="bg-[#18181B] border-zinc-600 text-white h-9 sm:h-8"
-                  placeholder="Описание изображения"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
                   onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 rounded bg-[#1a1a1a] border-zinc-600 text-purple-500 focus:ring-purple-500"
                 />
                 <Label htmlFor="isActive" className="text-sm text-white">Активно</Label>
               </div>
             </div>
 
             {/* Загрузка изображения */}
-            <div className="space-y-2">
-              <Label className="text-sm text-zinc-300">Изображение *</Label>
+            <div className="bg-[#222222] rounded-lg p-4 space-y-4">
+              <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                <div className="w-1 h-4 bg-purple-500 rounded"></div>
+                Загрузка изображения
+              </h3>
               <DragDropUpload
                 onUpload={handleImageUpload}
                 currentFile={formData.imageUrl}
                 onRemove={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
                 isUploading={isUploading}
                 uploadProgress={uploadProgress}
-                placeholder="Перетащите изображение сюда или нажмите для выбора"
+                placeholder="Выберите изображение"
                 accept="image/*"
                 maxSize={10}
               />
             </div>
 
             {/* Кнопки */}
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-zinc-600">
+            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-zinc-700">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsModalOpen(false)}
-                className="border-zinc-600 text-zinc-400 hover:text-white h-9 sm:h-8 w-full sm:w-auto"
+                className="border-zinc-600 text-zinc-300 hover:text-white hover:border-zinc-500 h-11 px-6 w-full sm:w-auto font-medium"
               >
                 Отмена
               </Button>
               <Button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 h-9 sm:h-8 w-full sm:w-auto"
+                className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 h-11 px-6 w-full sm:w-auto font-medium text-white shadow-lg"
                 disabled={isUploading}
               >
-                {editingImage ? "Сохранить" : "Добавить"}
+                {editingImage ? "Сохранить изменения" : "Добавить изображение"}
               </Button>
             </div>
           </form>

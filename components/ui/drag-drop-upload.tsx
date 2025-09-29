@@ -1,4 +1,4 @@
-import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
+import React, { useState, useRef, ChangeEvent } from 'react';
 import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,11 +26,10 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
   onRemove,
   isUploading = false,
   uploadProgress = 0,
-  placeholder = "Перетащите файл сюда или нажмите для выбора",
+  placeholder = "Выберите файл для загрузки",
   className,
   disabled = false
 }) => {
-  const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,30 +64,6 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
     }
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (!disabled) {
-      setIsDragOver(true);
-    }
-  };
-
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-
-    if (disabled) return;
-
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  };
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -104,23 +79,20 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div
-        className={cn(
-          "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
-          isDragOver && !disabled
-            ? "border-blue-400 bg-blue-50/5"
-            : "border-zinc-600 hover:border-zinc-500",
-          disabled && "opacity-50 cursor-not-allowed"
-        )}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={handleClick}
-      >
+      <div className="border border-zinc-600 rounded-lg p-3 bg-[#18181B] min-h-[120px] flex flex-col justify-center">
         {isUploading ? (
-          <div className="space-y-2">
-            <Progress value={uploadProgress} className="w-full h-2" />
-            <p className="text-xs text-zinc-400">Загрузка... {uploadProgress}%</p>
+          <div className="space-y-3">
+            <div className="text-center">
+              <Upload className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+              <p className="text-xs text-zinc-300 mb-2">Загрузка в Cloudflare R2...</p>
+            </div>
+            <Progress value={uploadProgress} className="w-full h-2 bg-zinc-700">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </Progress>
+            <p className="text-xs text-center text-zinc-400">{uploadProgress}%</p>
           </div>
         ) : currentFile ? (
           <div className="space-y-2">
@@ -132,16 +104,14 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
                 e.currentTarget.src = "/placeholder.jpg";
               }}
             />
-            <div className="flex gap-1 justify-center">
+            <div className="flex gap-2 justify-center">
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleClick();
-                }}
-                className="text-zinc-400 hover:text-white text-xs h-6"
+                onClick={handleClick}
+                className="text-zinc-300 hover:text-white border-zinc-600 hover:border-zinc-500 text-xs h-7 px-3"
+                disabled={disabled}
               >
                 <Upload className="h-3 w-3 mr-1" />
                 Изменить
@@ -149,41 +119,36 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
               {onRemove && (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove();
-                  }}
-                  className="text-zinc-400 hover:text-white text-xs h-6"
+                  onClick={onRemove}
+                  className="text-red-400 hover:text-red-300 border-red-600 hover:border-red-500 text-xs h-7 px-3"
+                  disabled={disabled}
                 >
                   <X className="h-3 w-3 mr-1" />
                   Удалить
                 </Button>
               )}
             </div>
-            <p className="text-xs text-zinc-500">Нажмите для изменения или перетащите новый файл</p>
+            <p className="text-xs text-center text-zinc-500">Изображение загружено</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            <Upload className="w-8 h-8 text-zinc-400 mx-auto" />
+          <div className="space-y-3 text-center">
+            <Upload className="w-6 h-6 text-zinc-400 mx-auto" />
             <p className="text-xs text-zinc-400">{placeholder}</p>
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClick();
-              }}
-              className="text-zinc-400 hover:text-white border-zinc-600 hover:border-zinc-500 text-xs h-8 px-4"
+              onClick={handleClick}
+              className="text-zinc-300 hover:text-white border-zinc-600 hover:border-zinc-500 text-xs h-8 px-4"
               disabled={disabled}
             >
               <Upload className="h-3 w-3 mr-2" />
-              Загрузить с устройства
+              Выбрать файл
             </Button>
             <p className="text-xs text-zinc-500">
-              {isDragOver ? "Отпустите для загрузки" : `Поддерживаемые форматы: ${accept}. Макс. размер: ${maxSize}MB`}
+              Форматы: {accept} • Макс. размер: {maxSize}MB
             </p>
           </div>
         )}
@@ -199,7 +164,7 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
       </div>
 
       {error && (
-        <p className="text-xs text-red-400">{error}</p>
+        <p className="text-xs text-red-400 text-center">{error}</p>
       )}
     </div>
   );

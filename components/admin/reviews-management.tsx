@@ -318,139 +318,162 @@ export function ReviewsManagement() {
               Добавить отзыв
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-full max-w-[600px] max-h-[95vh] sm:max-h-[90vh] mx-2 sm:mx-auto overflow-y-auto bg-[#27272A] border-zinc-700">
-            <DialogHeader>
-              <DialogTitle className="text-lg sm:text-xl text-white">
+          <DialogContent className="w-full max-w-4xl max-h-[95vh] mx-2 sm:mx-auto overflow-y-auto bg-[#1a1a1a] border-zinc-700 shadow-2xl">
+            <DialogHeader className="pb-4 border-b border-zinc-700">
+              <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 {editingReview ? "Редактировать отзыв" : "Добавить отзыв"}
               </DialogTitle>
-              <DialogDescription className="text-zinc-400 text-sm">
+              <DialogDescription className="text-zinc-400">
                 Заполните информацию об отзыве
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-              <div>
-                <Label htmlFor="name" className="text-white text-sm">
-                  Имя автора *
-                </Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-[#18181B] border-zinc-600 text-white h-9 sm:h-8"
-                  placeholder="Введите имя автора"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="rating" className="text-white text-sm">
-                  Рейтинг *
-                </Label>
-                <select
-                  id="rating"
-                  value={formData.rating}
-                  onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
-                  className="w-full px-3 py-2 h-9 sm:h-8 bg-[#18181B] border border-zinc-600 rounded-md text-white"
-                >
-                  {[5, 4, 3, 2, 1].map((rating) => (
-                    <option key={rating} value={rating}>
-                      {rating} {rating === 1 ? "звезда" : rating < 5 ? "звезды" : "звёзд"}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <Label htmlFor="text" className="text-white text-sm">
-                  Текст отзыва *
-                </Label>
-                <Textarea
-                  id="text"
-                  value={formData.text}
-                  onChange={(e) => setFormData({ ...formData, text: e.target.value })}
-                  className="bg-[#18181B] border-zinc-600 text-white min-h-[80px] sm:min-h-[60px]"
-                  placeholder="Введите текст отзыва"
-                  rows={4}
-                  required
-                />
-              </div>
-              <div>
-                <Label className="text-white text-sm">
-                  Аватарка
-                </Label>
-                <DragDropUpload
-                  onUpload={handleAvatarUpload}
-                  currentFile={formData.avatar}
-                  onRemove={() => setFormData(prev => ({ ...prev, avatar: "" }))}
-                  isUploading={isUploadingAvatar}
-                  uploadProgress={avatarUploadProgress}
-                  placeholder="Перетащите аватарку"
-                  accept="image/*"
-                  maxSize={5}
-                />
-              </div>
-              <div>
-                <Label className="text-white text-sm">
-                  Изображения к отзыву
-                </Label>
-                <div className="space-y-3">
-                  <DragDropUpload
-                    onUpload={handleImageUpload}
-                    isUploading={isUploadingImage}
-                    uploadProgress={imageUploadProgress}
-                    placeholder="Перетащите изображение"
-                    accept="image/*"
-                    maxSize={10}
-                    disabled={formData.images.length >= 3}
-                  />
-                  {formData.images.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {formData.images.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={image}
-                            alt={`Изображение ${index + 1}`}
-                            className="w-full h-20 object-cover rounded border border-zinc-600"
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeImage(index)}
-                          >
-                            ×
-                          </Button>
-                        </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Основная информация */}
+              <div className="bg-[#222222] rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                  <div className="w-1 h-4 bg-yellow-500 rounded"></div>
+                  Информация об авторе
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm text-zinc-300">
+                      Имя автора *
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="bg-[#1a1a1a] border-zinc-600 text-white h-10 focus:border-yellow-500"
+                      placeholder="Введите имя автора"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rating" className="text-sm text-zinc-300">
+                      Рейтинг *
+                    </Label>
+                    <select
+                      id="rating"
+                      value={formData.rating}
+                      onChange={(e) => setFormData({ ...formData, rating: Number(e.target.value) })}
+                      className="w-full px-3 py-2 h-10 bg-[#1a1a1a] border border-zinc-600 rounded-md text-white focus:border-yellow-500"
+                    >
+                      {[5, 4, 3, 2, 1].map((rating) => (
+                        <option key={rating} value={rating}>
+                          {rating} {rating === 1 ? "звезда" : rating < 5 ? "звезды" : "звёзд"}
+                        </option>
                       ))}
-                    </div>
-                  )}
-                  {formData.images.length >= 3 && (
-                    <p className="text-xs text-zinc-400">Максимум 3 изображения</p>
-                  )}
+                    </select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="text" className="text-sm text-zinc-300">
+                    Текст отзыва *
+                  </Label>
+                  <Textarea
+                    id="text"
+                    value={formData.text}
+                    onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                    className="bg-[#1a1a1a] border-zinc-600 text-white min-h-[100px] focus:border-yellow-500"
+                    placeholder="Введите текст отзыва"
+                    rows={4}
+                    required
+                  />
+                </div>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="isVisible"
+                    checked={formData.isVisible}
+                    onChange={(e) => setFormData({ ...formData, isVisible: e.target.checked })}
+                    className="w-4 h-4 rounded bg-[#1a1a1a] border-zinc-600 text-yellow-500 focus:ring-yellow-500"
+                  />
+                  <Label htmlFor="isVisible" className="text-sm text-white">
+                    Показывать на сайте
+                  </Label>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="isVisible"
-                  checked={formData.isVisible}
-                  onChange={(e) => setFormData({ ...formData, isVisible: e.target.checked })}
-                  className="rounded"
-                />
-                <Label htmlFor="isVisible" className="text-white">
-                  Показывать на сайте
-                </Label>
+
+              {/* Изображения */}
+              <div className="bg-[#222222] rounded-lg p-4 space-y-4">
+                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                  <div className="w-1 h-4 bg-yellow-500 rounded"></div>
+                  Изображения
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-zinc-300 font-medium">
+                      Аватарка
+                    </Label>
+                    <DragDropUpload
+                      onUpload={handleAvatarUpload}
+                      currentFile={formData.avatar}
+                      onRemove={() => setFormData(prev => ({ ...prev, avatar: "" }))}
+                      isUploading={isUploadingAvatar}
+                      uploadProgress={avatarUploadProgress}
+                      placeholder="Аватарка пользователя"
+                      accept="image/*"
+                      maxSize={5}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm text-zinc-300 font-medium">
+                      Изображения к отзыву
+                    </Label>
+                    <DragDropUpload
+                      onUpload={handleImageUpload}
+                      isUploading={isUploadingImage}
+                      uploadProgress={imageUploadProgress}
+                      placeholder="Дополнительные изображения"
+                      accept="image/*"
+                      maxSize={10}
+                      disabled={formData.images.length >= 3}
+                    />
+                    {formData.images.length >= 3 && (
+                      <p className="text-xs text-zinc-400">Максимум 3 изображения</p>
+                    )}
+                  </div>
+                </div>
+
+                {formData.images.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-zinc-700">
+                    {formData.images.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={image}
+                          alt={`Изображение ${index + 1}`}
+                          className="w-full h-24 object-cover rounded border border-zinc-600"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="absolute top-1 right-1 h-7 w-7 p-0 bg-red-600 border-red-600 text-white hover:bg-red-700 opacity-90"
+                          onClick={() => removeImage(index)}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <DialogFooter className="flex flex-col sm:flex-row gap-3">
+
+              <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-zinc-700">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsDialogOpen(false)}
-                  className="border-zinc-600 text-zinc-400 h-9 sm:h-8 w-full sm:w-auto"
+                  className="border-zinc-600 text-zinc-300 hover:text-white hover:border-zinc-500 h-11 px-6 w-full sm:w-auto font-medium"
                 >
                   Отмена
                 </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700 h-9 sm:h-8 w-full sm:w-auto">
-                  {editingReview ? "Обновить" : "Создать"}
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 h-11 px-6 w-full sm:w-auto font-medium text-white shadow-lg"
+                >
+                  {editingReview ? "Сохранить изменения" : "Добавить отзыв"}
                 </Button>
               </DialogFooter>
             </form>
@@ -525,24 +548,24 @@ export function ReviewsManagement() {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent className="bg-[#27272A] border-zinc-700">
+                      <AlertDialogContent className="bg-[#1a1a1a] border-zinc-700 shadow-2xl">
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="text-white">
+                          <AlertDialogTitle className="text-white text-lg font-bold">
                             Удалить отзыв?
                           </AlertDialogTitle>
                           <AlertDialogDescription className="text-zinc-400">
                             Это действие нельзя отменить. Отзыв будет удален навсегда.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="border-zinc-600 text-zinc-400">
+                        <AlertDialogFooter className="gap-3">
+                          <AlertDialogCancel className="border-zinc-600 text-zinc-300 hover:text-white hover:border-zinc-500 h-10 px-6">
                             Отмена
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDelete(review.id)}
-                            className="bg-red-600 hover:bg-red-700"
+                            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 h-10 px-6 text-white font-medium"
                           >
-                            Удалить
+                            Удалить отзыв
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
