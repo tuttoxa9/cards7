@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, getDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -153,19 +153,16 @@ export function CardFormModal({ isOpen, onClose, onSave, editingCard }: CardForm
 
     const loadCategories = async () => {
       try {
-        const q = query(collection(db, "categories"));
-        const querySnapshot = await getDocs(q);
-        const categoriesData: Array<{id: string, name: string}> = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          categoriesData.push({
-            id: doc.id,
-            name: data.name
-          });
-        });
-
-        setCategories(categoriesData);
+        const categoriesDoc = await getDoc(doc(db, "settings", "categories"));
+        if (categoriesDoc.exists()) {
+          const data = categoriesDoc.data();
+          const categoriesList = data.list || [];
+          const categoriesData: Array<{id: string, name: string}> = categoriesList.map((name: string, index: number) => ({
+            id: `cat_${index}`,
+            name: name
+          }));
+          setCategories(categoriesData);
+        }
       } catch (error) {
         console.error("Ошибка загрузки категорий:", error);
       }
