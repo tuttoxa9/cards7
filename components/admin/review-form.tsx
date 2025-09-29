@@ -35,6 +35,7 @@ export function ReviewForm({ onSave, onCancel, editingReview }: ReviewFormProps)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(reviewSchema),
+    mode: "onChange",
     defaultValues: editingReview || {
       authorName: "",
       authorAvatar: "",

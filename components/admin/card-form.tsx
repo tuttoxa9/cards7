@@ -72,6 +72,7 @@ interface CardFormProps {
 export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardSchema),
+    mode: "onChange",
     defaultValues: {
       title: "",
       name: "",

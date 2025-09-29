@@ -30,6 +30,7 @@ export function BackgroundImageForm({ onSave, onCancel, editingImage }: Backgrou
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: editingImage || { name: "", description: "", imageUrl: "" },
   });
 
