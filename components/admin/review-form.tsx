@@ -16,7 +16,7 @@ const reviewSchema = z.object({
   authorName: z.string().min(1, "Имя автора обязательно"),
   authorAvatar: z.string().url("Некорректный URL").optional().or(z.literal('')),
   rating: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
+    (val) => (typeof val === 'string' ? parseInt(val, 10) : val),
     z.number().min(1, "Рейтинг не может быть ниже 1").max(5, "Рейтинг не может быть выше 5")
   ),
   text: z.string().min(10, "Отзыв должен содержать минимум 10 символов"),
@@ -88,7 +88,7 @@ export function ReviewForm({ onSave, onCancel, editingReview }: ReviewFormProps)
           render={({ field }) => (
             <FormItem>
               <FormLabel>Рейтинг</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+              <Select onValueChange={field.onChange} value={String(field.value)}>
                 <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
                 <SelectContent>
                   {[5, 4, 3, 2, 1].map(r => <SelectItem key={r} value={String(r)}>{r} звезд</SelectItem>)}
