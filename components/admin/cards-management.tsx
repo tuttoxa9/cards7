@@ -1,14 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MoreHorizontal, Plus, Edit, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -57,6 +51,8 @@ export function CardsManagement() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortConfig, setSortConfig] = useState<{ key: keyof Card; direction: 'ascending' | 'descending' }>({ key: 'name', direction: 'ascending' });
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -81,6 +77,20 @@ export function CardsManagement() {
     };
 
     loadData();
+  }, []);
+
+  // Закрытие dropdown при клике вне области
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const sortedAndFilteredCards = [...cards]
@@ -115,12 +125,18 @@ export function CardsManagement() {
   };
 
 
+  const toggleDropdown = (cardId: string) => {
+    setOpenDropdown(openDropdown === cardId ? null : cardId);
+  };
+
   const handleEdit = (card: Card) => {
     setEditingCard(card);
     setIsModalOpen(true);
+    setOpenDropdown(null);
   };
 
   const handleDelete = async (cardId: string) => {
+    setOpenDropdown(null);
     if (window.confirm("Вы уверены, что хотите удалить эту карточку?")) {
       try {
         await deleteDoc(doc(db, "cards", cardId));
@@ -273,46 +289,37 @@ export function CardsManagement() {
                   />
                 </TableCell>
                 <TableCell className="py-3 px-4 text-right relative">
-                  <DropdownMenu modal={false}>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-zinc-700 data-[state=open]:bg-zinc-700 relative z-10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span className="sr-only">Открыть меню</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      side="bottom"
-                      className="w-48 bg-zinc-900 border border-zinc-700 text-zinc-300 shadow-lg rounded-md p-1"
-                      style={{ zIndex: 9999 }}
-                      sideOffset={5}
+                  <div className="relative" ref={dropdownRef}>
+                    <Button
+                      variant="ghost"
+                      className="h-8 w-8 p-0 hover:bg-zinc-700"
+                      onClick={() => toggleDropdown(card.id)}
                     >
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(card);
-                        }}
-                        className="cursor-pointer hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white px-2 py-2 rounded-sm"
+                      <span className="sr-only">Открыть меню</span>
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+
+                    {openDropdown === card.id && (
+                      <div
+                        className="absolute right-0 top-full mt-1 w-48 bg-zinc-900 border border-zinc-700 rounded-md shadow-lg z-[9999] py-1"
                       >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Редактировать
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(card.id);
-                        }}
-                        className="cursor-pointer hover:bg-red-900/50 hover:text-red-400 focus:bg-red-900/50 focus:text-red-400 text-red-400 px-2 py-2 rounded-sm"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Удалить
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        <button
+                          onClick={() => handleEdit(card)}
+                          className="w-full px-3 py-2 text-left text-zinc-300 hover:bg-zinc-700 hover:text-white flex items-center"
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Редактировать
+                        </button>
+                        <button
+                          onClick={() => handleDelete(card.id)}
+                          className="w-full px-3 py-2 text-left text-red-400 hover:bg-red-900/50 hover:text-red-300 flex items-center"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Удалить
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
