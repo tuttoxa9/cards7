@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardsManagement } from "./cards-management";
 import { SectionsManagement } from "./sections-management";
 import { ImagesManagement } from "./images-management";
 import { CategoriesManagement } from "./categories-management";
 import { ReviewsManagement } from "./reviews-management";
+import { SettingsPanel } from "./settings-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { useDrawer } from "@/hooks/use-drawer";
@@ -20,8 +21,11 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("cards");
-  const { isOpen, closeDrawer, Component, props, size, title } = useDrawer();
+  const { isOpen, closeDrawer, Component, props, size, title, openDrawer } = useDrawer();
 
+  const openSettingsPanel = () => {
+    openDrawer(SettingsPanel, {}, { size: "default", title: "Настройки" });
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -79,15 +83,24 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Заказы</TabsTrigger>
               </TabsList>
             </Tabs>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onLogout}
-              className="text-zinc-400 hover:text-white flex-shrink-0"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+             <div className="flex items-center gap-2">
+               <Button
+                variant="ghost"
+                size="icon"
+                onClick={openSettingsPanel}
+                className="text-zinc-400 hover:text-white flex-shrink-0 h-9 w-9"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onLogout}
+                className="text-zinc-400 hover:text-white flex-shrink-0 h-9 w-9"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
 

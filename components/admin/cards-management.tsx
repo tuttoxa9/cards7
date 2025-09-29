@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { MoreHorizontal, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -257,6 +258,7 @@ export function CardsManagement() {
               <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('name')}>Название</TableHead>
               <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('category')}>Категория</TableHead>
               <TableHead className="text-zinc-300 px-4 py-3 cursor-pointer hover:text-white transition-colors" onClick={() => requestSort('price')}>Цена (BYN)</TableHead>
+              <TableHead className="text-zinc-300 px-4 py-3">Статус</TableHead>
               <TableHead className="text-zinc-300 px-4 py-3">На главной</TableHead>
               <TableHead className="text-zinc-300 text-right w-[80px] px-4 py-3">Действия</TableHead>
             </TableRow>
@@ -275,6 +277,11 @@ export function CardsManagement() {
                 <TableCell className="py-3 px-4 text-white font-medium">{card.title || card.name}</TableCell>
                 <TableCell className="py-3 px-4 text-zinc-400">{card.category}</TableCell>
                 <TableCell className="py-3 px-4 text-white">{card.price.toLocaleString()}</TableCell>
+                <TableCell className="py-3 px-4">
+                  <Badge variant={card.inStock ? "default" : "destructive"} className={card.inStock ? "bg-green-600/80 border-green-600" : ""}>
+                    {card.inStock ? "В наличии" : "Закончился"}
+                  </Badge>
+                </TableCell>
                 <TableCell className="py-3 px-4">
                   <Switch
                     checked={card.isFeatured}
