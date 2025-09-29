@@ -8,7 +8,7 @@ import { SectionsManagement } from "./sections-management";
 import { ImagesManagement } from "./images-management";
 import { CategoriesManagement } from "./categories-management";
 import { ReviewsManagement } from "./reviews-management";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type ActiveTab = "cards" | "sections" | "images" | "categories" | "reviews" | "offers" | "orders";
 
@@ -64,79 +64,17 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </h1>
 
           <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-            {/* Сегментированная навигация */}
-            <div className="flex bg-[#18181B] rounded-lg p-1 overflow-x-auto scrollbar-hide flex-shrink-0">
-              <button
-                onClick={() => setActiveTab("cards")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "cards"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Карточки
-              </button>
-              <button
-                onClick={() => setActiveTab("sections")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "sections"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Секции
-              </button>
-              <button
-                onClick={() => setActiveTab("images")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "images"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Изображения
-              </button>
-              <button
-                onClick={() => setActiveTab("categories")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "categories"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Категории
-              </button>
-              <button
-                onClick={() => setActiveTab("reviews")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "reviews"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Отзывы
-              </button>
-              <button
-                onClick={() => setActiveTab("offers")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "offers"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Предложения
-              </button>
-              <button
-                onClick={() => setActiveTab("orders")}
-                className={`px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
-                  activeTab === "orders"
-                    ? "bg-[#27272A] text-white"
-                    : "text-zinc-400 hover:text-white"
-                }`}
-              >
-                Заказы
-              </button>
-            </div>
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActiveTab)} className="w-full sm:w-auto">
+              <TabsList className="grid grid-cols-4 sm:grid-cols-7 w-full sm:w-auto bg-[#18181B] p-1 h-auto">
+                <TabsTrigger value="cards" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Карточки</TabsTrigger>
+                <TabsTrigger value="sections" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Секции</TabsTrigger>
+                <TabsTrigger value="images" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Изображения</TabsTrigger>
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Категории</TabsTrigger>
+                <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Отзывы</TabsTrigger>
+                <TabsTrigger value="offers" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Предложения</TabsTrigger>
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Заказы</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
             <Button
               variant="ghost"
