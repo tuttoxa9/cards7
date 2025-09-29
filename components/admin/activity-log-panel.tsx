@@ -135,7 +135,7 @@ export function ActivityLogPanel({ user }: ActivityLogPanelProps) {
   return (
     <div className="space-y-4">
       <div className="p-4 bg-zinc-900/50 rounded-lg space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="flex flex-wrap gap-4">
           {/* Date From */}
           <Popover>
             <PopoverTrigger asChild>
