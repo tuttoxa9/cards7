@@ -38,7 +38,6 @@ export function ReviewsSection() {
     try {
       const q = query(
         collection(db, "reviews"),
-        where("isVisible", "==", true),
         limit(20)
       );
       const querySnapshot = await getDocs(q);
