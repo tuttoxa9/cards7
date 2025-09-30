@@ -63,24 +63,6 @@ export function MobileNav() {
             <span className="text-xs mt-1 font-medium">Отзывы</span>
           </Link>
 
-          <Link href="/cart" className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors flex-1 relative ${
-            pathname === "/cart" ? "text-white" : "text-gray-400"
-          }`}>
-            <div className={`p-2 rounded-xl ${pathname === "/cart" ? "bg-white/20" : ""}`}>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="8" cy="21" r="1"/>
-                <circle cx="19" cy="21" r="1"/>
-                <path d="m2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-              </svg>
-            </div>
-            {totalItems > 0 && (
-              <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                {totalItems}
-              </div>
-            )}
-            <span className="text-xs mt-1 font-medium">Корзина</span>
-          </Link>
-
         </div>
       </div>
     </>
