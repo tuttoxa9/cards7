@@ -43,7 +43,7 @@ interface Review {
   rating: number;
   text: string;
   createdAt: any; // Firestore timestamp
-  status: "Опубликован"; // Статус теперь всегда такой
+  isVisible: boolean;
 }
 
 interface ReviewsManagementProps {
@@ -79,16 +79,53 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
     }
   };
 
+  const migrateLegacyReviews = async () => {
+    if (sessionStorage.getItem('legacyReviewsMigrated_v1')) {
+      return;
+    }
+
+    toast.info("Проверка старых отзывов для миграции...");
+
+    try {
+      const reviewsQuerySnapshot = await getDocs(collection(db, "reviews"));
+      const updates: Promise<void>[] = [];
+      let updatedCount = 0;
+
+      reviewsQuerySnapshot.forEach(docSnapshot => {
+        const data = docSnapshot.data();
+        if (data.isVisible === undefined) {
+          updates.push(updateDoc(doc(db, "reviews", docSnapshot.id), { isVisible: true }));
+          updatedCount++;
+        }
+      });
+
+      if (updates.length > 0) {
+        await Promise.all(updates);
+        toast.success(`Миграция завершена. ${updatedCount} старых отзывов были опубликованы.`);
+      }
+
+      sessionStorage.setItem('legacyReviewsMigrated_v1', 'true');
+    } catch (error) {
+      console.error("Ошибка во время миграции старых отзывов:", error);
+      toast.error("Произошла ошибка при обновлении старых отзывов.");
+    }
+  };
+
   useEffect(() => {
-    loadReviews();
+    const initialize = async () => {
+      await migrateLegacyReviews();
+      loadReviews();
+    };
+    initialize();
   }, []);
 
   const handleSave = async (data: any, reviewId?: string) => {
     try {
+      const saveData = { ...data };
+
       if (reviewId) {
         // Обновление
-        const originalReview = reviews.find(r => r.id === reviewId);
-        await updateDoc(doc(db, "reviews", reviewId), data);
+        await updateDoc(doc(db, "reviews", reviewId), saveData);
         toast.success("Отзыв успешно обновлен");
 
         await logActivity({
@@ -97,14 +134,13 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
           actionType: "UPDATE",
           entityType: "Отзыв",
           entityId: reviewId,
-          description: `Обновил отзыв от "${data.authorName}".`,
+          description: `Обновил отзыв от "${saveData.authorName}".`,
         });
 
       } else {
         // Создание
         const docRef = await addDoc(collection(db, "reviews"), {
-          ...data,
-          status: "Опубликован",
+          ...saveData,
           createdAt: new Date(),
         });
         toast.success("Отзыв успешно добавлен");
@@ -115,7 +151,7 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
           actionType: "CREATE",
           entityType: "Отзыв",
           entityId: docRef.id,
-          description: `Создал новый отзыв от "${data.authorName}".`,
+          description: `Создал новый отзыв от "${saveData.authorName}".`,
         });
       }
       closeDrawer();
@@ -227,6 +263,7 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
               <TableHead className="min-w-[200px] text-zinc-300 px-4 py-3">Автор</TableHead>
               <TableHead className="w-[120px] text-zinc-300 px-4 py-3">Рейтинг</TableHead>
               <TableHead className="text-zinc-300 px-4 py-3">Отзыв</TableHead>
+              <TableHead className="w-[120px] text-zinc-300 px-4 py-3">Статус</TableHead>
               <TableHead className="w-[180px] text-zinc-300 px-4 py-3">Дата</TableHead>
               <TableHead className="w-[80px] text-right text-zinc-300 px-4 py-3">Действия</TableHead>
             </TableRow>
@@ -250,6 +287,11 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
                 </TableCell>
                 <TableCell className="px-4 py-3 text-zinc-300">
                   <p className="truncate max-w-sm">{review.text}</p>
+                </TableCell>
+                 <TableCell className="px-4 py-3">
+                  <Badge variant={review.isVisible ? "success" : "secondary"}>
+                    {review.isVisible ? "Опубликован" : "Скрыт"}
+                  </Badge>
                 </TableCell>
                 <TableCell className="px-4 py-3 text-zinc-400">
                   {new Date(review.createdAt).toLocaleString()}

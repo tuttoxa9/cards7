@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { ImageUploader } from "../ui/image-uploader";
 import { toast } from "sonner";
 
@@ -20,6 +21,7 @@ const reviewSchema = z.object({
     z.number().min(1, "Рейтинг не может быть ниже 1").max(5, "Рейтинг не может быть выше 5")
   ),
   text: z.string().min(10, "Отзыв должен содержать минимум 10 символов"),
+  isVisible: z.boolean().default(false),
 });
 
 type FormValues = z.infer<typeof reviewSchema>;
@@ -126,6 +128,28 @@ export function ReviewForm({ onSave, onCancel, editingReview }: ReviewFormProps)
                 />
               </FormControl>
                <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="isVisible"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border border-zinc-700 p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">
+                  Опубликовать отзыв
+                </FormLabel>
+                <p className="text-sm text-zinc-400">
+                  Сделать отзыв видимым для всех пользователей на сайте.
+                </p>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
             </FormItem>
           )}
         />
