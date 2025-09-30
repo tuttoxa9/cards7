@@ -39,7 +39,6 @@ export function ReviewsSection() {
       const q = query(
         collection(db, "reviews"),
         where("isVisible", "==", true),
-        orderBy("createdAt", "desc"),
         limit(20)
       );
       const querySnapshot = await getDocs(q);
