@@ -49,7 +49,7 @@ export function ImageUploader({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/jpeg': [], 'image/png': [] },
+    accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
     multiple: false,
   });
 
@@ -62,7 +62,7 @@ export function ImageUploader({
   const handleTriggerUpload = () => {
     const inputElement = document.createElement('input');
     inputElement.type = 'file';
-    inputElement.accept = 'image/jpeg,image/png';
+    inputElement.accept = 'image/jpeg,image/png,image/webp';
     inputElement.onchange = (e) => {
       const target = e.target as HTMLInputElement;
       if (target.files && target.files.length > 0) {
@@ -105,7 +105,7 @@ export function ImageUploader({
           <div className="space-y-1 text-zinc-400">
             <Upload className="w-8 h-8 mx-auto" />
             <p className="text-sm">Нажмите или перетащите</p>
-            <p className="text-xs text-zinc-500">JPG, PNG, макс. 2МБ</p>
+            <p className="text-xs text-zinc-500">JPG, PNG, WebP, макс. 2МБ</p>
           </div>
         )}
       </div>

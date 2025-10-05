@@ -64,8 +64,12 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
         const data = doc.data();
         return {
           id: doc.id,
-          ...data,
+          authorName: data.name || data.authorName,
+          authorAvatar: data.avatar || data.authorAvatar,
+          rating: data.rating,
+          text: data.text,
           createdAt: data.createdAt?.toDate(), // Конвертируем Timestamp в Date
+          status: data.status || "Опубликован",
         } as Review;
       });
       // Сортируем по дате, новые вверху
@@ -88,7 +92,13 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
       if (reviewId) {
         // Обновление
         const originalReview = reviews.find(r => r.id === reviewId);
-        await updateDoc(doc(db, "reviews", reviewId), data);
+        await updateDoc(doc(db, "reviews", reviewId), {
+          name: data.authorName,
+          avatar: data.authorAvatar,
+          rating: data.rating,
+          text: data.text,
+          isVisible: true,
+        });
         toast.success("Отзыв успешно обновлен");
 
         await logActivity({
@@ -103,7 +113,11 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
       } else {
         // Создание
         const docRef = await addDoc(collection(db, "reviews"), {
-          ...data,
+          name: data.authorName,
+          avatar: data.authorAvatar,
+          rating: data.rating,
+          text: data.text,
+          isVisible: true,
           status: "Опубликован",
           createdAt: new Date(),
         });
@@ -130,7 +144,12 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
     openDrawer(
       ReviewForm,
       {
-        editingReview: review,
+        editingReview: {
+          authorName: review.authorName,
+          authorAvatar: review.authorAvatar || "",
+          rating: review.rating,
+          text: review.text
+        },
         onSave: (data: any) => handleSave(data, review.id),
         onCancel: closeDrawer
       },

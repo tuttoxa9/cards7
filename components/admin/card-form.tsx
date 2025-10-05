@@ -34,11 +34,19 @@ const cardSchema = z.object({
   inStock: z.boolean(),
   isHot: z.boolean(),
   isFeatured: z.boolean(),
-  imageUrl: z.string().url("Некорректный URL изображения").optional(),
+  imageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
+    message: "Некорректный URL изображения"
+  }),
   image: z.string().optional(),
-  bannerImageUrl: z.string().url("Некорректный URL изображения").optional(),
-  carouselImageUrl: z.string().url("Некорректный URL изображения").optional(),
-  cardBackImageUrl: z.string().optional(),
+  bannerImageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
+    message: "Некорректный URL баннера"
+  }),
+  carouselImageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
+    message: "Некорректный URL изображения карусели"
+  }),
+  cardBackImageUrl: z.string().optional().refine((val) => !val || val === "none" || z.string().url().safeParse(val).success, {
+    message: "Некорректный URL задника карточки"
+  }),
 });
 
 type CardFormValues = z.infer<typeof cardSchema>;
