@@ -106,17 +106,18 @@ export default function ReviewsPage() {
       />
 
       {/* Background image in header area */}
-      <div className="relative h-96 overflow-hidden">
+      <div className="relative h-[500px] overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35"
           style={{
             backgroundImage: "url('/spidyandhalkk.png')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/80" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#06080A] to-transparent" />
       </div>
 
-      <main className="container mx-auto px-4 py-16 -mt-96 relative z-10">
+      <main className="container mx-auto px-4 py-16 -mt-[420px] relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6">
