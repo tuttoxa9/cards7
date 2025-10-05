@@ -19,34 +19,36 @@ import { toast } from "sonner";
 
 const cardSchema = z.object({
   title: z.string().min(1, "Название обязательно для заполнения"),
-  name: z.string(),
-  price: z.preprocess(
-    (a) => parseFloat(z.string().parse(a)),
+  name: z.string().optional(),
+  price: z.union([
+    z.string().transform((val) => {
+      const num = parseFloat(val);
+      if (isNaN(num) || num <= 0) throw new Error("Цена должна быть положительным числом");
+      return num;
+    }),
     z.number().positive("Цена должна быть положительным числом")
-  ),
-  originalPrice: z.preprocess(
-    (a) => (a === "" || a === undefined) ? undefined : parseFloat(z.string().parse(a)),
-    z.number().positive("Цена должна быть положительным числом").optional()
-  ),
+  ]),
+  originalPrice: z.union([
+    z.string().transform((val) => {
+      if (val === "" || val === undefined) return undefined;
+      const num = parseFloat(val);
+      if (isNaN(num) || num <= 0) throw new Error("Цена должна быть положительным числом");
+      return num;
+    }),
+    z.number().positive("Цена должна быть положительным числом"),
+    z.undefined()
+  ]).optional(),
   category: z.string().min(1, "Категория обязательна для выбора"),
   description: z.string().optional(),
   rarity: z.enum(["common", "rare", "epic", "legendary"]),
   inStock: z.boolean(),
   isHot: z.boolean(),
   isFeatured: z.boolean(),
-  imageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
-    message: "Некорректный URL изображения"
-  }),
+  imageUrl: z.string().optional(),
   image: z.string().optional(),
-  bannerImageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
-    message: "Некорректный URL баннера"
-  }),
-  carouselImageUrl: z.string().optional().refine((val) => !val || z.string().url().safeParse(val).success, {
-    message: "Некорректный URL изображения карусели"
-  }),
-  cardBackImageUrl: z.string().optional().refine((val) => !val || val === "none" || z.string().url().safeParse(val).success, {
-    message: "Некорректный URL задника карточки"
-  }),
+  bannerImageUrl: z.string().optional(),
+  carouselImageUrl: z.string().optional(),
+  cardBackImageUrl: z.string().optional(),
 });
 
 type CardFormValues = z.infer<typeof cardSchema>;
@@ -80,7 +82,7 @@ interface CardFormProps {
 export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       title: "",
       name: "",
@@ -166,11 +168,16 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
   }, []);
 
   function onSubmit(data: CardFormValues) {
-    const cardData = {
-      ...data,
-      name: data.title,
-    };
-    onSave(cardData as any);
+    try {
+      const cardData = {
+        ...data,
+        name: data.title,
+      };
+      onSave(cardData as any);
+    } catch (error) {
+      console.error("Ошибка валидации формы:", error);
+      toast.error("Пожалуйста, проверьте правильность заполнения всех полей");
+    }
   }
 
   const handleImageUpload = async (file: File, type: 'card' | 'banner' | 'carousel'): Promise<string | null> => {
@@ -324,7 +331,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
 
         <div className="flex-shrink-0 pt-6 border-t border-zinc-700 flex justify-end gap-3">
           <Button type="button" variant="outline" onClick={onCancel}>Отмена</Button>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isUploading || !form.formState.isValid}>
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isUploading}>
             {isUploading ? "Загрузка..." : (editingCard ? "Сохранить изменения" : "Добавить карточку")}
           </Button>
         </div>
