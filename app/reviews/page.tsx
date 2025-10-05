@@ -37,6 +37,7 @@ const gradients = [
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showReviews, setShowReviews] = useState(false);
 
   useEffect(() => {
     loadReviews();
@@ -57,9 +58,14 @@ export default function ReviewsPage() {
       });
 
       setReviews(reviewsData);
+      setLoading(false);
+
+      // Запускаем анимацию появления карточек
+      setTimeout(() => {
+        setShowReviews(true);
+      }, 100);
     } catch (error) {
       console.error("Ошибка загрузки отзывов:", error);
-    } finally {
       setLoading(false);
     }
   };
@@ -145,7 +151,14 @@ export default function ReviewsPage() {
               {reviews.map((review, index) => (
                   <Card
                     key={review.id}
-                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group mb-6`}
+                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl group mb-6 ${
+                      showReviews
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-8'
+                    }`}
+                    style={{
+                      transitionDelay: `${index * 100}ms`
+                    }}
                   >
                   <CardContent className="p-6">
                     {/* Header */}
@@ -205,7 +218,14 @@ export default function ReviewsPage() {
             </div>
 
             {/* Bottom CTA */}
-            <div className="text-center mt-16 pt-16 border-t border-zinc-800">
+            <div className={`text-center mt-16 pt-16 border-t border-zinc-800 transition-all duration-700 ${
+              showReviews
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8'
+            }`}
+            style={{
+              transitionDelay: `${reviews.length * 100 + 200}ms`
+            }}>
               <div className="max-w-2xl mx-auto">
                 <h3 className="text-3xl font-bold text-white mb-4">
                   Готовы стать частью нашей семьи коллекционеров?
