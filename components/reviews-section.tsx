@@ -93,8 +93,22 @@ export function ReviewsSection() {
   }
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <section className="py-16 md:py-24 relative">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-transparent">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{
+            backgroundImage: "url('/spidyandhalkk.png')",
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)"
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40" />
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
             Отзывы наших клиентов
