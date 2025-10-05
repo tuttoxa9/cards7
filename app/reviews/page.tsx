@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Star, Quote, Heart, Sparkles } from "lucide-react";
+import { Star, Quote, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/firebase";
@@ -116,10 +116,20 @@ export default function ReviewsPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-900/50 border border-zinc-800">
-              <Sparkles className="h-5 w-5 text-blue-400 animate-pulse" />
-              <span className="text-zinc-300">Загружаем истории наших клиентов...</span>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="spinner center">
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
+              <div className="spinner-blade"></div>
             </div>
           </div>
         ) : reviews.length === 0 ? (
