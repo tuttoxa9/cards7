@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Star, Quote, Heart, Sparkles } from "lucide-react";
@@ -37,39 +37,10 @@ const gradients = [
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     loadReviews();
   }, []);
-
-  useEffect(() => {
-    if (reviews.length > 0) {
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const cardId = entry.target.getAttribute('data-card-id');
-              if (cardId) {
-                setVisibleCards(prev => new Set([...prev, cardId]));
-              }
-            }
-          });
-        },
-        {
-          threshold: 0.1,
-          rootMargin: '50px 0px -50px 0px'
-        }
-      );
-
-      return () => {
-        if (observerRef.current) {
-          observerRef.current.disconnect();
-        }
-      };
-    }
-  }, [reviews]);
 
   const loadReviews = async () => {
     try {
@@ -106,43 +77,10 @@ export default function ReviewsPage() {
 
 
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#06080A]">
-        <Header />
-        <GradualBlur
-          preset="page-header"
-          strength={2}
-          divCount={5}
-          height="8rem"
-          animated="scroll"
-          curve="bezier"
-          exponential={true}
-          opacity={1}
-          zIndex={40}
-        />
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-900/50 border border-zinc-800">
-              <Sparkles className="h-5 w-5 text-blue-400 animate-pulse" />
-              <span className="text-zinc-300">Загружаем истории наших клиентов...</span>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
 
 
   return (
     <div className="min-h-screen bg-[#06080A]">
-      <style jsx>{`
-        .review-card {
-          transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-      `}</style>
       <Header />
 
       <GradualBlur
@@ -177,7 +115,14 @@ export default function ReviewsPage() {
           </p>
         </div>
 
-        {reviews.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-900/50 border border-zinc-800">
+              <Sparkles className="h-5 w-5 text-blue-400 animate-pulse" />
+              <span className="text-zinc-300">Загружаем истории наших клиентов...</span>
+            </div>
+          </div>
+        ) : reviews.length === 0 ? (
           <div className="text-center py-20">
             <div className="text-zinc-400 text-lg">
               Отзывы пока не добавлены
@@ -187,25 +132,10 @@ export default function ReviewsPage() {
           <>
             {/* Reviews Masonry Grid */}
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-              {reviews.map((review, index) => {
-                const isVisible = visibleCards.has(review.id);
-                return (
+              {reviews.map((review, index) => (
                   <Card
                     key={review.id}
-                    data-card-id={review.id}
-                    ref={(el) => {
-                      if (el && observerRef.current && !visibleCards.has(review.id)) {
-                        observerRef.current.observe(el);
-                      }
-                    }}
-                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl group mb-6 ${
-                      isVisible
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-12'
-                    }`}
-                    style={{
-                      transitionDelay: `${index * 100}ms`
-                    }}
+                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group mb-6`}
                   >
                   <CardContent className="p-6">
                     {/* Header */}
@@ -261,8 +191,7 @@ export default function ReviewsPage() {
                     </div>
                   </CardContent>
                 </Card>
-                );
-              })}
+              ))}
             </div>
 
             {/* Bottom CTA */}
