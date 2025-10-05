@@ -37,7 +37,7 @@ const gradients = [
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showReviews, setShowReviews] = useState(false);
+
 
   useEffect(() => {
     loadReviews();
@@ -68,11 +68,6 @@ export default function ReviewsPage() {
 
       setReviews(reviewsData);
       setLoading(false);
-
-      // Запускаем анимацию появления карточек
-      setTimeout(() => {
-        setShowReviews(true);
-      }, 100);
     } catch (error) {
       console.error("Ошибка загрузки отзывов:", error);
       setLoading(false);
@@ -110,20 +105,18 @@ export default function ReviewsPage() {
         zIndex={40}
       />
 
-      <main className="container mx-auto px-4 py-16 relative">
-        {/* Background image with overlay */}
-        <div className="absolute inset-0 -mx-4 bg-gradient-to-b from-transparent via-black/40 to-transparent">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-            style={{
-              backgroundImage: "url('/spidyandhalkk.png')",
-              maskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)"
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40" />
-        </div>
+      {/* Background image in header area */}
+      <div className="relative h-96 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{
+            backgroundImage: "url('/spidyandhalkk.png')"
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+      </div>
+
+      <main className="container mx-auto px-4 py-16 -mt-96 relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6">
@@ -173,14 +166,7 @@ export default function ReviewsPage() {
               {reviews.map((review, index) => (
                   <Card
                     key={review.id}
-                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl group mb-6 ${
-                      showReviews
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-8'
-                    }`}
-                    style={{
-                      transitionDelay: `${index * 100}ms`
-                    }}
+                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group mb-6`}
                   >
                   <CardContent className="p-6">
                     {/* Header */}
@@ -240,14 +226,7 @@ export default function ReviewsPage() {
             </div>
 
             {/* Bottom CTA */}
-            <div className={`text-center mt-16 pt-16 border-t border-zinc-800 transition-all duration-700 ${
-              showReviews
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-8'
-            }`}
-            style={{
-              transitionDelay: `${reviews.length * 100 + 200}ms`
-            }}>
+            <div className="text-center mt-16 pt-16 border-t border-zinc-800">
               <div className="max-w-2xl mx-auto">
                 <h3 className="text-3xl font-bold text-white mb-4">
                   Готовы стать частью нашей семьи коллекционеров?
