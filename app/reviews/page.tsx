@@ -20,10 +20,6 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
-  limit,
-  startAfter,
-  DocumentSnapshot,
 } from "firebase/firestore";
 import GradualBlur from "@/components/GradualBlur";
 
@@ -41,7 +37,6 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "rating_high" | "rating_low">("newest");
   const [filterRating, setFilterRating] = useState<number | "all">("all");
@@ -57,12 +52,12 @@ export default function ReviewsPage() {
       if (reset) {
         setLoading(true);
         setReviews([]);
-        setLastDoc(null);
         setHasMore(true);
       } else {
         setLoadingMore(true);
       }
 
+      // Упрощенный запрос без orderBy для избежания ошибки с составным индексом
       let q = query(
         collection(db, "reviews"),
         where("isVisible", "==", true)
@@ -72,43 +67,61 @@ export default function ReviewsPage() {
         q = query(q, where("rating", "==", filterRating));
       }
 
-      // Сортировка
-      switch (sortBy) {
-        case "newest":
-          q = query(q, orderBy("createdAt", "desc"));
-          break;
-        case "oldest":
-          q = query(q, orderBy("createdAt", "asc"));
-          break;
-        case "rating_high":
-          q = query(q, orderBy("rating", "desc"), orderBy("createdAt", "desc"));
-          break;
-        case "rating_low":
-          q = query(q, orderBy("rating", "asc"), orderBy("createdAt", "desc"));
-          break;
-      }
-
-      q = query(q, limit(REVIEWS_PER_PAGE));
-
-      if (!reset && lastDoc) {
-        q = query(q, startAfter(lastDoc));
-      }
-
       const querySnapshot = await getDocs(q);
-      const reviewsData: Review[] = [];
+      const allReviewsData: Review[] = [];
 
       querySnapshot.forEach((doc) => {
-        reviewsData.push({ id: doc.id, ...doc.data() } as Review);
+        allReviewsData.push({ id: doc.id, ...doc.data() } as Review);
       });
 
-      if (reset) {
-        setReviews(reviewsData);
-      } else {
-        setReviews(prev => [...prev, ...reviewsData]);
+      // Сортировка на клиентской стороне
+      let sortedReviews = [...allReviewsData];
+
+      switch (sortBy) {
+        case "newest":
+          sortedReviews.sort((a, b) => {
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            return dateB - dateA;
+          });
+          break;
+        case "oldest":
+          sortedReviews.sort((a, b) => {
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            return dateA - dateB;
+          });
+          break;
+        case "rating_high":
+          sortedReviews.sort((a, b) => {
+            if (b.rating !== a.rating) return b.rating - a.rating;
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            return dateB - dateA;
+          });
+          break;
+        case "rating_low":
+          sortedReviews.sort((a, b) => {
+            if (a.rating !== b.rating) return a.rating - b.rating;
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            return dateB - dateA;
+          });
+          break;
       }
 
-      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
-      setHasMore(querySnapshot.docs.length === REVIEWS_PER_PAGE);
+      // Пагинация на клиентской стороне
+      const startIndex = reset ? 0 : reviews.length;
+      const endIndex = startIndex + REVIEWS_PER_PAGE;
+      const paginatedReviews = sortedReviews.slice(startIndex, endIndex);
+
+      if (reset) {
+        setReviews(paginatedReviews);
+      } else {
+        setReviews(prev => [...prev, ...paginatedReviews]);
+      }
+
+      setHasMore(endIndex < sortedReviews.length);
 
     } catch (error) {
       console.error("Ошибка загрузки отзывов:", error);
