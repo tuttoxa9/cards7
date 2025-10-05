@@ -54,7 +54,16 @@ export default function ReviewsPage() {
       const reviewsData: Review[] = [];
 
       querySnapshot.forEach((doc) => {
-        reviewsData.push({ id: doc.id, ...doc.data() } as Review);
+        const data = doc.data();
+        reviewsData.push({
+          id: doc.id,
+          name: data.name,
+          rating: data.rating,
+          text: data.text,
+          avatar: data.avatar,
+          isVisible: data.isVisible,
+          createdAt: data.createdAt
+        } as Review);
       });
 
       setReviews(reviewsData);
