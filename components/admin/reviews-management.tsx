@@ -43,7 +43,6 @@ interface Review {
   rating: number;
   text: string;
   createdAt: any; // Firestore timestamp
-  status: "Опубликован"; // Статус теперь всегда такой
 }
 
 interface ReviewsManagementProps {
@@ -62,10 +61,14 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
       const reviewsQuerySnapshot = await getDocs(collection(db, "reviews"));
       const reviewsData: Review[] = reviewsQuerySnapshot.docs.map(doc => {
         const data = doc.data();
+        // Обеспечиваем обратную совместимость: читаем и старые, и новые поля
         return {
           id: doc.id,
-          ...data,
-          createdAt: data.createdAt?.toDate(), // Конвертируем Timestamp в Date
+          authorName: data.name || data.authorName,
+          authorAvatar: data.avatar || data.authorAvatar,
+          rating: data.rating,
+          text: data.text,
+          createdAt: data.createdAt?.toDate(),
         } as Review;
       });
       // Сортируем по дате, новые вверху
@@ -83,12 +86,23 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
     loadReviews();
   }, []);
 
-  const handleSave = async (data: any, reviewId?: string) => {
+  const handleSave = async (formData: any, reviewId?: string) => {
     try {
+      // Преобразуем данные из формы в схему для БД
+      const reviewData = {
+        name: formData.authorName,
+        avatar: formData.authorAvatar,
+        rating: formData.rating,
+        text: formData.text,
+        isVisible: true, // Отзывы из админки всегда видимы
+      };
+
       if (reviewId) {
         // Обновление
-        const originalReview = reviews.find(r => r.id === reviewId);
-        await updateDoc(doc(db, "reviews", reviewId), data);
+        await updateDoc(doc(db, "reviews", reviewId), {
+          ...reviewData,
+          updatedAt: new Date(),
+        });
         toast.success("Отзыв успешно обновлен");
 
         await logActivity({
@@ -97,14 +111,13 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
           actionType: "UPDATE",
           entityType: "Отзыв",
           entityId: reviewId,
-          description: `Обновил отзыв от "${data.authorName}".`,
+          description: `Обновил отзыв от "${reviewData.name}".`,
         });
 
       } else {
         // Создание
         const docRef = await addDoc(collection(db, "reviews"), {
-          ...data,
-          status: "Опубликован",
+          ...reviewData,
           createdAt: new Date(),
         });
         toast.success("Отзыв успешно добавлен");
@@ -115,7 +128,7 @@ export function ReviewsManagement({ user }: ReviewsManagementProps) {
           actionType: "CREATE",
           entityType: "Отзыв",
           entityId: docRef.id,
-          description: `Создал новый отзыв от "${data.authorName}".`,
+          description: `Создал новый отзыв от "${reviewData.name}".`,
         });
       }
       closeDrawer();

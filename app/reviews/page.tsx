@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Star, Quote, Heart } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/firebase";
 import {
@@ -14,25 +13,17 @@ import {
   where,
 } from "firebase/firestore";
 import GradualBlur from "@/components/GradualBlur";
+import { ReviewCard } from "@/components/reviews/ReviewCard"; // Импортируем новую карточку
 
+// Обновленный интерфейс, теперь включая createdAt для передачи в компонент
 interface Review {
   id: string;
   name: string;
   rating: number;
   text: string;
   avatar?: string;
-  isVisible: boolean;
-  createdAt?: any;
+  createdAt?: any; // Добавляем поле для даты
 }
-
-const gradients = [
-  "from-purple-500/20 via-blue-500/10 to-cyan-500/20",
-  "from-pink-500/20 via-rose-500/10 to-orange-500/20",
-  "from-green-500/20 via-emerald-500/10 to-teal-500/20",
-  "from-blue-500/20 via-indigo-500/10 to-purple-500/20",
-  "from-orange-500/20 via-red-500/10 to-pink-500/20",
-  "from-teal-500/20 via-cyan-500/10 to-blue-500/20"
-];
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -40,50 +31,35 @@ export default function ReviewsPage() {
   const [showReviews, setShowReviews] = useState(false);
 
   useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const q = query(
+          collection(db, "reviews"),
+          where("isVisible", "==", true)
+        );
+        const querySnapshot = await getDocs(q);
+        const reviewsData: Review[] = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        } as Review));
+
+        // Сортировка по дате, если она есть
+        reviewsData.sort((a: any, b: any) =>
+          b.createdAt?.toMillis() - a.createdAt?.toMillis()
+        );
+
+        setReviews(reviewsData);
+      } catch (error) {
+        console.error("Ошибка загрузки отзывов:", error);
+      } finally {
+        setLoading(false);
+        // Запускаем анимацию появления карточек
+        setTimeout(() => setShowReviews(true), 100);
+      }
+    };
+
     loadReviews();
   }, []);
-
-  const loadReviews = async () => {
-    try {
-      const q = query(
-        collection(db, "reviews"),
-        where("isVisible", "==", true)
-      );
-
-      const querySnapshot = await getDocs(q);
-      const reviewsData: Review[] = [];
-
-      querySnapshot.forEach((doc) => {
-        reviewsData.push({ id: doc.id, ...doc.data() } as Review);
-      });
-
-      setReviews(reviewsData);
-      setLoading(false);
-
-      // Запускаем анимацию появления карточек
-      setTimeout(() => {
-        setShowReviews(true);
-      }, 100);
-    } catch (error) {
-      console.error("Ошибка загрузки отзывов:", error);
-      setLoading(false);
-    }
-  };
-
-  const renderStars = (rating: number) => {
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${
-          i < rating ? "fill-yellow-400 text-yellow-400" : "text-zinc-600"
-        }`}
-      />
-    ));
-  };
-
-
-
-
 
   return (
     <div className="min-h-screen bg-[#06080A]">
@@ -124,18 +100,7 @@ export default function ReviewsPage() {
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="spinner center">
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
-              <div className="spinner-blade"></div>
+              {[...Array(12)].map((_, i) => <div key={i} className="spinner-blade"></div>)}
             </div>
           </div>
         ) : reviews.length === 0 ? (
@@ -146,74 +111,21 @@ export default function ReviewsPage() {
           </div>
         ) : (
           <>
-            {/* Reviews Masonry Grid */}
-            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+            {/* Обновленная сетка с новым компонентом ReviewCard */}
+            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
               {reviews.map((review, index) => (
-                  <Card
-                    key={review.id}
-                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl group mb-6 ${
-                      showReviews
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 translate-y-8'
-                    }`}
-                    style={{
-                      transitionDelay: `${index * 100}ms`
-                    }}
-                  >
-                  <CardContent className="p-6">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-lg shadow-lg">
-                            {review.avatar ? (
-                              <img
-                                src={review.avatar}
-                                alt={review.name}
-                                className="w-12 h-12 rounded-full object-cover"
-                              />
-                            ) : (
-                              review.name.charAt(0).toUpperCase()
-                            )}
-                          </div>
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-zinc-900"></div>
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-white text-lg">
-                            {review.name}
-                          </h3>
-                          <div className="flex items-center space-x-1 mb-1">
-                            {renderStars(review.rating)}
-                          </div>
-                          <Badge className="bg-zinc-800/50 text-zinc-300 text-xs border-0">
-                            Проверенная покупка
-                          </Badge>
-                        </div>
-                      </div>
-                      <Quote className="h-8 w-8 text-white/20 group-hover:text-white/40 transition-colors" />
-                    </div>
-
-                    {/* Review Text */}
-                    <div className="relative">
-                      <p className="text-zinc-200 leading-relaxed text-base">
-                        "{review.text}"
-                      </p>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 text-yellow-400">
-                          <Star className="h-3 w-3 fill-current" />
-                          <span className="text-sm font-medium">{review.rating}</span>
-                        </div>
-                      </div>
-                      <div className="text-xs text-zinc-400">
-                        {Math.floor(Math.random() * 30) + 1} дн. назад
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  className={`transition-all duration-500 ${
+                    showReviews
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-8'
+                  }`}
+                  style={{
+                    transitionDelay: `${index * 80}ms`
+                  }}
+                />
               ))}
             </div>
 
@@ -224,7 +136,7 @@ export default function ReviewsPage() {
                 : 'opacity-0 translate-y-8'
             }`}
             style={{
-              transitionDelay: `${reviews.length * 100 + 200}ms`
+              transitionDelay: `${reviews.length * 80 + 200}ms`
             }}>
               <div className="max-w-2xl mx-auto">
                 <h3 className="text-3xl font-bold text-white mb-4">
