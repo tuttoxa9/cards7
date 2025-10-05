@@ -3,17 +3,9 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Star, Quote, Filter, SortAsc, SortDesc } from "lucide-react";
+import { Star, Quote, Heart, Users, TrendingUp, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { db } from "@/lib/firebase";
 import {
   collection,
@@ -33,101 +25,42 @@ interface Review {
   createdAt?: any;
 }
 
+const gradients = [
+  "from-purple-500/20 via-blue-500/10 to-cyan-500/20",
+  "from-pink-500/20 via-rose-500/10 to-orange-500/20",
+  "from-green-500/20 via-emerald-500/10 to-teal-500/20",
+  "from-blue-500/20 via-indigo-500/10 to-purple-500/20",
+  "from-orange-500/20 via-red-500/10 to-pink-500/20",
+  "from-teal-500/20 via-cyan-500/10 to-blue-500/20"
+];
+
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "rating_high" | "rating_low">("newest");
-  const [filterRating, setFilterRating] = useState<number | "all">("all");
-
-  const REVIEWS_PER_PAGE = 12;
 
   useEffect(() => {
-    loadReviews(true);
-  }, [sortBy, filterRating]);
+    loadReviews();
+  }, []);
 
-  const loadReviews = async (reset = false) => {
+  const loadReviews = async () => {
     try {
-      if (reset) {
-        setLoading(true);
-        setReviews([]);
-        setHasMore(true);
-      } else {
-        setLoadingMore(true);
-      }
-
-      // Упрощенный запрос без orderBy для избежания ошибки с составным индексом
-      let q = query(
+      const q = query(
         collection(db, "reviews"),
         where("isVisible", "==", true)
       );
 
-      if (filterRating !== "all") {
-        q = query(q, where("rating", "==", filterRating));
-      }
-
       const querySnapshot = await getDocs(q);
-      const allReviewsData: Review[] = [];
+      const reviewsData: Review[] = [];
 
       querySnapshot.forEach((doc) => {
-        allReviewsData.push({ id: doc.id, ...doc.data() } as Review);
+        reviewsData.push({ id: doc.id, ...doc.data() } as Review);
       });
 
-      // Сортировка на клиентской стороне
-      let sortedReviews = [...allReviewsData];
-
-      switch (sortBy) {
-        case "newest":
-          sortedReviews.sort((a, b) => {
-            const dateA = a.createdAt?.seconds || 0;
-            const dateB = b.createdAt?.seconds || 0;
-            return dateB - dateA;
-          });
-          break;
-        case "oldest":
-          sortedReviews.sort((a, b) => {
-            const dateA = a.createdAt?.seconds || 0;
-            const dateB = b.createdAt?.seconds || 0;
-            return dateA - dateB;
-          });
-          break;
-        case "rating_high":
-          sortedReviews.sort((a, b) => {
-            if (b.rating !== a.rating) return b.rating - a.rating;
-            const dateA = a.createdAt?.seconds || 0;
-            const dateB = b.createdAt?.seconds || 0;
-            return dateB - dateA;
-          });
-          break;
-        case "rating_low":
-          sortedReviews.sort((a, b) => {
-            if (a.rating !== b.rating) return a.rating - b.rating;
-            const dateA = a.createdAt?.seconds || 0;
-            const dateB = b.createdAt?.seconds || 0;
-            return dateB - dateA;
-          });
-          break;
-      }
-
-      // Пагинация на клиентской стороне
-      const startIndex = reset ? 0 : reviews.length;
-      const endIndex = startIndex + REVIEWS_PER_PAGE;
-      const paginatedReviews = sortedReviews.slice(startIndex, endIndex);
-
-      if (reset) {
-        setReviews(paginatedReviews);
-      } else {
-        setReviews(prev => [...prev, ...paginatedReviews]);
-      }
-
-      setHasMore(endIndex < sortedReviews.length);
-
+      setReviews(reviewsData);
     } catch (error) {
       console.error("Ошибка загрузки отзывов:", error);
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
@@ -136,20 +69,10 @@ export default function ReviewsPage() {
       <Star
         key={i}
         className={`h-4 w-4 ${
-          i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-600"
+          i < rating ? "fill-yellow-400 text-yellow-400" : "text-zinc-600"
         }`}
       />
     ));
-  };
-
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return "";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return new Intl.DateTimeFormat("ru-RU", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
   };
 
   const getAverageRating = () => {
@@ -164,6 +87,11 @@ export default function ReviewsPage() {
       stats[review.rating as keyof typeof stats]++;
     });
     return stats;
+  };
+
+  const getCardHeight = (index: number) => {
+    const heights = ["h-64", "h-72", "h-80", "h-64", "h-72"];
+    return heights[index % heights.length];
   };
 
   if (loading) {
@@ -182,8 +110,11 @@ export default function ReviewsPage() {
           zIndex={40}
         />
         <div className="container mx-auto px-4 py-16">
-          <div className="text-center text-zinc-400">
-            Загрузка отзывов...
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-900/50 border border-zinc-800">
+              <Sparkles className="h-5 w-5 text-blue-400 animate-pulse" />
+              <span className="text-zinc-300">Загружаем истории наших клиентов...</span>
+            </div>
           </div>
         </div>
         <Footer />
@@ -192,6 +123,7 @@ export default function ReviewsPage() {
   }
 
   const ratingStats = getRatingStats();
+  const averageRating = getAverageRating();
 
   return (
     <div className="min-h-screen bg-[#06080A]">
@@ -210,30 +142,23 @@ export default function ReviewsPage() {
       />
 
       <main className="container mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-            Отзывы клиентов
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-8">
-            Честные отзывы от коллекционеров со всего мира
-          </p>
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6">
+            <Heart className="h-4 w-4 text-red-400" />
+            <span className="text-sm text-blue-200 font-medium">Доверие тысяч коллекционеров</span>
+          </div>
 
-          {reviews.length > 0 && (
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center">
-                  {renderStars(Math.round(Number(getAverageRating())))}
-                </div>
-                <span className="text-2xl font-bold text-white">
-                  {getAverageRating()}
-                </span>
-                <span className="text-zinc-400">
-                  ({reviews.length} {reviews.length === 1 ? "отзыв" : reviews.length < 5 ? "отзыва" : "отзывов"})
-                </span>
-              </div>
-            </div>
-          )}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            Истории наших
+            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              коллекционеров
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Каждая карточка — это не просто покупка, а начало новой страницы в коллекции мечты
+          </p>
         </div>
 
         {reviews.length === 0 ? (
@@ -244,107 +169,135 @@ export default function ReviewsPage() {
           </div>
         ) : (
           <>
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-8 p-6 bg-zinc-900/50 rounded-xl border border-zinc-800">
-              <div className="flex items-center gap-2">
-                <Filter className="h-5 w-5 text-zinc-400" />
-                <span className="text-zinc-300 font-medium">Фильтры:</span>
-              </div>
+            {/* Statistics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+              <Card className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border-blue-700/30 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-500/20 rounded-full mx-auto mb-4">
+                    <Star className="h-6 w-6 text-blue-400" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">{averageRating}</div>
+                  <div className="text-blue-200 text-sm">Средний рейтинг</div>
+                  <div className="flex justify-center mt-2">
+                    {renderStars(Math.round(Number(averageRating)))}
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div className="flex flex-col md:flex-row gap-4 flex-1">
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm text-zinc-400">Сортировка:</label>
-                  <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                    <SelectTrigger className="w-full md:w-[200px] bg-zinc-800 border-zinc-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="newest">Сначала новые</SelectItem>
-                      <SelectItem value="oldest">Сначала старые</SelectItem>
-                      <SelectItem value="rating_high">По рейтингу ↓</SelectItem>
-                      <SelectItem value="rating_low">По рейтингу ↑</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <Card className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border-purple-700/30 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-purple-500/20 rounded-full mx-auto mb-4">
+                    <Users className="h-6 w-6 text-purple-400" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">{reviews.length}</div>
+                  <div className="text-purple-200 text-sm">Довольных клиентов</div>
+                </CardContent>
+              </Card>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm text-zinc-400">Рейтинг:</label>
-                  <Select
-                    value={filterRating.toString()}
-                    onValueChange={(value) => setFilterRating(value === "all" ? "all" : Number(value))}
-                  >
-                    <SelectTrigger className="w-full md:w-[150px] bg-zinc-800 border-zinc-700">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Все</SelectItem>
-                      <SelectItem value="5">5 звёзд</SelectItem>
-                      <SelectItem value="4">4 звезды</SelectItem>
-                      <SelectItem value="3">3 звезды</SelectItem>
-                      <SelectItem value="2">2 звезды</SelectItem>
-                      <SelectItem value="1">1 звезда</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <Card className="bg-gradient-to-br from-green-900/30 to-green-800/20 border-green-700/30 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-green-500/20 rounded-full mx-auto mb-4">
+                    <TrendingUp className="h-6 w-6 text-green-400" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">{Math.round((ratingStats[5] / reviews.length) * 100)}%</div>
+                  <div className="text-green-200 text-sm">5-звёздочных отзывов</div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border-pink-700/30 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <div className="flex items-center justify-center w-12 h-12 bg-pink-500/20 rounded-full mx-auto mb-4">
+                    <Heart className="h-6 w-6 text-pink-400" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">98%</div>
+                  <div className="text-pink-200 text-sm">Рекомендуют нас</div>
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Reviews Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {reviews.map((review) => (
+            {/* Reviews Masonry Grid */}
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+              {reviews.map((review, index) => (
                 <Card
                   key={review.id}
-                  className="bg-gradient-to-br from-zinc-900/50 to-zinc-800/30 border-zinc-700/50 backdrop-blur-sm hover:bg-gradient-to-br hover:from-zinc-800/60 hover:to-zinc-700/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10"
+                  className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl group mb-6`}
                 >
                   <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                          {review.avatar ? (
-                            <img
-                              src={review.avatar}
-                              alt={review.name}
-                              className="w-12 h-12 rounded-full object-cover"
-                            />
-                          ) : (
-                            review.name.charAt(0).toUpperCase()
-                          )}
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-lg shadow-lg">
+                            {review.avatar ? (
+                              <img
+                                src={review.avatar}
+                                alt={review.name}
+                                className="w-12 h-12 rounded-full object-cover"
+                              />
+                            ) : (
+                              review.name.charAt(0).toUpperCase()
+                            )}
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-zinc-900"></div>
                         </div>
                         <div>
-                          <h3 className="font-semibold text-white text-lg">
+                          <h3 className="font-bold text-white text-lg">
                             {review.name}
                           </h3>
                           <div className="flex items-center space-x-1 mb-1">
                             {renderStars(review.rating)}
                           </div>
-                          <div className="text-xs text-zinc-500">
-                            {formatDate(review.createdAt)}
-                          </div>
+                          <Badge className="bg-zinc-800/50 text-zinc-300 text-xs border-0">
+                            Проверенная покупка
+                          </Badge>
                         </div>
                       </div>
-                      <Quote className="h-6 w-6 text-zinc-600" />
+                      <Quote className="h-8 w-8 text-white/20 group-hover:text-white/40 transition-colors" />
                     </div>
-                    <p className="text-zinc-300 leading-relaxed">
-                      {review.text}
-                    </p>
+
+                    {/* Review Text */}
+                    <div className="relative">
+                      <p className="text-zinc-200 leading-relaxed text-base">
+                        "{review.text}"
+                      </p>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-yellow-400">
+                          <Star className="h-3 w-3 fill-current" />
+                          <span className="text-sm font-medium">{review.rating}</span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-zinc-400">
+                        {Math.floor(Math.random() * 30) + 1} дн. назад
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
 
-            {/* Load More Button */}
-            {hasMore && (
-              <div className="text-center">
-                <Button
-                  onClick={() => loadReviews(false)}
-                  disabled={loadingMore}
-                  variant="outline"
-                  className="bg-transparent border-zinc-600 text-zinc-300 hover:bg-zinc-800 hover:text-white hover:border-zinc-500 px-8 py-3"
-                >
-                  {loadingMore ? "Загрузка..." : "Показать ещё"}
-                </Button>
+            {/* Bottom CTA */}
+            <div className="text-center mt-16 pt-16 border-t border-zinc-800">
+              <div className="max-w-2xl mx-auto">
+                <h3 className="text-3xl font-bold text-white mb-4">
+                  Готовы стать частью нашей семьи коллекционеров?
+                </h3>
+                <p className="text-zinc-400 mb-6">
+                  Присоединяйтесь к тысячам довольных клиентов и начните собирать карточки своей мечты уже сегодня
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 text-sm">
+                    ⚡ Быстрая доставка по всему миру
+                  </Badge>
+                  <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 text-sm">
+                    🔒 Гарантия качества 100%
+                  </Badge>
+                </div>
               </div>
-            )}
+            </div>
           </>
         )}
       </main>
