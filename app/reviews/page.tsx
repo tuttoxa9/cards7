@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { Star, Quote, Heart, Users, TrendingUp, Sparkles } from "lucide-react";
+import { Star, Quote, Heart, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/firebase";
@@ -37,10 +37,39 @@ const gradients = [
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCards, setVisibleCards] = useState<Set<string>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     loadReviews();
   }, []);
+
+  useEffect(() => {
+    if (reviews.length > 0) {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const cardId = entry.target.getAttribute('data-card-id');
+              if (cardId) {
+                setVisibleCards(prev => new Set([...prev, cardId]));
+              }
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px 0px -50px 0px'
+        }
+      );
+
+      return () => {
+        if (observerRef.current) {
+          observerRef.current.disconnect();
+        }
+      };
+    }
+  }, [reviews]);
 
   const loadReviews = async () => {
     try {
@@ -75,24 +104,7 @@ export default function ReviewsPage() {
     ));
   };
 
-  const getAverageRating = () => {
-    if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
-  };
 
-  const getRatingStats = () => {
-    const stats = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(review => {
-      stats[review.rating as keyof typeof stats]++;
-    });
-    return stats;
-  };
-
-  const getCardHeight = (index: number) => {
-    const heights = ["h-64", "h-72", "h-80", "h-64", "h-72"];
-    return heights[index % heights.length];
-  };
 
   if (loading) {
     return (
@@ -122,11 +134,15 @@ export default function ReviewsPage() {
     );
   }
 
-  const ratingStats = getRatingStats();
-  const averageRating = getAverageRating();
+
 
   return (
     <div className="min-h-screen bg-[#06080A]">
+      <style jsx>{`
+        .review-card {
+          transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+      `}</style>
       <Header />
 
       <GradualBlur
@@ -150,8 +166,8 @@ export default function ReviewsPage() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-            Истории наших
-            <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Истории наших{" "}
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               коллекционеров
             </span>
           </h1>
@@ -169,59 +185,28 @@ export default function ReviewsPage() {
           </div>
         ) : (
           <>
-            {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-              <Card className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border-blue-700/30 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-blue-500/20 rounded-full mx-auto mb-4">
-                    <Star className="h-6 w-6 text-blue-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{averageRating}</div>
-                  <div className="text-blue-200 text-sm">Средний рейтинг</div>
-                  <div className="flex justify-center mt-2">
-                    {renderStars(Math.round(Number(averageRating)))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border-purple-700/30 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-purple-500/20 rounded-full mx-auto mb-4">
-                    <Users className="h-6 w-6 text-purple-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{reviews.length}</div>
-                  <div className="text-purple-200 text-sm">Довольных клиентов</div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-900/30 to-green-800/20 border-green-700/30 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-green-500/20 rounded-full mx-auto mb-4">
-                    <TrendingUp className="h-6 w-6 text-green-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{Math.round((ratingStats[5] / reviews.length) * 100)}%</div>
-                  <div className="text-green-200 text-sm">5-звёздочных отзывов</div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border-pink-700/30 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center w-12 h-12 bg-pink-500/20 rounded-full mx-auto mb-4">
-                    <Heart className="h-6 w-6 text-pink-400" />
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">98%</div>
-                  <div className="text-pink-200 text-sm">Рекомендуют нас</div>
-                </CardContent>
-              </Card>
-            </div>
-
             {/* Reviews Masonry Grid */}
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-              {reviews.map((review, index) => (
-                <Card
-                  key={review.id}
-                  className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl group mb-6`}
-                >
+              {reviews.map((review, index) => {
+                const isVisible = visibleCards.has(review.id);
+                return (
+                  <Card
+                    key={review.id}
+                    data-card-id={review.id}
+                    ref={(el) => {
+                      if (el && observerRef.current && !visibleCards.has(review.id)) {
+                        observerRef.current.observe(el);
+                      }
+                    }}
+                    className={`break-inside-avoid bg-gradient-to-br ${gradients[index % gradients.length]} backdrop-blur-sm border-zinc-700/50 hover:border-zinc-600/70 transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl group mb-6 ${
+                      isVisible
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 translate-y-12'
+                    }`}
+                    style={{
+                      transitionDelay: `${index * 100}ms`
+                    }}
+                  >
                   <CardContent className="p-6">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
@@ -276,7 +261,8 @@ export default function ReviewsPage() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
 
             {/* Bottom CTA */}
