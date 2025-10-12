@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { X, Plus, Minus, CreditCard, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCart } from "@/lib/cart-context"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface CartOverlayProps {
   isOpen: boolean
@@ -44,23 +45,29 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
   }, 0)
 
   return (
-    <div className={cn(
-      "fixed inset-0 z-50 flex transition-all duration-300",
-      isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-    )}>
-      {/* Backdrop with blur */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop with blur */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            onClick={onClose}
+          />
 
-      {/* Desktop Cart Content - slide from right */}
-      <div className={cn(
-        "relative hidden md:flex ml-auto w-1/3 h-full flex-col bg-slate-900 transform transition-transform duration-300 ease-out",
-        isOpen ? "translate-x-0" : "translate-x-full"
-      )}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+          {/* Desktop Cart Content - slide from right */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: "0%" }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed top-0 right-0 h-full w-full md:w-1/3 hidden md:flex flex-col bg-slate-900 z-50"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-8 h-8 text-red-500" viewBox="0 0 16 16">
               <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -223,15 +230,18 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             </Button>
           </div>
         )}
-      </div>
+          </motion.div>
 
-      {/* Mobile Cart Content - slide from bottom */}
-      <div className={cn(
-        "relative md:hidden flex flex-col w-full h-full bg-slate-900 transform transition-transform duration-300 ease-out",
-        isOpen ? "translate-y-0" : "translate-y-full"
-      )}>
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-900/95 backdrop-blur-sm">
+          {/* Mobile Cart Content - slide from bottom */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed bottom-0 left-0 right-0 h-[90vh] md:hidden flex flex-col bg-slate-900 z-50 rounded-t-3xl"
+          >
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-900/95 backdrop-blur-sm">
           <div className="flex items-center space-x-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-6 h-6 text-red-500" viewBox="0 0 16 16">
               <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -388,7 +398,9 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             </Button>
           </div>
         )}
-      </div>
-    </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }
