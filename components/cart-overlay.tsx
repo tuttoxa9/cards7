@@ -53,7 +53,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={onClose}
           />
@@ -63,8 +63,8 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             initial={{ x: "100%" }}
             animate={{ x: "0%" }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed top-0 right-0 h-full w-full md:w-1/3 hidden md:flex flex-col bg-slate-900 z-50"
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            className="fixed top-0 right-0 h-full w-full md:w-1/3 hidden md:flex flex-col bg-slate-900 z-50 rounded-l-3xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
@@ -237,7 +237,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             initial={{ y: "100%" }}
             animate={{ y: "0%" }}
             exit={{ y: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className="fixed bottom-0 left-0 right-0 h-[90vh] md:hidden flex flex-col bg-slate-900 z-50 rounded-t-3xl"
           >
             {/* Mobile Header */}

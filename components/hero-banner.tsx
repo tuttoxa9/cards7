@@ -262,6 +262,48 @@ export function HeroBanner() {
         </div>
       </div>
 
+      {/* Анимированные карточки справа по центру - только на мобильных */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-0 z-10 pointer-events-none md:hidden">
+        <div
+          key={`animated-cards-mobile-${activeCard}`}
+          className="relative w-32 h-44 animate-in slide-in-from-right-4 fade-in duration-1000"
+        >
+          {/* Оборотная сторона карточки (задняя, под наклоном влево) */}
+          <div
+            className="absolute w-28 h-40 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            style={{
+              transform: 'rotate(-8deg) translate(-20px, 10px)',
+              zIndex: 1
+            }}
+          >
+            <img
+              src={currentCard.cardBackImageUrl || CARD_BACK_IMAGE_URL}
+              alt="Оборотная сторона карточки"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/placeholder.svg";
+              }}
+            />
+          </div>
+
+          {/* Лицевая сторона карточки (основная, ровная) */}
+          <div
+            className="absolute w-28 h-40 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            style={{
+              transform: 'rotate(0deg) translate(0px, 0px)',
+              zIndex: 2,
+              boxShadow: '0 20px 50px -5px rgba(0, 0, 0, 0.9), 0 10px 30px -3px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <img
+              src={currentCard.imageUrl || currentCard.bannerImageUrl || "/placeholder.svg"}
+              alt={currentCard.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="absolute bottom-48 md:bottom-32 left-0 right-0 z-10 pointer-events-none">
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
