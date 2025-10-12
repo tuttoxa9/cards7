@@ -129,17 +129,8 @@ export function Header() {
 
   return (
     <header
-      className={cn(
-        "sticky top-0 z-[1200] transition-colors duration-300",
-        isScrolled ? "bg-gradient-to-b from-black/95 to-transparent" : "bg-transparent"
-      )}
+      className="sticky top-0 z-[1200] bg-transparent transition-colors duration-300"
     >
-      <div
-        className={cn(
-          "absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-transparent pointer-events-none -z-10",
-          isScrolled && "opacity-0"
-        )}
-      />
 
       <div className="relative container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
