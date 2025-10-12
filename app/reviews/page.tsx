@@ -98,7 +98,7 @@ export default function ReviewsPage() {
         strength={2}
         divCount={5}
         height="8rem"
-        animated="scroll"
+        animated={false}
         curve="bezier"
         exponential={true}
         opacity={1}
@@ -106,7 +106,7 @@ export default function ReviewsPage() {
       />
 
       {/* Background image in header area */}
-      <div className="relative h-[600px] overflow-hidden -mt-16">
+      <div className="relative h-[600px] overflow-hidden -mt-32">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35"
           style={{
@@ -117,7 +117,7 @@ export default function ReviewsPage() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#06080A] to-transparent" />
       </div>
 
-      <main className="container mx-auto px-4 py-16 -mt-[520px] relative z-10">
+      <main className="container mx-auto px-4 py-16 -mt-[540px] relative z-10">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 mb-6">

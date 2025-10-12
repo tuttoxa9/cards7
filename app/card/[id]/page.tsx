@@ -55,7 +55,7 @@ function CardPageSkeleton() {
         strength={2}
         divCount={5}
         height="8rem"
-        animated="scroll"
+        animated={false}
         curve="bezier"
         exponential={true}
         opacity={1}
@@ -200,7 +200,7 @@ export default function CardPage({ params }: PageProps) {
           strength={2}
           divCount={5}
           height="8rem"
-          animated="scroll"
+          animated={false}
           curve="bezier"
           exponential={true}
           opacity={1}
@@ -240,7 +240,7 @@ export default function CardPage({ params }: PageProps) {
         strength={2}
         divCount={5}
         height="8rem"
-        animated="scroll"
+        animated={false}
         curve="bezier"
         exponential={true}
         opacity={1}

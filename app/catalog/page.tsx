@@ -18,7 +18,7 @@ export default function CatalogPage() {
         strength={2}
         divCount={5}
         height="8rem"
-        animated="scroll"
+        animated={false}
         curve="bezier"
         exponential={true}
         opacity={1}
