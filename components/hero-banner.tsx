@@ -124,7 +124,7 @@ export function HeroBanner() {
           key={activeCard}
           src={currentCard.bannerImageUrl || currentCard.imageUrl || "/placeholder.svg"}
           alt={currentCard.name}
-          className="w-full h-full object-cover animate-in fade-in duration-1000"
+          className="w-full h-full object-cover object-top animate-in fade-in duration-1000"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/40" />
