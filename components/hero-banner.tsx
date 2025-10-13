@@ -187,7 +187,7 @@ export function HeroBanner() {
       </div>
 
       {/* Card Selector - Mobile (Top) */}
-      <div className="absolute inset-x-0 top-24 z-10 md:hidden">
+      <div className="absolute inset-x-0 top-28 z-10 md:hidden">
         <div className="px-4 py-4 carousel-container">
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide carousel-item">
             {featuredCards.map((card, index) => (
@@ -263,7 +263,7 @@ export function HeroBanner() {
       </div>
 
       {/* Анимированные карточки справа по центру - только на мобильных */}
-      <div className="absolute top-1/3 -translate-y-1/3 right-8 z-10 pointer-events-none md:hidden">
+      <div className="absolute top-2/5 -translate-y-2/5 right-8 z-10 pointer-events-none md:hidden">
         <div
           key={`animated-cards-mobile-${activeCard}`}
           className="relative w-38 h-52 animate-in slide-in-from-right-4 fade-in duration-1000"
