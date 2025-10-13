@@ -266,13 +266,13 @@ export function HeroBanner() {
       <div className="absolute top-1/3 -translate-y-1/3 right-8 z-10 pointer-events-none md:hidden">
         <div
           key={`animated-cards-mobile-${activeCard}`}
-          className="relative w-64 h-88 animate-in slide-in-from-right-4 fade-in duration-1000"
+          className="relative w-48 h-66 animate-in slide-in-from-right-4 fade-in duration-1000"
         >
           {/* Оборотная сторона карточки (задняя, под наклоном влево) */}
           <div
-            className="absolute w-56 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            className="absolute w-42 h-60 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
-              transform: 'rotate(-8deg) translate(-40px, 20px)',
+              transform: 'rotate(-8deg) translate(-30px, 15px)',
               zIndex: 1
             }}
           >
@@ -288,7 +288,7 @@ export function HeroBanner() {
 
           {/* Лицевая сторона карточки (основная, ровная) */}
           <div
-            className="absolute w-56 h-80 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
+            className="absolute w-42 h-60 rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000"
             style={{
               transform: 'rotate(0deg) translate(0px, 0px)',
               zIndex: 2,
