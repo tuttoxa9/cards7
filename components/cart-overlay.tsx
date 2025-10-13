@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,7 @@ import { X, Plus, Minus, CreditCard, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCart } from "@/lib/cart-context"
 import { motion, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
 
 interface CartOverlayProps {
   isOpen: boolean
@@ -16,6 +17,9 @@ interface CartOverlayProps {
 
 export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
   const { cartItems, updateQuantity, removeFromCart, totalPrice } = useCart()
+  const router = useRouter()
+  const [dragY, setDragY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -44,6 +48,35 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
     return sum
   }, 0)
 
+  const handleDragStart = (e: React.TouchEvent) => {
+    setIsDragging(true)
+  }
+
+  const handleDragMove = (e: React.TouchEvent) => {
+    if (isDragging) {
+      const touch = e.touches[0]
+      const deltaY = touch.clientY - (window.innerHeight * 0.1)
+      if (deltaY > 0) {
+        setDragY(deltaY)
+      }
+    }
+  }
+
+  const handleDragEnd = () => {
+    if (isDragging) {
+      if (dragY > 100) {
+        onClose()
+      }
+      setDragY(0)
+      setIsDragging(false)
+    }
+  }
+
+  const handleCatalogClick = () => {
+    onClose()
+    router.push('/catalog')
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -53,8 +86,8 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
             onClick={onClose}
           />
 
@@ -63,18 +96,16 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             initial={{ x: "100%" }}
             animate={{ x: "0%" }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed top-0 right-0 h-full w-full md:w-1/3 hidden md:flex flex-col bg-slate-900 z-50 rounded-l-3xl"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed top-0 right-0 h-full w-full md:w-[450px] hidden md:flex flex-col bg-black border-l border-t border-b border-[#555555] z-[60]"
+            style={{ borderRadius: "16px 0 0 16px" }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <div className="flex items-center justify-between p-6 border-b border-[#555555]">
           <div className="flex items-center space-x-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-8 h-8 text-red-500" viewBox="0 0 16 16">
-              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-            </svg>
             <h2 className="text-2xl font-bold text-white">Корзина</h2>
             <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
-              {cartItems.length} товар{cartItems.length !== 1 ? (cartItems.length < 5 ? 'а' : 'ов') : ''}
+              {cartItems.length}
             </Badge>
           </div>
 
@@ -82,7 +113,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:text-red-400 hover:bg-slate-700 w-12 h-12 rounded-full transition-all duration-300 hover:scale-110"
+            className="text-white hover:text-red-400 hover:bg-white/10 w-12 h-12 rounded-full transition-all duration-300"
           >
             <X className="w-6 h-6" />
           </Button>
@@ -92,13 +123,13 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-24 h-24 text-white/20 mb-4" viewBox="0 0 16 16">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-24 h-24 text-gray-500 mb-4" viewBox="0 0 16 16">
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
               </svg>
               <h3 className="text-2xl font-semibold text-white mb-2">Корзина пуста</h3>
-              <p className="text-white/60 mb-6">Добавьте карточки в корзину, чтобы продолжить покупки</p>
+              <p className="text-gray-400 mb-6">Добавьте карточки в корзину, чтобы продолжить покупки</p>
               <Button
-                onClick={onClose}
+                onClick={handleCatalogClick}
                 className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full"
               >
                 Перейти к каталогу
@@ -106,11 +137,11 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             </div>
           ) : (
             cartItems.map((item) => (
-              <Card key={item.id} className="bg-slate-800 border-slate-600 hover:bg-slate-700 transition-all duration-300 rounded-2xl overflow-hidden shadow-lg">
+              <Card key={item.id} className="bg-[#0a0a0a] border-[#333333] hover:bg-[#111111] transition-all duration-300 rounded-xl overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {/* Image */}
-                    <div className="w-24 h-32 rounded-xl overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-auto rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.imageUrl || item.image}
                         alt={item.title}
@@ -121,17 +152,14 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                     {/* Details */}
                     <div className="flex-1 space-y-2">
                       <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-white line-clamp-2">
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-white line-clamp-2">
                             {item.title}
                           </h3>
                           <div className="flex items-center space-x-2 mt-1">
-                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
-                              {item.category}
-                            </Badge>
-                            <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
-                              {item.rarity}
-                            </Badge>
+                            <span className="text-xs text-gray-400">{item.category}</span>
+                            <span className="text-xs text-gray-500">•</span>
+                            <span className="text-xs text-gray-400">{item.rarity}</span>
                           </div>
                         </div>
 
@@ -139,59 +167,54 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveItem(item.id)}
-                          className="text-gray-400 hover:text-red-400 hover:bg-red-600 w-8 h-8 rounded-lg"
+                          className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 w-8 h-8 rounded-lg ml-2"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
 
-                      {/* Price */}
+                      {/* Quantity Controls */}
                       <div className="flex items-center space-x-2">
-                        <span className="text-xl font-bold text-white">
-                          {item.price.toLocaleString()} BYN
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          className="w-7 h-7 rounded-md bg-[#222222] hover:bg-[#333333] text-white border border-[#444444]"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </Button>
+
+                        <span className="text-white font-semibold text-sm w-8 text-center">
+                          {item.quantity}
                         </span>
-                        {item.originalPrice && (
-                          <>
-                            <span className="text-sm text-white/50 line-through">
-                              {item.originalPrice.toLocaleString()} BYN
-                            </span>
-                            <Badge variant="destructive" className="bg-red-600 text-xs">
-                              -{item.discount}%
-                            </Badge>
-                          </>
-                        )}
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          className="w-7 h-7 rounded-md bg-[#222222] hover:bg-[#333333] text-white border border-[#444444]"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
                       </div>
 
-                      {/* Quantity Controls */}
+                      {/* Price */}
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            className="w-8 h-8 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
-                          >
-                            <Minus className="w-4 h-4" />
-                          </Button>
-
-                          <span className="text-white font-semibold w-8 text-center">
-                            {item.quantity}
-                          </span>
-
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </Button>
-                        </div>
-
-                        <div className="text-right">
-                          <span className="text-lg font-bold text-white">
-                            {(item.price * item.quantity).toLocaleString()} BYN
-                          </span>
+                        <div className="flex items-center space-x-2">
+                          {item.originalPrice && item.originalPrice > item.price ? (
+                            <>
+                              <span className="text-sm text-gray-500 line-through">
+                                {item.originalPrice.toLocaleString()} BYN
+                              </span>
+                              <span className="text-base font-bold text-red-500">
+                                {item.price.toLocaleString()} BYN
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-base font-bold text-white">
+                              {item.price.toLocaleString()} BYN
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -204,27 +227,29 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
         {/* Summary */}
         {cartItems.length > 0 && (
-          <div className="border-t border-white/10 p-6 space-y-4">
+          <div className="sticky bottom-0 border-t border-[#555555] p-6 space-y-4 bg-black">
             <div className="space-y-2">
-              <div className="flex justify-between text-white/70">
+              <div className="flex justify-between text-gray-300 text-sm">
                 <span>Товары ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} шт.)</span>
                 <span>{(totalPrice + totalDiscount).toLocaleString()} BYN</span>
               </div>
 
               {totalDiscount > 0 && (
-                <div className="flex justify-between text-green-400">
+                <div className="flex justify-between text-red-400 text-sm">
                   <span>Скидка</span>
                   <span>-{totalDiscount.toLocaleString()} BYN</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-xl font-bold text-white border-t border-white/10 pt-2">
+              <div className="h-[2px] bg-[#555555] my-3"></div>
+
+              <div className="flex justify-between text-xl font-bold text-white">
                 <span>Итого</span>
                 <span>{totalPrice.toLocaleString()} BYN</span>
               </div>
             </div>
 
-            <Button className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl text-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+            <Button className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl text-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2">
               <CreditCard className="w-5 h-5" />
               <span>Оформить заказ</span>
             </Button>
@@ -235,17 +260,26 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
           {/* Mobile Cart Content - slide from bottom */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: "0%" }}
+            animate={{ y: dragY }}
             exit={{ y: "100%" }}
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="fixed bottom-0 left-0 right-0 h-[90vh] md:hidden flex flex-col bg-slate-900 z-50 rounded-t-3xl"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed bottom-0 left-0 right-0 h-[90vh] md:hidden flex flex-col bg-black border-t border-l border-r border-[#555555] z-[60]"
+            style={{
+              borderRadius: "16px 16px 0 0",
+              transform: isDragging ? `translateY(${dragY}px)` : undefined
+            }}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
           >
+            {/* Grabber */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-[#555555] rounded-full"></div>
+            </div>
+
             {/* Mobile Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-900/95 backdrop-blur-sm">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#555555]">
           <div className="flex items-center space-x-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-6 h-6 text-red-500" viewBox="0 0 16 16">
-              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-            </svg>
             <h2 className="text-xl font-bold text-white">Корзина</h2>
             <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-xs">
               {cartItems.length}
@@ -256,7 +290,7 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:text-red-400 hover:bg-slate-700 w-10 h-10 rounded-full"
+            className="text-white hover:text-red-400 hover:bg-white/10 w-10 h-10 rounded-full"
           >
             <X className="w-5 h-5" />
           </Button>
@@ -266,13 +300,13 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-16 h-16 text-white/20 mb-4" viewBox="0 0 16 16">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-16 h-16 text-gray-500 mb-4" viewBox="0 0 16 16">
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
               </svg>
               <h3 className="text-xl font-semibold text-white mb-2">Корзина пуста</h3>
-              <p className="text-white/60 mb-6 text-sm">Добавьте карточки в корзину, чтобы продолжить покупки</p>
+              <p className="text-gray-400 mb-6 text-sm">Добавьте карточки в корзину, чтобы продолжить покупки</p>
               <Button
-                onClick={onClose}
+                onClick={handleCatalogClick}
                 className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full"
               >
                 Перейти к каталогу
@@ -280,11 +314,11 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
             </div>
           ) : (
             cartItems.map((item) => (
-              <Card key={item.id} className="bg-slate-800 border-slate-600 rounded-xl overflow-hidden">
+              <Card key={item.id} className="bg-[#0a0a0a] border-[#333333] rounded-xl overflow-hidden">
                 <CardContent className="p-3">
                   <div className="flex gap-3">
                     {/* Image */}
-                    <div className="w-16 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-auto rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={item.imageUrl || item.image}
                         alt={item.title}
@@ -300,9 +334,9 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                             {item.title}
                           </h3>
                           <div className="flex items-center space-x-1 mt-1">
-                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs px-1 py-0">
-                              {item.category}
-                            </Badge>
+                            <span className="text-xs text-gray-400">{item.category}</span>
+                            <span className="text-xs text-gray-500">•</span>
+                            <span className="text-xs text-gray-400">{item.rarity}</span>
                           </div>
                         </div>
 
@@ -310,56 +344,54 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveItem(item.id)}
-                          className="text-gray-400 hover:text-red-400 w-6 h-6 rounded-lg flex-shrink-0"
+                          className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 w-6 h-6 rounded-lg flex-shrink-0"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       </div>
 
-                      {/* Price */}
+                      {/* Quantity Controls */}
                       <div className="flex items-center space-x-2">
-                        <span className="text-sm font-bold text-white">
-                          {item.price.toLocaleString()} BYN
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                          className="w-6 h-6 rounded-md bg-[#222222] hover:bg-[#333333] text-white border border-[#444444]"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </Button>
+
+                        <span className="text-white font-semibold text-sm w-6 text-center">
+                          {item.quantity}
                         </span>
-                        {item.originalPrice && (
-                          <>
-                            <span className="text-xs text-white/50 line-through">
-                              {item.originalPrice.toLocaleString()} BYN
-                            </span>
-                          </>
-                        )}
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                          className="w-6 h-6 rounded-md bg-[#222222] hover:bg-[#333333] text-white border border-[#444444]"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </Button>
                       </div>
 
-                      {/* Quantity Controls */}
+                      {/* Price */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            className="w-6 h-6 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </Button>
-
-                          <span className="text-white font-semibold text-sm w-6 text-center">
-                            {item.quantity}
-                          </span>
-
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                            className="w-6 h-6 rounded-full bg-slate-600 hover:bg-slate-500 text-white"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </Button>
-                        </div>
-
-                        <div className="text-right">
-                          <span className="text-sm font-bold text-white">
-                            {(item.price * item.quantity).toLocaleString()} BYN
-                          </span>
+                          {item.originalPrice && item.originalPrice > item.price ? (
+                            <>
+                              <span className="text-xs text-gray-500 line-through">
+                                {item.originalPrice.toLocaleString()} BYN
+                              </span>
+                              <span className="text-sm font-bold text-red-500">
+                                {item.price.toLocaleString()} BYN
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-sm font-bold text-white">
+                              {item.price.toLocaleString()} BYN
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -372,21 +404,23 @@ export function CartOverlay({ isOpen, onClose }: CartOverlayProps) {
 
         {/* Mobile Summary */}
         {cartItems.length > 0 && (
-          <div className="border-t border-white/10 p-4 space-y-3 bg-slate-900/95 backdrop-blur-sm">
+          <div className="sticky bottom-0 border-t border-[#555555] p-4 space-y-3 bg-black">
             <div className="space-y-2">
-              <div className="flex justify-between text-white/70 text-sm">
+              <div className="flex justify-between text-gray-300 text-sm">
                 <span>Товары ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} шт.)</span>
                 <span>{(totalPrice + totalDiscount).toLocaleString()} BYN</span>
               </div>
 
               {totalDiscount > 0 && (
-                <div className="flex justify-between text-green-400 text-sm">
+                <div className="flex justify-between text-red-400 text-sm">
                   <span>Скидка</span>
                   <span>-{totalDiscount.toLocaleString()} BYN</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-lg font-bold text-white border-t border-white/10 pt-2">
+              <div className="h-[2px] bg-[#555555] my-2"></div>
+
+              <div className="flex justify-between text-lg font-bold text-white">
                 <span>Итого</span>
                 <span>{totalPrice.toLocaleString()} BYN</span>
               </div>
