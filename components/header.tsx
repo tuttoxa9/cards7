@@ -197,18 +197,19 @@ export function Header() {
             {/* Desktop Search */}
             <div className="relative hidden md:block" ref={searchRef}>
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 pointer-events-none" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70 w-5 h-5 pointer-events-none z-10" />
                 <Input
                   placeholder="Поиск карточек..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={handleSearchFocus}
-                  className="pl-12 pr-12 h-12 w-80 border-white/20 rounded-3xl text-white placeholder:text-white/60 text-lg focus:border-white/40 bg-white/10 backdrop-blur-sm"
+                  className="pl-12 pr-12 h-12 w-80 border-white/30 rounded-3xl text-white placeholder:text-white/50 text-lg focus:border-white/50 bg-black/40 backdrop-blur-md shadow-lg hover:bg-black/50 transition-all duration-300 focus:shadow-xl focus:bg-black/50"
+                  style={{ WebkitTextFillColor: 'white' }}
                 />
                 {searchQuery && (
                   <button
                     onClick={handleClearSearch}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/60 hover:text-white transition-colors z-10"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -217,7 +218,7 @@ export function Header() {
 
               {/* Search Results Dropdown */}
               {isSearchOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden z-50 max-h-96 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden z-50 max-h-96 overflow-y-auto animate-slide-down shadow-2xl">
                   {isLoading ? (
                     <div className="p-4 text-center">
                       <div className="spinner center">
