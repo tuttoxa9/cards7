@@ -1,7 +1,6 @@
 import { Header } from "@/components/header"
 import { HeroBanner } from "@/components/hero-banner"
 import { FeaturedSections } from "@/components/featured-sections"
-import { ReviewsSection } from "@/components/reviews-section"
 import { Footer } from "@/components/footer"
 import GradualBlur from "@/components/GradualBlur"
 
@@ -29,7 +28,6 @@ export default function HomePage() {
           <FeaturedSections />
         </div>
 
-        <ReviewsSection />
       </main>
 
       <Footer />
