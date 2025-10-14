@@ -12,6 +12,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import GradualBlur from "@/components/GradualBlur";
 
 interface Review {
   id: string;
@@ -78,6 +79,17 @@ export default function ReviewsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <Header />
+      <GradualBlur
+        preset="page-header"
+        strength={2}
+        divCount={5}
+        height="8rem"
+        animated={false}
+        curve="bezier"
+        exponential={true}
+        opacity={1}
+        zIndex={40}
+      />
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
