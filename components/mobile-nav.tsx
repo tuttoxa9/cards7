@@ -12,8 +12,8 @@ export function MobileNav() {
     <>
       {/* Bottom Navigation Bar - Only on Mobile */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-t border-gray-800">
-        <div className="flex items-center justify-between w-full px-4 py-2">
-          <Link href="/" className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors flex-1 ${
+        <div className="flex items-center justify-between w-full px-4 py-1">
+          <Link href="/" className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors flex-1 ${
             pathname === "/" ? "text-white" : "text-gray-400"
           }`}>
             <div className={`p-2 rounded-xl ${pathname === "/" ? "bg-white/20" : ""}`}>
@@ -25,7 +25,7 @@ export function MobileNav() {
             <span className="text-xs mt-1 font-medium">Главная</span>
           </Link>
 
-          <Link href="/catalog" className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors flex-1 ${
+          <Link href="/catalog" className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors flex-1 ${
             pathname === "/catalog" ? "text-white" : "text-gray-400"
           }`}>
             <div className={`p-2 rounded-xl ${pathname === "/catalog" ? "bg-white/20" : ""}`}>
@@ -39,7 +39,7 @@ export function MobileNav() {
             <span className="text-xs mt-1 font-medium">Каталог</span>
           </Link>
 
-          <Link href="/media" className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors flex-1 ${
+          <Link href="/media" className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors flex-1 ${
             pathname === "/media" ? "text-white" : "text-gray-400"
           }`}>
             <div className={`p-2 rounded-xl ${pathname === "/media" ? "bg-white/20" : ""}`}>
@@ -52,7 +52,7 @@ export function MobileNav() {
             <span className="text-xs mt-1 font-medium">Медиа</span>
           </Link>
 
-          <Link href="/reviews" className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors flex-1 ${
+          <Link href="/reviews" className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors flex-1 ${
             pathname === "/reviews" ? "text-white" : "text-gray-400"
           }`}>
             <div className={`p-2 rounded-xl ${pathname === "/reviews" ? "bg-white/20" : ""}`}>

@@ -90,12 +90,22 @@ export default function ReviewsPage() {
         opacity={1}
         zIndex={40}
       />
-      <main className="container mx-auto px-4 py-12">
+      <div className="relative h-[400px] overflow-hidden -mt-32">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+          style={{
+            backgroundImage: "url('/spidyandhalkk.png')"
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-gray-900" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent" />
+      </div>
+      <main className="container mx-auto px-4 py-12 relative z-10 -mt-[200px]">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Отзывы наших клиентов
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Что говорят о нас наши покупатели.
           </p>
         </div>
