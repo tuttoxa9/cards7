@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react"
 import { Header } from "@/components/header"
-import { CardGallery } from "@/components/card-gallery"
-import { CardDetails } from "@/components/card-details"
-import { RelatedCards } from "@/components/related-cards"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { ChevronLeft, Star, ShieldCheck, Truck, Plus, Minus, ShoppingCart, Heart } from "lucide-react"
 import Link from "next/link"
 import GradualBlur from "@/components/GradualBlur"
-import { doc, getDoc, collection, getDocs, query, where, limit } from "firebase/firestore"
+import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { useCart } from "@/lib/cart-context"
+import { toast } from "sonner"
+import { RelatedCards } from "@/components/related-cards"
 
 interface CardData {
   id: string;
@@ -21,22 +21,13 @@ interface CardData {
   name?: string;
   price: number;
   originalPrice?: number;
-  discount?: number;
-  rating?: number;
-  reviews?: number;
   category: string;
   rarity?: string;
-  year?: string;
   description: string;
-  features?: string[];
   inStock: boolean;
-  stockCount?: number;
   imageUrl?: string;
   image?: string;
   images?: string[];
-  galleryImages?: string[];
-  bannerImageUrl?: string;
-  carouselImageUrl?: string;
 }
 
 interface PageProps {
@@ -47,102 +38,39 @@ interface PageProps {
 
 function CardPageSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Header />
-
-      <GradualBlur
-        preset="page-header"
-        strength={2}
-        divCount={5}
-        height="8rem"
-        animated={false}
-        curve="bezier"
-        exponential={true}
-        opacity={1}
-        zIndex={40}
-      />
-
+      <GradualBlur preset="page-header" strength={2} divCount={5} height="8rem" animated={false} curve="bezier" exponential={true} opacity={1} zIndex={40} />
       <main className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center space-x-2 mb-8">
-          <Skeleton className="h-10 w-40" />
-        </div>
+        <div className="w-full max-w-5xl mx-auto">
+          {/* Breadcrumb Skeleton */}
+          <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700/50 rounded-md mb-8 animate-pulse shimmer" />
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Image Gallery Skeleton */}
-          <div className="space-y-4">
-            <Card className="bg-card border-border">
-              <div className="aspect-[3/4] relative">
-                <Skeleton className="w-full h-full rounded-lg" />
-              </div>
-            </Card>
-            <div className="flex space-x-2">
-              {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="w-16 h-20 rounded" />
-              ))}
-            </div>
-          </div>
-
-          {/* Card Details Skeleton */}
-          <div className="space-y-6">
-            <div>
-              <div className="flex gap-2 mb-4">
-                <Skeleton className="h-6 w-20" />
-                <Skeleton className="h-6 w-16" />
-              </div>
-              <Skeleton className="h-8 w-3/4 mb-4" />
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-5 w-24" />
-              <Skeleton className="h-5 w-20" />
-            </div>
-
-            <div className="space-y-2">
-              <Skeleton className="h-8 w-32" />
-              <Skeleton className="h-5 w-40" />
-            </div>
-
-            <Card className="bg-card border-border">
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Skeleton className="h-4 w-16 mb-2" />
-                    <Skeleton className="h-5 w-20" />
-                  </div>
-                  <div>
-                    <Skeleton className="h-4 w-20 mb-2" />
-                    <Skeleton className="h-5 w-16" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {/* Image Gallery Skeleton */}
             <div className="space-y-4">
-              <Skeleton className="h-12 w-full" />
-              <div className="flex gap-3">
-                <Skeleton className="h-12 w-32" />
-                <Skeleton className="h-12 w-12" />
-                <Skeleton className="h-12 w-12" />
+              <div className="aspect-[4/5] bg-gray-200 dark:bg-gray-800/80 rounded-2xl animate-pulse shimmer" />
+              <div className="grid grid-cols-4 gap-4">
+                <div className="aspect-square bg-gray-200 dark:bg-gray-800/80 rounded-lg animate-pulse shimmer" />
+                <div className="aspect-square bg-gray-200 dark:bg-gray-800/80 rounded-lg animate-pulse shimmer" />
+                <div className="aspect-square bg-gray-200 dark:bg-gray-800/80 rounded-lg animate-pulse shimmer" />
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Related Cards Skeleton */}
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-48" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i} className="bg-transparent border-border aspect-square">
-                <Skeleton className="w-full h-full rounded-3xl" />
-              </Card>
-            ))}
+            {/* Details Skeleton */}
+            <div className="py-4">
+              <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700/50 rounded-md mb-3 animate-pulse shimmer" />
+              <div className="h-8 w-3/4 bg-gray-300 dark:bg-gray-700 rounded-md mb-6 animate-pulse shimmer" />
+
+              <div className="h-12 w-48 bg-gray-300 dark:bg-gray-700 rounded-md mb-8 animate-pulse shimmer" />
+
+              <div className="h-24 w-full bg-gray-200 dark:bg-gray-700/50 rounded-md mb-8 animate-pulse shimmer" />
+
+              <div className="h-14 w-full bg-gray-300 dark:bg-gray-700 rounded-full animate-pulse shimmer" />
+            </div>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   )
@@ -152,27 +80,22 @@ export default function CardPage({ params }: PageProps) {
   const [card, setCard] = useState<CardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [activeImage, setActiveImage] = useState("")
+  const [quantity, setQuantity] = useState(1)
+  const { addToCart: addToCartContext } = useCart()
 
   useEffect(() => {
     const loadCard = async () => {
+      if (!params.id) return
       try {
         setIsLoading(true)
         const cardDoc = await getDoc(doc(db, "cards", params.id))
 
         if (cardDoc.exists()) {
           const cardData = cardDoc.data() as CardData
-          setCard({
-            id: cardDoc.id,
-            ...cardData,
-            title: cardData.title || cardData.name || "",
-            name: cardData.name || cardData.title || "",
-            images: cardData.galleryImages || cardData.images || [cardData.imageUrl || cardData.image || "/placeholder.svg"],
-            features: cardData.features || [],
-            stockCount: cardData.stockCount || 0,
-            rating: cardData.rating || 4.5,
-            reviews: cardData.reviews || 0,
-            year: cardData.year || "2024"
-          })
+          const images = cardData.images || [cardData.imageUrl || cardData.image || "/placeholder.svg"]
+          setCard({ id: cardDoc.id, ...cardData, images })
+          setActiveImage(images[0])
         } else {
           setNotFound(true)
         }
@@ -183,9 +106,14 @@ export default function CardPage({ params }: PageProps) {
         setIsLoading(false)
       }
     }
-
     loadCard()
   }, [params.id])
+
+  const handleAddToCart = () => {
+    if (!card) return
+    addToCartContext({ ...card, quantity })
+    toast.success(`${card.title} (x${quantity}) добавлена в корзину!`)
+  }
 
   if (isLoading) {
     return <CardPageSkeleton />
@@ -193,132 +121,118 @@ export default function CardPage({ params }: PageProps) {
 
   if (notFound || !card) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Header />
-        <GradualBlur
-          preset="page-header"
-          strength={2}
-          divCount={5}
-          height="8rem"
-          animated={false}
-          curve="bezier"
-          exponential={true}
-          opacity={1}
-          zIndex={40}
-        />
-
-        <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center space-x-2 mb-8">
-            <Link href="/catalog">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Назад к каталогу
-              </Button>
-            </Link>
-          </div>
-
-          <div className="text-center py-20">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Карточка не найдена</h1>
-            <p className="text-muted-foreground mb-8">К сожалению, запрашиваемая карточка не существует или была удалена.</p>
-            <Link href="/catalog">
-              <Button>Вернуться к каталогу</Button>
-            </Link>
-          </div>
+        <main className="container mx-auto px-4 py-20 text-center">
+          <h1 className="text-4xl font-bold mb-4">Карточка не найдена</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">Запрашиваемая карточка не существует.</p>
+          <Link href="/catalog">
+            <Button>Вернуться в каталог</Button>
+          </Link>
         </main>
-
         <Footer />
       </div>
     )
   }
 
+  const discountPercent = card.originalPrice && card.price ? Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100) : 0
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Header />
+      <GradualBlur preset="page-header" strength={2} divCount={5} height="8rem" animated={false} curve="bezier" exponential={true} opacity={1} zIndex={40} />
 
-      <GradualBlur
-        preset="page-header"
-        strength={2}
-        divCount={5}
-        height="8rem"
-        animated={false}
-        curve="bezier"
-        exponential={true}
-        opacity={1}
-        zIndex={40}
-      />
-
-      {/* Hero Section with animated background */}
-      <div className="relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse delay-1000" />
-          <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full blur-3xl animate-pulse delay-500" />
-        </div>
-
-        <main className="relative container mx-auto px-4 py-8">
-          {/* Enhanced Breadcrumb */}
-          <div className="flex items-center space-x-2 mb-12">
-            <Link href="/catalog">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-all duration-300 backdrop-blur-sm border border-zinc-700/50"
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Назад к каталогу
-              </Button>
-            </Link>
-            <span className="text-zinc-600">/</span>
-            <span className="text-zinc-400">{card.category}</span>
-            <span className="text-zinc-600">/</span>
-            <span className="text-zinc-300 font-medium truncate max-w-[200px]">{card.title}</span>
+      <main className="container mx-auto px-4 py-8">
+        <div className="w-full max-w-6xl mx-auto">
+          {/* Breadcrumbs */}
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-8">
+            <Link href="/catalog" className="hover:text-red-500 transition-colors">Каталог</Link>
+            <ChevronLeft className="w-4 h-4 transform rotate-180 mx-2" />
+            <span className="font-medium text-gray-800 dark:text-gray-200">{card.title}</span>
           </div>
 
-          {/* Main Content with enhanced spacing and effects */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
             {/* Image Gallery */}
-            <div className="relative">
-              {/* Glow effect behind gallery */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-3xl blur-2xl opacity-30" />
-              <div className="relative">
-                <CardGallery
-                  images={card.images || [card.imageUrl || card.image || "/placeholder.svg"]}
-                  title={card.title}
-                />
+            <div className="space-y-4">
+              <div className="aspect-[4/5] bg-white dark:bg-gray-800/50 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center border border-gray-200 dark:border-gray-800">
+                <img src={activeImage} alt={card.title} className="w-full h-full object-contain" />
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                {card.images?.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(img)}
+                    className={cn(
+                      "aspect-square bg-white dark:bg-gray-800/50 rounded-lg overflow-hidden transition-all duration-200 flex items-center justify-center border",
+                      activeImage === img ? "border-red-500 ring-2 ring-red-500/50" : "border-gray-200 dark:border-gray-800 hover:border-red-400"
+                    )}
+                  >
+                    <img src={img} alt={`${card.title} thumbnail ${idx + 1}`} className="w-full h-full object-contain" />
+                  </button>
+                ))}
               </div>
             </div>
 
             {/* Card Details */}
-            <div className="relative">
-              {/* Subtle glow effect */}
-              <div className="absolute -inset-4 bg-gradient-to-l from-primary/10 to-transparent rounded-3xl blur-xl opacity-50" />
-              <div className="relative">
-                <CardDetails card={card} />
+            <div className="py-4">
+              <Badge variant="outline" className="mb-3 text-red-500 border-red-500/50">{card.category}</Badge>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">{card.title}</h1>
+
+              <div className="flex items-baseline gap-3 mb-6">
+                <span className="text-3xl font-bold text-red-500">{card.price.toLocaleString('ru-RU')} BYN</span>
+                {card.originalPrice && (
+                  <span className="text-xl text-gray-400 dark:text-gray-500 line-through">{card.originalPrice.toLocaleString('ru-RU')} BYN</span>
+                )}
+                {discountPercent > 0 && (
+                  <Badge className="bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400 border-red-500/20 text-md font-semibold">
+                    -{discountPercent}%
+                  </Badge>
+                )}
+              </div>
+
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">Описание</h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{card.description}</p>
+              </div>
+
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-full">
+                  <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                  <span className="font-bold w-10 text-center">{quantity}</span>
+                  <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setQuantity(q => q + 1)}>
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Button size="lg" className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-full text-lg font-bold" onClick={handleAddToCart}>
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Добавить в корзину
+                </Button>
+              </div>
+
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-600 dark:text-gray-300">Гарантия подлинности и качества</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Truck className="w-5 h-5 text-blue-500" />
+                  <span className="text-gray-600 dark:text-gray-300">Быстрая доставка по всему миру</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Enhanced Related Cards Section */}
-          <div className="relative">
-            {/* Section background with subtle pattern */}
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900/50 to-zinc-800/50 rounded-3xl blur-3xl" />
-            <div className="relative bg-zinc-900/20 rounded-3xl border border-zinc-700/50 backdrop-blur-sm p-8">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-white mb-4">Похожие карточки</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary to-purple-500 rounded-full mx-auto" />
-              </div>
-              <RelatedCards currentCardId={card.id} category={card.category} />
-            </div>
+          {/* Related Cards Section */}
+          <div className="mt-20 lg:mt-28">
+            <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">Похожие карточки</h2>
+            <RelatedCards currentCardId={card.id} category={card.category} />
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
 
-      {/* Enhanced Footer */}
-      <div className="relative mt-20">
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
-        <Footer />
-      </div>
+      <Footer />
     </div>
   )
 }

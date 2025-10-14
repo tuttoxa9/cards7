@@ -263,9 +263,11 @@ export function FeaturedSections() {
                         <span className="text-gray-400 text-xs line-through">
                           {card.originalPrice?.toLocaleString() || '5 479'} BYN
                         </span>
+                      {card.originalPrice && card.originalPrice > card.price && (
                         <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
-                          -{card.discount || '79'}%
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                         </Badge>
+                      )}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
                         {card.price.toLocaleString()} BYN
@@ -436,12 +438,14 @@ export function FeaturedSections() {
                       <span className="text-gray-400 text-xs line-through">
                         {card.originalPrice?.toLocaleString() || '3 499'} BYN
                       </span>
-                      <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
-                        -{card.discount || '80'}%
-                      </Badge>
+                      {card.originalPrice && card.originalPrice > card.price && (
+                        <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                        </Badge>
+                      )}
                     </div>
                     <div className="text-white font-bold text-lg mb-2">
-                      {Math.round(card.price * 0.2).toLocaleString()} BYN
+                      {card.price.toLocaleString()} BYN
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -598,12 +602,14 @@ export function FeaturedSections() {
                         <span className="text-gray-400 text-xs line-through">
                           {card.originalPrice?.toLocaleString() || '599'} BYN
                         </span>
+                      {card.originalPrice && card.originalPrice > card.price && (
                         <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
-                          -{card.discount || '68'}%
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                         </Badge>
+                      )}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
-                        193 BYN
+                      {card.price.toLocaleString()} BYN
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
