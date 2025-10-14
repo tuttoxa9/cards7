@@ -122,54 +122,65 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
             className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
           >
             {cards.map((card) => (
-          <Link key={card.id} href={`/card/${card.id}`}>
-            <Card className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-primary/70 transition-all duration-300 overflow-hidden rounded-3xl aspect-square">
-              <div className="relative w-full h-full overflow-hidden rounded-3xl">
+          <Link key={card.id} href={`/card/${card.id}`} className="block">
+            <Card className="group cursor-pointer glass-strong border border-white/10 hover-glow-purple transition-all duration-300 overflow-visible rounded-2xl aspect-square hover:scale-[1.03]">
+              <div className="relative w-full h-full overflow-hidden rounded-2xl">
                 <img
                   src={card.imageUrl || card.image || "/placeholder.svg"}
                   alt={card.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
                 {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col space-y-2">
-                  {card.isHot && <Badge className="bg-red-600 text-white text-sm px-3 py-1 rounded-full">Хит продаж</Badge>}
-                  {card.tag && <Badge className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full">{card.tag}</Badge>}
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  {card.isHot && (
+                    <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-3 py-1.5 rounded-full border border-red-400/30 shadow-lg flex items-center gap-1.5 w-fit">
+                      <span className="text-sm">🔥</span>
+                      <span className="font-semibold">Хит продаж</span>
+                    </Badge>
+                  )}
+                  {card.tag && (
+                    <Badge className="glass text-white text-xs px-3 py-1.5 rounded-full border border-purple-400/30 shadow-lg font-semibold w-fit">
+                      {card.tag}
+                    </Badge>
+                  )}
                   {!card.inStock && (
-                    <Badge variant="secondary" className="bg-gray-600 text-white text-sm px-3 py-1 rounded-full">
+                    <Badge className="bg-gray-800/80 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full border border-gray-600/30 shadow-lg w-fit">
                       Нет в наличии
                     </Badge>
                   )}
                 </div>
 
                 {/* Price at bottom */}
-                <div className="absolute bottom-4 left-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-white">{card.price} BYN</span>
-                      {card.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through text-gray-400">{card.originalPrice} BYN</span>
+                <div className="absolute bottom-4 left-4 right-4 z-10">
+                  <div className="glass-strong rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl font-bold text-white">{card.price} BYN</span>
+                        {card.originalPrice && (
+                          <span className="text-sm text-gray-400 line-through">{card.originalPrice} BYN</span>
+                        )}
+                      </div>
+                      {card.originalPrice && card.originalPrice > card.price && (
+                        <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                        </Badge>
                       )}
                     </div>
-                    {card.originalPrice && card.originalPrice > card.price && (
-                      <Badge variant="destructive" className="bg-red-600 text-white text-xs">
-                        -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
-                      </Badge>
-                    )}
                   </div>
                 </div>
 
-                {/* Hover icons */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill w-7 h-7" viewBox="0 0 16 16">
+                {/* Hover overlay with icons */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
+                  <Button size="icon" className="w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white rounded-full shadow-xl border border-purple-400/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill w-6 h-6" viewBox="0 0 16 16">
                       <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                     </svg>
                   </Button>
-                  <Button size="icon" className="w-12 h-12 bg-white/90 hover:bg-white text-black rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-heart-fill w-7 h-7" viewBox="0 0 16 16">
+                  <Button size="icon" className="w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-full shadow-xl border border-red-400/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-heart-fill w-6 h-6" viewBox="0 0 16 16">
                       <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                     </svg>
                   </Button>

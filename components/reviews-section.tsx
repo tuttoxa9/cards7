@@ -122,63 +122,65 @@ export function ReviewsSection() {
           {displayedReviews.map((review) => (
             <Card
               key={review.id}
-              className="group cursor-pointer bg-transparent border-2 border-transparent hover:border-primary/70 transition-all duration-300 overflow-hidden rounded-3xl h-80 relative"
+              className="group cursor-pointer glass-strong border-white/10 hover-glow-purple transition-all duration-300 overflow-hidden rounded-2xl h-80 relative hover:scale-[1.02]"
             >
-              <div className="relative w-full h-full overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-900/80 via-zinc-800/60 to-zinc-700/40 backdrop-blur-sm">
+              <div className="relative w-full h-full overflow-hidden rounded-2xl">
 
-                {/* Background pattern/gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-transparent" />
+                {/* Large decorative quote in background */}
+                <Quote className="absolute top-4 right-4 h-32 w-32 text-white/5 z-0" />
 
                 {/* Content */}
                 <CardContent className="relative z-10 p-6 h-full flex flex-col justify-between">
                   {/* Header with user info */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xl border-2 border-white/20">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-purple-400/30 flex-shrink-0">
                         {review.avatar ? (
                           <img
                             src={review.avatar}
                             alt={review.name}
-                            className="w-14 h-14 rounded-full object-cover"
+                            className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
                           review.name.charAt(0).toUpperCase()
                         )}
                       </div>
                       <div>
-                        <h3 className="font-bold text-white text-lg">
+                        <h3 className="font-bold text-white text-base">
                           {review.name}
                         </h3>
-                        <div className="flex items-center space-x-1 mt-1">
+                        <div className="flex items-center gap-0.5 mt-1">
                           {renderStars(review.rating)}
                         </div>
                       </div>
                     </div>
-                    <Quote className="h-8 w-8 text-white/30" />
                   </div>
 
                   {/* Review text */}
-                  <div className="flex-1 flex items-center">
-                    <p className="text-zinc-200 leading-relaxed text-sm font-medium">
+                  <div className="flex-1 flex items-center my-4">
+                    <p className="text-gray-200 leading-relaxed text-sm font-normal italic">
                       "{review.text}"
                     </p>
                   </div>
 
                   {/* Bottom decoration */}
-                  <div className="mt-4 pt-4 border-t border-white/10">
+                  <div className="mt-auto pt-4 border-t border-white/10">
                     <div className="flex justify-between items-center">
-                      <Badge className="bg-gradient-to-r from-blue-600/80 to-purple-600/80 text-white text-xs px-3 py-1 rounded-full border border-white/20">
+                      <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-3 py-1.5 rounded-full border border-purple-400/30 shadow-lg font-semibold">
                         ⭐ {review.rating}/5
                       </Badge>
-                      <div className="text-xs text-zinc-400">
-                        Проверенный отзыв
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-gray-300 font-medium">
+                          Проверено
+                        </span>
                       </div>
                     </div>
                   </div>
                 </CardContent>
 
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
+                {/* Hover gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none" />
               </div>
             </Card>
           ))}

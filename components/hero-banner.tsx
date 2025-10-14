@@ -141,10 +141,10 @@ export function HeroBanner() {
                 <button
                   key={card.id}
                   onClick={() => setActiveCard(index)}
-                  className={`relative flex-shrink-0 w-28 h-28 rounded-2xl overflow-hidden transition-all duration-700 ease-out ${
+                  className={`relative flex-shrink-0 w-28 h-28 rounded-2xl overflow-hidden transition-all duration-700 ease-out border-2 ${
                     index === activeCard
-                      ? "ring-2 ring-purple-400 shadow-2xl shadow-purple-500/40 z-10"
-                      : ""
+                      ? "border-purple-400 shadow-2xl glow-purple z-10"
+                      : "border-white/20 opacity-60 hover:opacity-80"
                   }`}
                   style={{
                     transform: index === activeCard ? "scale(1.5)" : "scale(1)",
@@ -169,7 +169,7 @@ export function HeroBanner() {
                 variant="ghost"
                 size="icon"
                 onClick={prevCard}
-                className="text-white/60 hover:text-white hover:bg-white/20 rounded-full w-12 h-12 backdrop-blur-sm border border-white/20"
+                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-purple rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
               >
                 <ChevronLeft className="w-6 h-6" />
               </Button>
@@ -177,7 +177,7 @@ export function HeroBanner() {
                 variant="ghost"
                 size="icon"
                 onClick={nextCard}
-                className="text-white/60 hover:text-white hover:bg-white/20 rounded-full w-12 h-12 backdrop-blur-sm border border-white/20"
+                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-purple rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
               >
                 <ChevronRight className="w-6 h-6" />
               </Button>
@@ -194,16 +194,11 @@ export function HeroBanner() {
               <button
                 key={card.id}
                 onClick={() => setActiveCard(index)}
-                className={`relative flex-shrink-0 transition-all duration-300 ${
+                className={`relative flex-shrink-0 transition-all duration-300 border-2 ${
                   index === activeCard
-                    ? "w-20 h-24 ring-2 ring-blue-500 shadow-lg scale-110 z-10"
-                    : "w-16 h-20 opacity-60"
+                    ? "w-20 h-24 border-purple-400 shadow-lg scale-110 z-10 glow-purple"
+                    : "w-16 h-20 opacity-60 border-white/20 hover:opacity-80"
                 } rounded-xl overflow-hidden`}
-                style={{
-                  boxShadow: index === activeCard
-                    ? '0 0 0 2px transparent, 0 0 0 4px rgba(59, 130, 246, 0.5), 0 8px 25px -5px rgba(59, 130, 246, 0.3)'
-                    : ''
-                }}
                 style={{
                   marginLeft: index > 0 && index === activeCard ? "4px" : "0px",
                   marginRight: index < featuredCards.length - 1 && index === activeCard ? "4px" : "0px",
@@ -308,14 +303,16 @@ export function HeroBanner() {
         <div className="container mx-auto px-4 md:px-8">
           <div className="max-w-2xl pointer-events-auto">
             <div className="flex items-center gap-3 mb-4">
-              {/* Новинка бейдж на мобильных */}
-              <div className="md:hidden bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-                <span className="text-white text-sm font-medium">Новинка</span>
+              {/* Бейдж категории на мобильных */}
+              <div className="md:hidden">
+                <Badge className="glass-strong border-purple-400/30 text-white px-3 py-1.5 text-xs font-semibold rounded-full shadow-lg">
+                  {currentCard.category}
+                </Badge>
               </div>
 
               {/* Бейджи на десктопе */}
               <div className="hidden md:flex items-center gap-3">
-                <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white border-0 px-4 py-2 text-sm font-medium rounded-full">
+                <Badge className="glass-strong border-purple-400/30 text-white px-4 py-2 text-sm font-semibold rounded-full shadow-lg glow-purple">
                   {currentCard.category}
                 </Badge>
               </div>
@@ -347,7 +344,7 @@ export function HeroBanner() {
               <div className="flex items-center gap-3 md:gap-4">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex-1 md:flex-none"
+                  className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white border border-red-400/30 px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-bold rounded-full shadow-xl glow-red hover:shadow-2xl transition-all duration-300 flex-1 md:flex-none"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-cart-fill w-4 h-4 md:w-5 md:h-5 mr-2" viewBox="0 0 16 16">
                     <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -357,7 +354,7 @@ export function HeroBanner() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-white/30 bg-white/10 backdrop-blur-lg text-white hover:bg-white/20 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full"
+                  className="glass-strong border-white/20 text-white hover:bg-white/20 hover:border-white/30 px-4 md:px-6 py-2 md:py-3 text-base md:text-lg rounded-full font-semibold shadow-lg transition-all duration-300"
                 >
                   Подробнее
                 </Button>

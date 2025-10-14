@@ -93,9 +93,12 @@ export function CatalogFilters() {
       </div>
 
       {/* Price Range */}
-      <Card className="bg-card border-border">
+      <Card className="glass-strong border-white/10 shadow-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-card-foreground">Цена</CardTitle>
+          <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+            <span className="text-purple-400">💰</span>
+            Цена
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Slider
@@ -104,37 +107,41 @@ export function CatalogFilters() {
             max={5000}
             min={0}
             step={100}
-            className="w-full"
+            className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-purple-600 [&_[role=slider]]:to-purple-500 [&_[role=slider]]:border-2 [&_[role=slider]]:border-purple-400/50 [&_[role=slider]]:shadow-lg [&_[role=slider]]:shadow-purple-500/30"
           />
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>от {filters.priceRange[0]} Br</span>
-            <span>до {filters.priceRange[1]} Br</span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-white glass px-3 py-1.5 rounded-full">от {filters.priceRange[0]} Br</span>
+            <span className="text-xs font-medium text-white glass px-3 py-1.5 rounded-full">до {filters.priceRange[1]} Br</span>
           </div>
         </CardContent>
       </Card>
 
       {/* Categories */}
-      <Card className="bg-card border-border">
+      <Card className="glass-strong border-white/10 shadow-xl">
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-card-foreground">Категории</CardTitle>
+          <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
+            <span className="text-purple-400">📁</span>
+            Категории
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {isLoading ? (
             [...Array(3)].map((_, i) => (
               <div key={i} className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-gray-300 rounded animate-pulse" />
-                <div className="h-4 bg-gray-300 rounded animate-pulse flex-1" />
+                <div className="w-4 h-4 bg-white/20 rounded animate-pulse" />
+                <div className="h-4 bg-white/20 rounded animate-pulse flex-1" />
               </div>
             ))
           ) : (
             categories.map((category) => (
-              <div key={category} className="flex items-center space-x-2">
+              <div key={category} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
                 <Checkbox
                   id={category}
                   checked={filters.categories.includes(category)}
                   onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
+                  className="border-white/30 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-600 data-[state=checked]:to-purple-500 data-[state=checked]:border-purple-400"
                 />
-                <label htmlFor={category} className="text-sm text-card-foreground cursor-pointer flex-1">
+                <label htmlFor={category} className="text-sm text-white cursor-pointer flex-1 font-medium">
                   {category}
                 </label>
               </div>
