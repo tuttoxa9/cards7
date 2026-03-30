@@ -233,7 +233,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
               <FormField control={form.control} name="category" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Категория *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl><SelectTrigger><SelectValue placeholder={categories.length === 0 ? "Загрузка..." : "Выберите категорию"} /></SelectTrigger></FormControl>
                     <SelectContent>{categories.map((cat) => (<SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>))}</SelectContent>
                   </Select>
@@ -270,7 +270,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
                 <FormField control={form.control} name="rarity" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Редкость</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl><SelectTrigger className="md:max-w-xs"><SelectValue placeholder="Выберите редкость" /></SelectTrigger></FormControl>
                       <SelectContent>{rarities.map((rarity) => (<SelectItem key={rarity.value} value={rarity.value}>{rarity.label}</SelectItem>))}</SelectContent>
                     </Select>
@@ -311,7 +311,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
                          <div className="w-full space-y-2">
                             <ImageIcon className="w-8 h-8 mx-auto text-zinc-400" />
                             <p className="text-sm text-zinc-400">Выберите задник</p>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value}>
                              <FormControl><SelectTrigger><SelectValue placeholder="Без задника" /></SelectTrigger></FormControl>
                              <SelectContent>
                                <SelectItem value="none">Без задника</SelectItem>
