@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from '@/lib/r2';
 import sharp from 'sharp';
+import { sanitizeFileName } from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
     // Создаем уникальное имя файла с расширением .webp
     const timestamp = Date.now();
     const folder = type === 'banner' ? 'banners' : type === 'background' ? 'backgrounds' : type === 'carousel' ? 'carousel' : type === 'avatar' ? 'avatars' : type === 'review' ? 'reviews' : 'cards';
-    const originalName = file.name.split('.')[0]; // убираем расширение
+    const originalName = sanitizeFileName(file.name.split('.')[0]); // убираем расширение и санируем
     const fileName = `${folder}/${timestamp}_${originalName}.webp`;
 
     // Конвертируем файл в ArrayBuffer
