@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
           .toBuffer();
       }
     } catch (error) {
-      console.log('Ошибка конвертации в WebP, используем оригинальный файл:', error);
+      console.error('Ошибка конвертации в WebP, используем оригинальный файл:', error);
       // Fallback: используем оригинальный файл если конвертация не удалась
       processedBuffer = Buffer.from(fileBuffer);
       contentType = file.type;
