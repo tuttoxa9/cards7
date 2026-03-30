@@ -93,62 +93,79 @@ export function CatalogFilters() {
       </div>
 
       {/* Price Range */}
-      <Card className="glass-strong border-white/10 shadow-xl">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-            <span className="text-purple-400">💰</span>
-            Цена
-          </CardTitle>
+      <Card className="bg-transparent border-0 shadow-none">
+        <CardHeader className="px-0 pb-3">
+          <CardTitle className="text-sm font-semibold text-white">Цена</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="px-0 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">от</span>
+              <input
+                type="number"
+                value={filters.priceRange[0]}
+                onChange={(e) => setFilters(prev => ({...prev, priceRange: [Number(e.target.value), prev.priceRange[1]]}))}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
+              />
+            </div>
+            <div className="w-2 h-px bg-zinc-800" />
+            <div className="flex-1 relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">до</span>
+              <input
+                type="number"
+                value={filters.priceRange[1]}
+                onChange={(e) => setFilters(prev => ({...prev, priceRange: [prev.priceRange[0], Number(e.target.value)]}))}
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
           <Slider
             value={filters.priceRange}
             onValueChange={(value) => setFilters((prev) => ({ ...prev, priceRange: value as [number, number] }))}
             max={5000}
             min={0}
             step={100}
-            className="w-full [&_[role=slider]]:bg-gradient-to-r [&_[role=slider]]:from-purple-600 [&_[role=slider]]:to-purple-500 [&_[role=slider]]:border-2 [&_[role=slider]]:border-purple-400/50 [&_[role=slider]]:shadow-lg [&_[role=slider]]:shadow-purple-500/30"
+            className="w-full [&_[role=slider]]:bg-white [&_[role=slider]]:border-primary [&_[role=slider]]:w-4 [&_[role=slider]]:h-4 [&_.bg-primary]:bg-primary h-[2px] mt-6"
           />
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-white glass px-3 py-1.5 rounded-full">от {filters.priceRange[0]} Br</span>
-            <span className="text-xs font-medium text-white glass px-3 py-1.5 rounded-full">до {filters.priceRange[1]} Br</span>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Categories */}
-      <Card className="glass-strong border-white/10 shadow-xl">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-            <span className="text-purple-400">📁</span>
-            Категории
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <div className="h-px bg-zinc-800/50 w-full" />
+
+      {/* Categories as Chips */}
+      <div className="bg-transparent border-0 shadow-none">
+        <div className="px-0 pb-3">
+          <h3 className="text-sm font-semibold text-white">Категории</h3>
+        </div>
+        <div className="px-0">
           {isLoading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-white/20 rounded animate-pulse" />
-                <div className="h-4 bg-white/20 rounded animate-pulse flex-1" />
-              </div>
-            ))
+            <div className="flex flex-wrap gap-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-8 w-20 bg-zinc-800/50 rounded-full animate-pulse" />
+              ))}
+            </div>
           ) : (
-            categories.map((category) => (
-              <div key={category} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
-                <Checkbox
-                  id={category}
-                  checked={filters.categories.includes(category)}
-                  onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
-                  className="border-white/30 data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-600 data-[state=checked]:to-purple-500 data-[state=checked]:border-purple-400"
-                />
-                <label htmlFor={category} className="text-sm text-white cursor-pointer flex-1 font-medium">
-                  {category}
-                </label>
-              </div>
-            ))
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => {
+                const isSelected = filters.categories.includes(category);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => handleCategoryChange(category, !isSelected)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border ${
+                      isSelected
+                        ? 'bg-primary/10 text-primary border-primary/30'
+                        : 'bg-transparent text-zinc-400 border-zinc-800 hover:border-zinc-600 hover:text-zinc-300'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                )
+              })}
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
 
     </div>

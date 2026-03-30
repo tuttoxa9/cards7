@@ -63,32 +63,25 @@ export function CardGallery({ images, title }: CardGalleryProps) {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 flex flex-col items-center">
         {/* Main Image */}
-        <Card className="relative overflow-hidden bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 border-zinc-700/50 shadow-2xl backdrop-blur-sm">
-          <div className="aspect-[3/4] relative group bg-zinc-900/20">
+        <div className="relative overflow-visible bg-transparent border-0 shadow-none flex justify-center w-full">
+          <div className="relative group overflow-visible aspect-auto inline-block max-w-full">
             {/* Loading skeleton */}
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 animate-pulse" />
+              <div className="absolute inset-0 bg-zinc-800/20 animate-pulse rounded-xl" />
             )}
 
             <img
               src={images[currentImage] || "/placeholder.svg"}
               alt={`${title} - изображение ${currentImage + 1}`}
-              className={`w-full h-full object-cover transition-all duration-700 transform ${
-                isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in hover:scale-105"
-              } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              style={{ transform: `scale(${isZoomed ? 1.5 : 1}) rotate(${rotation}deg)` }}
-              onClick={() => setIsZoomed(!isZoomed)}
+              className={`max-w-full h-auto object-contain max-h-[70vh] drop-shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ filter: 'drop-shadow(0 25px 25px rgb(0 0 0 / 0.5))' }}
               onLoad={() => setImageLoaded(true)}
               loading="lazy"
             />
-
-            {/* Holographic effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Navigation Arrows */}
             {images.length > 1 && (
@@ -118,33 +111,9 @@ export function CardGallery({ images, title }: CardGalleryProps) {
                 variant="secondary"
                 size="icon"
                 className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={() => setIsZoomed(!isZoomed)}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={rotateImage}
-              >
-                <RotateCw className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
                 onClick={() => setIsFullscreen(true)}
               >
                 <Maximize2 className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={downloadImage}
-              >
-                <Download className="w-4 h-4" />
               </Button>
             </div>
 
@@ -172,16 +141,14 @@ export function CardGallery({ images, title }: CardGalleryProps) {
               </div>
             )}
 
-            {/* Modern gradient overlay */}
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
           </div>
-        </Card>
+        </div>
 
         {/* Enhanced Thumbnail Gallery */}
         {images.length > 1 && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-zinc-400 px-1">Дополнительные изображения</h3>
-            <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="space-y-3 w-full">
+            <h3 className="text-sm font-medium text-zinc-400 px-1 text-center">Дополнительные изображения</h3>
+            <div className="flex space-x-4 overflow-x-auto pb-2 justify-center scrollbar-hide">
               {images.map((image, index) => (
                 <button
                   key={index}
@@ -217,7 +184,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
 
       {/* Fullscreen Modal */}
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-zinc-800">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-zinc-800 z-[100]">
           <div className="relative w-full h-[90vh] flex items-center justify-center">
             <img
               src={images[currentImage] || "/placeholder.svg"}

@@ -68,16 +68,15 @@ export default function ReviewsPage() {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
-        className={`h-5 w-5 ${
-          i < rating ? "text-yellow-400" : "text-gray-300"
+        className={`h-4 w-4 ${
+          i < rating ? "text-[#FBBF24] fill-[#FBBF24]" : "text-zinc-600"
         }`}
-        fill="currentColor"
       />
     ));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+    <div className="min-h-screen bg-zinc-950">
       <Header />
       <GradualBlur
         preset="page-header"
@@ -92,34 +91,34 @@ export default function ReviewsPage() {
       />
       <main className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Отзывы наших клиентов
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
             Что говорят о нас наши покупатели.
           </p>
         </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : reviews.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <p className="text-zinc-500 text-lg">
               Отзывов пока нет.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (
               <Card
                 key={review.id}
-                className="bg-white dark:bg-gray-800/50 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200 dark:border-gray-700"
+                className="bg-[#1C1C24] border-0 rounded-[12px] shadow-none"
               >
                 <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-xl font-bold text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center mb-5">
+                    <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-xl font-bold text-zinc-400">
                       {review.avatar ? (
                         <img
                           src={review.avatar}
@@ -130,17 +129,23 @@ export default function ReviewsPage() {
                         review.name.charAt(0).toUpperCase()
                       )}
                     </div>
-                    <div className="ml-4">
-                      <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
-                        {review.name}
-                      </h3>
-                      <div className="flex">
+                    <div className="ml-4 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-[600] text-base text-white">
+                          {review.name}
+                        </h3>
+                        <div className="flex items-center text-green-500 gap-1 bg-green-500/10 px-1.5 py-0.5 rounded text-[10px] font-medium tracking-wide">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
+                          Проверенный
+                        </div>
+                      </div>
+                      <div className="flex mt-1.5 gap-0.5">
                         {renderStars(review.rating)}
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    "{review.text}"
+                  <p className="text-[#9CA3AF] leading-[1.5] text-[15px]">
+                    {review.text}
                   </p>
                 </CardContent>
               </Card>

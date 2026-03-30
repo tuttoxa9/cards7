@@ -6,21 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Minus, Plus, Trash2, Heart } from "lucide-react"
 
+import { CartItem as CartItemType } from "@/lib/cart-context"
+
 interface CartItemProps {
-  item: {
-    id: number
-    title: string
-    image: string
-    price: number
-    originalPrice?: number
-    discount?: number
-    category: string
-    rarity: string
-    quantity: number
-    inStock: boolean
-  }
-  onUpdateQuantity: (id: number, quantity: number) => void
-  onRemove: (id: number) => void
+  item: CartItemType
+  onUpdateQuantity: (id: string, quantity: number) => void
+  onRemove: (id: string) => void
 }
 
 export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
