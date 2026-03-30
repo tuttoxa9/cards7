@@ -52,23 +52,29 @@ export function FeaturedSections() {
 
   // Функция для получения карточек по их ID
   const getCardsByIds = async (cardIds: string[]): Promise<CardData[]> => {
-    const cards: CardData[] = [];
-
-    for (const cardId of cardIds) {
-      try {
-        const cardDoc = await getDoc(doc(db, "cards", cardId));
-        if (cardDoc.exists()) {
-          cards.push({
-            id: cardDoc.id,
-            ...cardDoc.data()
-          } as CardData);
+    try {
+      const cardPromises = cardIds.map(async (cardId) => {
+        try {
+          const cardDoc = await getDoc(doc(db, "cards", cardId));
+          if (cardDoc.exists()) {
+            return {
+              id: cardDoc.id,
+              ...cardDoc.data()
+            } as CardData;
+          }
+          return null;
+        } catch (error) {
+          console.error(`Ошибка загрузки карточки ${cardId}:`, error);
+          return null;
         }
-      } catch (error) {
-        console.error(`Ошибка загрузки карточки ${cardId}:`, error);
-      }
-    }
+      });
 
-    return cards;
+      const cards = await Promise.all(cardPromises);
+      return cards.filter((card): card is CardData => card !== null);
+    } catch (error) {
+      console.error("Ошибка при параллельной загрузке карточек:", error);
+      return [];
+    }
   };
 
   // Функция для загрузки категорий из Firestore
@@ -100,24 +106,20 @@ export function FeaturedSections() {
           getDoc(doc(db, "homepageSections", "newArrivals"))
         ]);
 
-        // Загрузка карточек для каждой секции
-        if (weeklyDealsDoc.exists()) {
-          const data = weeklyDealsDoc.data() as SectionData;
-          const cards = await getCardsByIds(data.cardIds || []);
-          setWeeklyDeals(cards);
-        }
+        // Загрузка карточек для каждой секции параллельно
+        const fetchSectionCards = async (doc: any, setter: (cards: CardData[]) => void) => {
+          if (doc.exists()) {
+            const data = doc.data() as SectionData;
+            const cards = await getCardsByIds(data.cardIds || []);
+            setter(cards);
+          }
+        };
 
-        if (bestSellersDoc.exists()) {
-          const data = bestSellersDoc.data() as SectionData;
-          const cards = await getCardsByIds(data.cardIds || []);
-          setBestSellers(cards);
-        }
-
-        if (newArrivalsDoc.exists()) {
-          const data = newArrivalsDoc.data() as SectionData;
-          const cards = await getCardsByIds(data.cardIds || []);
-          setNewArrivals(cards);
-        }
+        await Promise.all([
+          fetchSectionCards(weeklyDealsDoc, setWeeklyDeals),
+          fetchSectionCards(bestSellersDoc, setBestSellers),
+          fetchSectionCards(newArrivalsDoc, setNewArrivals)
+        ]);
 
       } catch (error) {
         console.error("Ошибка загрузки секций:", error);
