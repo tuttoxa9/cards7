@@ -11,7 +11,7 @@
   --card-foreground: #ffffff;
   --popover: #1C1C24;
   --popover-foreground: #ffffff;
-  --primary: #a855f7; /* Purple accent used sparingly */
+  --primary: #6d28d9; /* Deep violet accent used sparingly */
   --primary-foreground: #ffffff;
   --secondary: #27272A; /* Zinc 800 - solid secondary */
   --secondary-foreground: #ffffff;
@@ -23,8 +23,8 @@
   --destructive-foreground: #ffffff;
   --border: #27272A; /* Solid thin borders, no transparency */
   --input: #121212;
-  --ring: #a855f7;
-  --chart-1: #a855f7;
+  --ring: #6d28d9;
+  --chart-1: #6d28d9;
   --chart-2: #8b5cf6;
   --chart-3: #ef4444;
   --chart-4: #f59e0b;
@@ -32,12 +32,12 @@
   --radius: 0.75rem; /* 12px for softer, modern corners but not too rounded */
   --sidebar: #1C1C24;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #a855f7;
+  --sidebar-primary: #6d28d9;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #27272A;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #27272A;
-  --sidebar-ring: #a855f7;
+  --sidebar-ring: #6d28d9;
 }
 
 .dark {
@@ -48,7 +48,7 @@
   --card-foreground: #ffffff;
   --popover: #1C1C24;
   --popover-foreground: #ffffff;
-  --primary: #a855f7;
+  --primary: #6d28d9;
   --primary-foreground: #ffffff;
   --secondary: #27272A;
   --secondary-foreground: #ffffff;
@@ -60,20 +60,20 @@
   --destructive-foreground: #ffffff;
   --border: #27272A;
   --input: #121212;
-  --ring: #a855f7;
-  --chart-1: #a855f7;
+  --ring: #6d28d9;
+  --chart-1: #6d28d9;
   --chart-2: #8b5cf6;
   --chart-3: #ef4444;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
   --sidebar: #1C1C24;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #a855f7;
+  --sidebar-primary: #6d28d9;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #27272A;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #27272A;
-  --sidebar-ring: #a855f7;
+  --sidebar-ring: #6d28d9;
 }
 
 @theme inline {

@@ -65,19 +65,20 @@ export function CardGallery({ images, title }: CardGalleryProps) {
     <>
       <div className="space-y-6 flex flex-col items-center">
         {/* Main Image */}
-        <Card className="relative overflow-hidden bg-transparent border-0 shadow-none flex justify-center w-full">
-          <div className="relative group rounded-xl overflow-hidden aspect-auto inline-block max-w-full">
+        <div className="relative overflow-visible bg-transparent border-0 shadow-none flex justify-center w-full">
+          <div className="relative group overflow-visible aspect-auto inline-block max-w-full">
             {/* Loading skeleton */}
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-zinc-800/50 animate-pulse rounded-xl" />
+              <div className="absolute inset-0 bg-zinc-800/20 animate-pulse rounded-xl" />
             )}
 
             <img
               src={images[currentImage] || "/placeholder.svg"}
               alt={`${title} - изображение ${currentImage + 1}`}
-              className={`max-w-full h-auto object-contain max-h-[70vh] rounded-xl drop-shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
+              className={`max-w-full h-auto object-contain max-h-[70vh] drop-shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
+              style={{ filter: 'drop-shadow(0 25px 25px rgb(0 0 0 / 0.5))' }}
               onLoad={() => setImageLoaded(true)}
               loading="lazy"
             />
@@ -141,7 +142,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
             )}
 
           </div>
-        </Card>
+        </div>
 
         {/* Enhanced Thumbnail Gallery */}
         {images.length > 1 && (

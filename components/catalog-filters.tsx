@@ -125,7 +125,7 @@ export function CatalogFilters() {
             max={5000}
             min={0}
             step={100}
-            className="w-full [&_[role=slider]]:bg-white [&_[role=slider]]:border-primary [&_[role=slider]]:w-4 [&_[role=slider]]:h-4 [&_.bg-primary]:bg-primary h-1"
+            className="w-full [&_[role=slider]]:bg-white [&_[role=slider]]:border-primary [&_[role=slider]]:w-4 [&_[role=slider]]:h-4 [&_.bg-primary]:bg-primary h-[2px] mt-6"
           />
         </CardContent>
       </Card>
@@ -133,11 +133,11 @@ export function CatalogFilters() {
       <div className="h-px bg-zinc-800/50 w-full" />
 
       {/* Categories as Chips */}
-      <Card className="bg-transparent border-0 shadow-none">
-        <CardHeader className="px-0 pb-3">
-          <CardTitle className="text-sm font-semibold text-white">Категории</CardTitle>
-        </CardHeader>
-        <CardContent className="px-0">
+      <div className="bg-transparent border-0 shadow-none">
+        <div className="px-0 pb-3">
+          <h3 className="text-sm font-semibold text-white">Категории</h3>
+        </div>
+        <div className="px-0">
           {isLoading ? (
             <div className="flex flex-wrap gap-2">
               {[...Array(5)].map((_, i) => (
@@ -155,7 +155,7 @@ export function CatalogFilters() {
                     className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border ${
                       isSelected
                         ? 'bg-primary/10 text-primary border-primary/30'
-                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'
+                        : 'bg-transparent text-zinc-400 border-zinc-800 hover:border-zinc-600 hover:text-zinc-300'
                     }`}
                   >
                     {category}
@@ -164,8 +164,8 @@ export function CatalogFilters() {
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
 
     </div>

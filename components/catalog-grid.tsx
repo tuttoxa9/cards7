@@ -126,61 +126,39 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
           >
             {cards.map((card) => (
               <Link key={card.id} href={`/card/${card.id}`} className="block h-full group">
-                <Card className="h-full bg-[#1C1C24] border border-zinc-800/50 hover:border-primary/50 transition-all duration-300 rounded-2xl overflow-hidden flex flex-col">
-                  {/* Image Container */}
-                  <div className="relative aspect-square w-full bg-zinc-900/50 p-6 flex items-center justify-center">
+                <div className="flex flex-col h-full bg-transparent">
+                  {/* Image Container (Transparent) */}
+                  <div className="relative aspect-[4/5] w-full p-4 flex items-center justify-center">
                     <img
                       src={card.imageUrl || card.image || "/placeholder.svg"}
                       alt={card.title}
-                      className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-2xl"
+                      className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+                      style={{ filter: 'drop-shadow(0 15px 15px rgb(0 0 0 / 0.5))' }}
                     />
 
-                    {/* Strict Badges */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                      {card.isHot && (
-                        <Badge className="bg-[#1F2937] text-white text-xs px-2.5 py-1 rounded-md border border-red-500/50 font-medium tracking-wide">
+                    {/* Single Clean Badge */}
+                    <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
+                      {card.isHot ? (
+                        <Badge className="bg-[#1F2937] text-white text-xs px-2.5 py-1 rounded-md border border-zinc-700 font-medium tracking-wide">
                           ХИТ ПРОДАЖ
                         </Badge>
-                      )}
-                      {card.tag && (
-                        <Badge className="bg-[#1F2937] text-zinc-300 text-xs px-2.5 py-1 rounded-md border border-zinc-700 font-medium">
-                          {card.tag}
-                        </Badge>
-                      )}
-                      {!card.inStock && (
+                      ) : !card.inStock ? (
                         <Badge className="bg-zinc-900 text-zinc-500 text-xs px-2.5 py-1 rounded-md border border-zinc-800 font-medium">
                           НЕТ В НАЛИЧИИ
                         </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Content Container */}
-                  <div className="p-5 flex flex-col flex-1 justify-between gap-4 bg-[#1C1C24]">
-                    <div>
-                      <h3 className="font-semibold text-white text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-                        {card.title}
-                      </h3>
-                      <p className="text-zinc-500 text-sm mt-1">{card.category}</p>
+                      ) : card.tag ? (
+                        <Badge className="bg-[#1F2937] text-zinc-300 text-xs px-2.5 py-1 rounded-md border border-zinc-700 font-medium">
+                          {card.tag}
+                        </Badge>
+                      ) : null}
                     </div>
 
-                    <div className="flex items-end justify-between">
-                      <div className="flex flex-col">
-                        {card.originalPrice && (
-                          <span className="text-xs text-zinc-500 line-through decoration-zinc-600 mb-0.5">
-                            {card.originalPrice.toLocaleString()} BYN
-                          </span>
-                        )}
-                        <span className="text-xl font-bold text-white tracking-tight">
-                          {card.price.toLocaleString()} <span className="text-sm text-zinc-400 font-medium">BYN</span>
-                        </span>
-                      </div>
-
-                      {/* Compact Add to Cart Button */}
-                      {card.inStock && (
+                    {/* Floating Add to Cart Button */}
+                    {card.inStock && (
+                      <div className="absolute bottom-4 right-4 z-20">
                         <Button
                           size="icon"
-                          className="h-10 w-10 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+                          className="h-10 w-10 rounded-full bg-primary/90 text-white shadow-lg shadow-black/50 hover:bg-primary transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
                           onClick={(e) => {
                             e.preventDefault();
                             addToCart({
@@ -197,10 +175,31 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
                         >
                           <ShoppingCart className="w-4 h-4" />
                         </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content Container (Directly below image, no boxes) */}
+                  <div className="pt-4 flex flex-col flex-1 gap-1">
+                    <p className="text-zinc-500 text-[13px] font-medium uppercase tracking-wider">
+                      {card.category}
+                    </p>
+                    <h3 className="font-medium text-white text-base line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                      {card.title}
+                    </h3>
+
+                    <div className="flex items-end gap-2 mt-auto pt-2">
+                      <span className="text-xl font-bold text-white tracking-tight">
+                        {card.price.toLocaleString()} <span className="text-sm text-zinc-500 font-medium">BYN</span>
+                      </span>
+                      {card.originalPrice && (
+                        <span className="text-xs text-zinc-500 line-through decoration-zinc-600 mb-1">
+                          {card.originalPrice.toLocaleString()} BYN
+                        </span>
                       )}
                     </div>
                   </div>
-                </Card>
+                </div>
               </Link>
             ))}
           </div>
