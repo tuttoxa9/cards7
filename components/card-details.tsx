@@ -26,11 +26,14 @@ interface CardDetailsProps {
   }
 }
 
+import { useCart } from "@/lib/cart-context"
+
 export function CardDetails({ card }: CardDetailsProps) {
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [copied, setCopied] = useState(false)
   const [addingToCart, setAddingToCart] = useState(false)
+  const { addToCart } = useCart()
 
   const increaseQuantity = () => {
     const maxStock = card.stockCount || 999
@@ -45,10 +48,15 @@ export function CardDetails({ card }: CardDetailsProps) {
     }
   }
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     setAddingToCart(true)
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    addToCart({
+      id: card.id,
+      title: card.title,
+      price: card.price,
+      image: card.imageUrl || "/placeholder.svg",
+      quantity: quantity
+    })
     setAddingToCart(false)
     toast.success(`${card.title} добавлен в корзину`)
   }
@@ -99,11 +107,6 @@ export function CardDetails({ card }: CardDetailsProps) {
           <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-primary/30 px-3 py-1 font-medium transition-colors">
             {card.category}
           </Badge>
-          {card.year && (
-            <Badge variant="outline" className="border-zinc-700 text-zinc-400 font-medium">
-              {card.year}
-            </Badge>
-          )}
           {card.rarity && (
             <Badge className={`bg-gradient-to-r ${getRarityColor(card.rarity)} text-white font-medium border-0`}>
               {getRarityIcon(card.rarity)}
@@ -111,7 +114,7 @@ export function CardDetails({ card }: CardDetailsProps) {
             </Badge>
           )}
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight tracking-tight text-balance">
+        <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight tracking-tight text-balance drop-shadow-sm">
           {card.title}
         </h1>
 
@@ -121,7 +124,7 @@ export function CardDetails({ card }: CardDetailsProps) {
             <div className="flex items-center gap-2">
               <div className="flex items-center text-yellow-500">
                 <Star className="w-5 h-5 fill-current" />
-                <span className="ml-1.5 font-semibold text-white">{card.rating}</span>
+                <span className="ml-1.5 font-semibold text-zinc-300">{card.rating}</span>
               </div>
               <span className="text-zinc-500 text-sm">({card.reviews || 0} отзывов)</span>
             </div>
@@ -146,7 +149,7 @@ export function CardDetails({ card }: CardDetailsProps) {
       <div className="space-y-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-4">
-            <span className="text-4xl font-bold text-white tracking-tight">
+            <span className="text-4xl font-bold text-zinc-100 tracking-tight drop-shadow-sm">
               {card.price.toLocaleString()} <span className="text-2xl text-zinc-400 font-medium">BYN</span>
             </span>
             {card.originalPrice && (

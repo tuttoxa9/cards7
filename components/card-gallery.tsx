@@ -65,8 +65,8 @@ export function CardGallery({ images, title }: CardGalleryProps) {
     <>
       <div className="space-y-6">
         {/* Main Image */}
-        <Card className="relative overflow-hidden bg-gradient-to-br from-zinc-900/50 to-zinc-950/50 border-zinc-700/50 shadow-2xl backdrop-blur-sm">
-          <div className="aspect-[3/4] relative group bg-zinc-900/20">
+        <Card className="relative overflow-hidden bg-transparent border-0 shadow-none">
+          <div className="relative group rounded-xl overflow-hidden bg-zinc-900/50 border border-zinc-800/50 aspect-auto">
             {/* Loading skeleton */}
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 animate-pulse" />
@@ -75,20 +75,12 @@ export function CardGallery({ images, title }: CardGalleryProps) {
             <img
               src={images[currentImage] || "/placeholder.svg"}
               alt={`${title} - изображение ${currentImage + 1}`}
-              className={`w-full h-full object-cover transition-all duration-700 transform ${
-                isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in hover:scale-105"
-              } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              style={{ transform: `scale(${isZoomed ? 1.5 : 1}) rotate(${rotation}deg)` }}
-              onClick={() => setIsZoomed(!isZoomed)}
+              className={`w-full h-auto object-contain max-h-[70vh] transition-all duration-700 transform ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               onLoad={() => setImageLoaded(true)}
               loading="lazy"
             />
-
-            {/* Holographic effect overlay */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Navigation Arrows */}
             {images.length > 1 && (
@@ -118,33 +110,9 @@ export function CardGallery({ images, title }: CardGalleryProps) {
                 variant="secondary"
                 size="icon"
                 className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={() => setIsZoomed(!isZoomed)}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={rotateImage}
-              >
-                <RotateCw className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
                 onClick={() => setIsFullscreen(true)}
               >
                 <Maximize2 className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="bg-black/70 hover:bg-black/90 text-white border-0 backdrop-blur-sm shadow-lg"
-                onClick={downloadImage}
-              >
-                <Download className="w-4 h-4" />
               </Button>
             </div>
 
@@ -217,7 +185,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
 
       {/* Fullscreen Modal */}
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-zinc-800">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-zinc-800 z-[100]">
           <div className="relative w-full h-[90vh] flex items-center justify-center">
             <img
               src={images[currentImage] || "/placeholder.svg"}
