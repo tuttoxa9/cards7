@@ -75,7 +75,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
             <img
               src={images[currentImage] || "/placeholder.svg"}
               alt={`${title} - изображение ${currentImage + 1}`}
-              className={`max-w-full h-auto object-contain max-h-[70vh] rounded-xl border border-zinc-800/50 bg-zinc-900/50 transition-all duration-700 transform ${
+              className={`max-w-full h-auto object-contain max-h-[70vh] rounded-xl drop-shadow-2xl transition-all duration-300 transform hover:scale-[1.02] ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               onLoad={() => setImageLoaded(true)}

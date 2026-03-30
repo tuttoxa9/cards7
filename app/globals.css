@@ -4,76 +4,76 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Premium dark color scheme with accents */
-  --background: #121215; /* Deep dark gray background */
-  --foreground: #ffffff; /* White text */
-  --card: rgba(30, 30, 35, 0.6); /* Semi-transparent card with glassmorphism */
-  --card-foreground: #ffffff; /* White card text */
-  --popover: rgba(40, 40, 45, 0.8); /* Semi-transparent popover */
-  --popover-foreground: #ffffff; /* White popover text */
-  --primary: #a855f7; /* Purple accent */
-  --primary-foreground: #ffffff; /* White text on primary */
-  --secondary: rgba(100, 100, 110, 0.3); /* Transparent secondary */
-  --secondary-foreground: #ffffff; /* White text on secondary */
-  --muted: rgba(60, 60, 65, 0.4); /* Muted transparent background */
-  --muted-foreground: #a1a1aa; /* Light gray muted text */
-  --accent: #ef4444; /* Red accent for highlights */
-  --accent-foreground: #ffffff; /* White text on accent */
-  --destructive: #ef4444; /* Red for destructive actions */
-  --destructive-foreground: #ffffff; /* White text on destructive */
-  --border: rgba(255, 255, 255, 0.1); /* Subtle white border */
-  --input: rgba(30, 30, 35, 0.8); /* Dark input background */
-  --ring: rgba(168, 85, 247, 0.5); /* Purple focus ring */
-  --chart-1: #a855f7; /* Purple */
-  --chart-2: #8b5cf6; /* Violet */
-  --chart-3: #ef4444; /* Red */
-  --chart-4: #f59e0b; /* Orange */
-  --chart-5: #ec4899; /* Pink */
-  --radius: 1rem;
-  --sidebar: rgba(30, 30, 35, 0.8); /* Dark sidebar */
-  --sidebar-foreground: #ffffff; /* White sidebar text */
-  --sidebar-primary: rgba(168, 85, 247, 0.2); /* Purple tinted sidebar */
-  --sidebar-primary-foreground: #ffffff; /* White text */
-  --sidebar-accent: #a855f7; /* Purple sidebar accent */
-  --sidebar-accent-foreground: #ffffff; /* White text */
-  --sidebar-border: rgba(255, 255, 255, 0.1); /* Subtle border */
-  --sidebar-ring: rgba(168, 85, 247, 0.5); /* Purple focus ring */
-}
-
-.dark {
-  /* Same as root - already dark themed */
-  --background: #121215;
-  --foreground: #ffffff;
-  --card: rgba(30, 30, 35, 0.6);
+  /* Strict Premium Dark UI */
+  --background: #121212; /* Deep dark background */
+  --foreground: #ffffff; /* White headings and main text */
+  --card: #1C1C24; /* Solid, slightly lighter card background */
   --card-foreground: #ffffff;
-  --popover: rgba(40, 40, 45, 0.8);
+  --popover: #1C1C24;
   --popover-foreground: #ffffff;
-  --primary: #a855f7;
+  --primary: #a855f7; /* Purple accent used sparingly */
   --primary-foreground: #ffffff;
-  --secondary: rgba(100, 100, 110, 0.3);
+  --secondary: #27272A; /* Zinc 800 - solid secondary */
   --secondary-foreground: #ffffff;
-  --muted: rgba(60, 60, 65, 0.4);
-  --muted-foreground: #a1a1aa;
-  --accent: #ef4444;
+  --muted: #1F2937; /* Gray 800 */
+  --muted-foreground: #9CA3AF; /* Light gray for descriptions - highly readable */
+  --accent: #27272A; /* Same as secondary for hover states */
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(30, 30, 35, 0.8);
-  --ring: rgba(168, 85, 247, 0.5);
+  --border: #27272A; /* Solid thin borders, no transparency */
+  --input: #121212;
+  --ring: #a855f7;
   --chart-1: #a855f7;
   --chart-2: #8b5cf6;
   --chart-3: #ef4444;
   --chart-4: #f59e0b;
   --chart-5: #ec4899;
-  --sidebar: rgba(30, 30, 35, 0.8);
+  --radius: 0.75rem; /* 12px for softer, modern corners but not too rounded */
+  --sidebar: #1C1C24;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: rgba(168, 85, 247, 0.2);
+  --sidebar-primary: #a855f7;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #a855f7;
+  --sidebar-accent: #27272A;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: rgba(168, 85, 247, 0.5);
+  --sidebar-border: #27272A;
+  --sidebar-ring: #a855f7;
+}
+
+.dark {
+  /* Same as root */
+  --background: #121212;
+  --foreground: #ffffff;
+  --card: #1C1C24;
+  --card-foreground: #ffffff;
+  --popover: #1C1C24;
+  --popover-foreground: #ffffff;
+  --primary: #a855f7;
+  --primary-foreground: #ffffff;
+  --secondary: #27272A;
+  --secondary-foreground: #ffffff;
+  --muted: #1F2937;
+  --muted-foreground: #9CA3AF;
+  --accent: #27272A;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #27272A;
+  --input: #121212;
+  --ring: #a855f7;
+  --chart-1: #a855f7;
+  --chart-2: #8b5cf6;
+  --chart-3: #ef4444;
+  --chart-4: #f59e0b;
+  --chart-5: #ec4899;
+  --sidebar: #1C1C24;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #a855f7;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #27272A;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #27272A;
+  --sidebar-ring: #a855f7;
 }
 
 @theme inline {

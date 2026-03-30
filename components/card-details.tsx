@@ -55,7 +55,9 @@ export function CardDetails({ card }: CardDetailsProps) {
       title: card.title,
       price: card.price,
       image: card.imageUrl || "/placeholder.svg",
-      quantity: quantity
+      quantity: quantity,
+      originalPrice: card.originalPrice,
+      discount: card.discount,
     })
     setAddingToCart(false)
     toast.success(`${card.title} добавлен в корзину`)
@@ -114,12 +116,12 @@ export function CardDetails({ card }: CardDetailsProps) {
             </Badge>
           )}
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight tracking-tight text-balance drop-shadow-sm">
+        <h1 className="text-4xl sm:text-5xl font-bold text-white leading-tight tracking-tight text-balance">
           {card.title}
         </h1>
 
         {/* Rating & Simple Stock */}
-        <div className="flex items-center flex-wrap gap-4 pt-2">
+        <div className="flex items-center flex-wrap gap-4 mt-2">
           {card.rating && card.rating > 0 && (
             <div className="flex items-center gap-2">
               <div className="flex items-center text-yellow-500">
@@ -143,32 +145,30 @@ export function CardDetails({ card }: CardDetailsProps) {
         </div>
       </div>
 
-      <div className="h-px bg-zinc-800 w-full my-6" />
+      <div className="h-px bg-zinc-800 w-full my-6 opacity-50" />
 
       {/* Price & Actions Inline */}
       <div className="space-y-6">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-baseline gap-4">
-            <span className="text-4xl font-bold text-zinc-100 tracking-tight drop-shadow-sm">
-              {card.price.toLocaleString()} <span className="text-2xl text-zinc-400 font-medium">BYN</span>
+        <div className="flex items-baseline gap-4">
+          <span className="text-4xl font-bold text-white tracking-tight">
+            {card.price.toLocaleString()} <span className="text-2xl text-zinc-500 font-medium">BYN</span>
+          </span>
+          {card.originalPrice && (
+            <span className="text-lg text-zinc-500 line-through decoration-zinc-600">
+              {card.originalPrice.toLocaleString()} BYN
             </span>
-            {card.originalPrice && (
-              <span className="text-xl text-zinc-500 line-through decoration-zinc-600">
-                {card.originalPrice.toLocaleString()} BYN
-              </span>
-            )}
-            {card.originalPrice && (
-              <Badge className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20 font-semibold px-2 py-0.5">
-                {card.discount
-                  ? `-${card.discount}%`
-                  : `-${Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%`}
-              </Badge>
-            )}
-          </div>
+          )}
+          {card.originalPrice && (
+            <Badge className="bg-zinc-800 text-zinc-300 border-zinc-700 font-semibold px-2 py-0.5">
+              {card.discount
+                ? `-${card.discount}%`
+                : `-${Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%`}
+            </Badge>
+          )}
         </div>
 
         {card.inStock && (
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden h-14">
               <Button
                 variant="ghost"
@@ -195,7 +195,7 @@ export function CardDetails({ card }: CardDetailsProps) {
 
             <Button
               size="lg"
-              className="flex-1 h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-base rounded-xl transition-all shadow-lg shadow-primary/20"
+              className="flex-1 h-14 bg-primary hover:bg-primary/90 text-white font-semibold text-base rounded-xl transition-all w-full"
               onClick={handleAddToCart}
               disabled={addingToCart}
             >
@@ -211,77 +211,49 @@ export function CardDetails({ card }: CardDetailsProps) {
                 </div>
               )}
             </Button>
-
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                className={`h-14 w-14 rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 transition-colors ${
-                  isWishlisted ? "text-red-500 border-red-500/20 bg-red-500/10 hover:bg-red-500/20" : "text-zinc-400"
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`} />
-              </Button>
-
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleShare}
-                className="h-14 w-14 rounded-xl border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-400 transition-colors"
-              >
-                {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
-              </Button>
-            </div>
           </div>
         )}
       </div>
 
-      <div className="h-px bg-zinc-800 w-full my-8" />
+      <div className="h-px bg-zinc-800 w-full my-8 opacity-50" />
 
       {/* Description */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-white">Описание</h3>
-        <p className="text-zinc-400 leading-relaxed text-pretty text-base">{card.description}</p>
+        <h3 className="text-lg font-medium text-white">Описание</h3>
+        <p className="text-zinc-400 text-base leading-[1.6] text-pretty">{card.description}</p>
       </div>
 
       {/* Features List */}
       {card.features && card.features.length > 0 && (
         <div className="space-y-4 pt-4">
-          <h3 className="text-xl font-semibold text-white">Особенности</h3>
+          <h3 className="text-lg font-medium text-white">Особенности</h3>
           <ul className="grid grid-cols-1 gap-3">
             {card.features.map((feature, index) => (
               <li key={index} className="flex items-start gap-3 text-zinc-400">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                <span className="leading-relaxed">{feature}</span>
+                <span className="text-zinc-500 mt-0.5">•</span>
+                <span className="leading-[1.6]">{feature}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <div className="h-px bg-zinc-800 w-full my-8" />
+      <div className="h-px bg-zinc-800 w-full my-8 opacity-50" />
 
-      {/* Minimal Guarantees List */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Strict Guarantees List */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
-            <Shield className="w-5 h-5 text-green-500" />
-          </div>
+          <Shield className="w-6 h-6 text-zinc-400 stroke-[1.5px]" />
           <span className="text-sm font-medium text-zinc-300">Оригинальный<br/>товар</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-            <Truck className="w-5 h-5 text-blue-500" />
-          </div>
+          <Truck className="w-6 h-6 text-zinc-400 stroke-[1.5px]" />
           <span className="text-sm font-medium text-zinc-300">Быстрая<br/>доставка</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-            <RotateCcw className="w-5 h-5 text-purple-500" />
-          </div>
+          <RotateCcw className="w-6 h-6 text-zinc-400 stroke-[1.5px]" />
           <span className="text-sm font-medium text-zinc-300">Возврат<br/>14 дней</span>
         </div>
       </div>
