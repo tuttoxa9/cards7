@@ -10,7 +10,7 @@ import GradualBlur from "@/components/GradualBlur"
 export default function CatalogPage() {
   const [cardsCount, setCardsCount] = useState<number | null>(null);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-900">
+    <div className="min-h-screen bg-zinc-950">
       <Header />
 
       <GradualBlur

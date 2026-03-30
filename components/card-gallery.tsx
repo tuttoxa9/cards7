@@ -63,19 +63,19 @@ export function CardGallery({ images, title }: CardGalleryProps) {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 flex flex-col items-center">
         {/* Main Image */}
-        <Card className="relative overflow-hidden bg-transparent border-0 shadow-none">
-          <div className="relative group rounded-xl overflow-hidden bg-zinc-900/50 border border-zinc-800/50 aspect-auto">
+        <Card className="relative overflow-hidden bg-transparent border-0 shadow-none flex justify-center w-full">
+          <div className="relative group rounded-xl overflow-hidden aspect-auto inline-block max-w-full">
             {/* Loading skeleton */}
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 animate-pulse" />
+              <div className="absolute inset-0 bg-zinc-800/50 animate-pulse rounded-xl" />
             )}
 
             <img
               src={images[currentImage] || "/placeholder.svg"}
               alt={`${title} - изображение ${currentImage + 1}`}
-              className={`w-full h-auto object-contain max-h-[70vh] transition-all duration-700 transform ${
+              className={`max-w-full h-auto object-contain max-h-[70vh] rounded-xl border border-zinc-800/50 bg-zinc-900/50 transition-all duration-700 transform ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
               onLoad={() => setImageLoaded(true)}
@@ -140,16 +140,14 @@ export function CardGallery({ images, title }: CardGalleryProps) {
               </div>
             )}
 
-            {/* Modern gradient overlay */}
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
           </div>
         </Card>
 
         {/* Enhanced Thumbnail Gallery */}
         {images.length > 1 && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-zinc-400 px-1">Дополнительные изображения</h3>
-            <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="space-y-3 w-full">
+            <h3 className="text-sm font-medium text-zinc-400 px-1 text-center">Дополнительные изображения</h3>
+            <div className="flex space-x-4 overflow-x-auto pb-2 justify-center scrollbar-hide">
               {images.map((image, index) => (
                 <button
                   key={index}

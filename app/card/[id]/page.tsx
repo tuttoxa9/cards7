@@ -47,7 +47,7 @@ interface PageProps {
 
 function CardPageSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+    <div className="min-h-screen bg-zinc-950">
       <Header />
 
       <GradualBlur
@@ -209,7 +209,7 @@ export default function CardPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+    <div className="min-h-screen bg-zinc-950">
       <Header />
 
       <GradualBlur
@@ -226,13 +226,6 @@ export default function CardPage({ params }: PageProps) {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        {/* Static subtle background elements */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-3xl" />
-          <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full blur-3xl" />
-        </div>
-
         <main className="relative max-w-6xl mx-auto px-4 py-8">
           {/* Enhanced Breadcrumb */}
           <div className="flex items-center space-x-2 mb-8">
@@ -266,8 +259,6 @@ export default function CardPage({ params }: PageProps) {
 
             {/* Card Details */}
             <div className="relative lg:col-span-7">
-              {/* Subtle glow effect */}
-              <div className="absolute -inset-4 bg-gradient-to-l from-primary/10 to-transparent rounded-3xl blur-xl opacity-50" />
               <div className="relative">
                 <CardDetails card={card} />
               </div>
@@ -275,13 +266,11 @@ export default function CardPage({ params }: PageProps) {
           </div>
 
           {/* Enhanced Related Cards Section */}
-          <div className="relative">
-            {/* Section background with subtle pattern */}
-            <div className="absolute inset-0 bg-gradient-to-r from-zinc-900/50 to-zinc-800/50 rounded-3xl blur-3xl" />
-            <div className="relative bg-zinc-900/20 rounded-3xl border border-zinc-700/50 backdrop-blur-sm p-8">
+          <div className="relative mt-20">
+            <div className="relative bg-zinc-900/20 rounded-3xl border border-zinc-700/50 p-8">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-white mb-4">Похожие карточки</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-primary to-purple-500 rounded-full mx-auto" />
+                <div className="w-24 h-1 bg-zinc-600 rounded-full mx-auto" />
               </div>
               <RelatedCards currentCardId={card.id} category={card.category} />
             </div>
@@ -291,7 +280,6 @@ export default function CardPage({ params }: PageProps) {
 
       {/* Enhanced Footer */}
       <div className="relative mt-20">
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 to-transparent" />
         <Footer />
       </div>
     </div>
