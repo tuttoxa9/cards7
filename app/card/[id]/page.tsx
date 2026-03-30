@@ -256,9 +256,9 @@ export default function CardPage({ params }: PageProps) {
           <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full blur-3xl animate-pulse delay-500" />
         </div>
 
-        <main className="relative container mx-auto px-4 py-8">
+        <main className="relative max-w-6xl mx-auto px-4 py-8">
           {/* Enhanced Breadcrumb */}
-          <div className="flex items-center space-x-2 mb-12">
+          <div className="flex items-center space-x-2 mb-8">
             <Link href="/catalog">
               <Button
                 variant="ghost"
@@ -276,9 +276,9 @@ export default function CardPage({ params }: PageProps) {
           </div>
 
           {/* Main Content with enhanced spacing and effects */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20 items-start">
             {/* Image Gallery */}
-            <div className="relative">
+            <div className="relative lg:col-span-5 w-full max-w-md mx-auto">
               {/* Glow effect behind gallery */}
               <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-purple-500/20 rounded-3xl blur-2xl opacity-30" />
               <div className="relative">
@@ -290,7 +290,7 @@ export default function CardPage({ params }: PageProps) {
             </div>
 
             {/* Card Details */}
-            <div className="relative">
+            <div className="relative lg:col-span-7">
               {/* Subtle glow effect */}
               <div className="absolute -inset-4 bg-gradient-to-l from-primary/10 to-transparent rounded-3xl blur-xl opacity-50" />
               <div className="relative">
