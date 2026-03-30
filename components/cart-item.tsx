@@ -82,9 +82,15 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
                   <span className="text-sm text-muted-foreground line-through">
                     {item.originalPrice.toLocaleString()} BYN
                   </span>
-                  <Badge variant="destructive" className="bg-red-600 text-xs">
-                    -{item.discount}%
-                  </Badge>
+                  {item.discount ? (
+                    <Badge variant="destructive" className="bg-red-600 text-xs">
+                      -{item.discount}%
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="bg-red-600 text-xs">
+                      -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
+                    </Badge>
+                  )}
                 </>
               )}
             </div>

@@ -163,11 +163,15 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
                           <span className="text-sm text-gray-400 line-through">{card.originalPrice} BYN</span>
                         )}
                       </div>
-                      {card.originalPrice && card.originalPrice > card.price && (
+                      {card.discount ? (
+                        <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          -{card.discount}%
+                        </Badge>
+                      ) : (card.originalPrice && card.originalPrice > card.price && (
                         <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                           -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                         </Badge>
-                      )}
+                      ))}
                     </div>
                   </div>
                 </div>

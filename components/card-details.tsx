@@ -156,9 +156,15 @@ export function CardDetails({ card }: CardDetailsProps) {
                   <span className="text-xl text-zinc-500 line-through">
                     {card.originalPrice.toLocaleString()} BYN
                   </span>
-                  <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg animate-pulse">
-                    -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
-                  </Badge>
+                  {card.discount ? (
+                    <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg animate-pulse">
+                      -{card.discount}%
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg animate-pulse">
+                      -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                    </Badge>
+                  )}
                 </>
               )}
             </div>
