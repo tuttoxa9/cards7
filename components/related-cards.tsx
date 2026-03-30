@@ -172,11 +172,15 @@ export function RelatedCards({ currentCardId, category }: RelatedCardsProps) {
                             <span className="text-sm text-gray-400 line-through">{card.originalPrice.toLocaleString()} BYN</span>
                           )}
                         </div>
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge variant="destructive" className="bg-red-600 text-white text-xs">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge variant="destructive" className="bg-red-600 text-white text-xs">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                       </div>
                     </div>
                   </div>

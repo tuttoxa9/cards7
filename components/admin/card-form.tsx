@@ -28,6 +28,16 @@ const cardSchema = z.object({
     }),
     z.number().positive("Цена должна быть положительным числом")
   ]),
+  discount: z.union([
+    z.string().transform((val) => {
+      if (val === "" || val === undefined) return undefined;
+      const num = parseFloat(val);
+      if (isNaN(num) || num < 0 || num > 100) throw new Error("Скидка должна быть от 0 до 100%");
+      return num;
+    }),
+    z.number().min(0).max(100, "Скидка должна быть от 0 до 100%"),
+    z.undefined()
+  ]).optional(),
   originalPrice: z.union([
     z.string().transform((val) => {
       if (val === "" || val === undefined) return undefined;
@@ -88,6 +98,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
       name: "",
       price: 0,
       originalPrice: undefined,
+      discount: undefined,
       category: "",
       description: "",
       rarity: "common",
@@ -111,6 +122,7 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
       form.reset({
         ...editingCard,
         originalPrice: editingCard.originalPrice || undefined,
+        discount: editingCard.discount || undefined,
       });
     } else {
       form.reset({
@@ -211,6 +223,68 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
     { value: "legendary", label: "Легендарная" }
   ];
 
+  const handlePriceChange = (val: string) => {
+    const price = parseFloat(val);
+    if (isNaN(price)) return;
+    const opVal = form.getValues("originalPrice");
+    const originalPrice = typeof opVal === 'string' ? parseFloat(opVal) : opVal;
+
+    if (typeof originalPrice === 'number' && !isNaN(originalPrice) && originalPrice > price) {
+      const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+      form.setValue("discount", discount, { shouldValidate: true });
+    } else if (typeof originalPrice === 'number' && !isNaN(originalPrice) && originalPrice <= price) {
+      form.setValue("discount", undefined, { shouldValidate: true });
+    }
+  };
+
+  const handleOriginalPriceChange = (val: string) => {
+    const originalPrice = parseFloat(val);
+    if (isNaN(originalPrice) || originalPrice <= 0) {
+      form.setValue("discount", undefined, { shouldValidate: true });
+      return;
+    }
+
+    const dVal = form.getValues("discount");
+    const discount = typeof dVal === 'string' ? parseFloat(dVal) : dVal;
+
+    if (typeof discount === 'number' && !isNaN(discount) && discount > 0) {
+      const newPrice = Number((originalPrice * (1 - discount / 100)).toFixed(2));
+      form.setValue("price", newPrice, { shouldValidate: true });
+    } else {
+      const pVal = form.getValues("price");
+      const price = typeof pVal === 'string' ? parseFloat(pVal) : pVal;
+
+      if (typeof price === 'number' && !isNaN(price) && price < originalPrice) {
+        const calcDiscount = Math.round(((originalPrice - price) / originalPrice) * 100);
+        form.setValue("discount", calcDiscount, { shouldValidate: true });
+      }
+    }
+  };
+
+  const handleDiscountChange = (val: string) => {
+    if (val === "") {
+      return;
+    }
+    const discount = parseFloat(val);
+    if (isNaN(discount) || discount < 0 || discount >= 100) return;
+
+    const opVal = form.getValues("originalPrice");
+    const originalPrice = typeof opVal === 'string' ? parseFloat(opVal) : opVal;
+
+    if (typeof originalPrice === 'number' && !isNaN(originalPrice) && originalPrice > 0) {
+      const newPrice = Number((originalPrice * (1 - discount / 100)).toFixed(2));
+      form.setValue("price", newPrice, { shouldValidate: true });
+    } else {
+      const pVal = form.getValues("price");
+      const price = typeof pVal === 'string' ? parseFloat(pVal) : pVal;
+
+      if (typeof price === 'number' && !isNaN(price) && price > 0) {
+        const newOriginalPrice = Number((price / (1 - discount / 100)).toFixed(2));
+        form.setValue("originalPrice", newOriginalPrice, { shouldValidate: true });
+      }
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex flex-col h-full">
@@ -250,18 +324,60 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
             </TabsContent>
 
             <TabsContent value="prices" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                 <FormField control={form.control} name="price" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Цена (BYN) *</FormLabel>
-                    <FormControl><Input type="number" placeholder="0.00" {...field} /></FormControl>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handlePriceChange(e.target.value);
+                        }}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
                 <FormField control={form.control} name="originalPrice" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Старая цена (BYN)</FormLabel>
-                    <FormControl><Input type="number" placeholder="0.00" {...field} /></FormControl>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleOriginalPriceChange(e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="discount" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Скидка (%)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="1"
+                        placeholder="0"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleDiscountChange(e.target.value);
+                        }}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />

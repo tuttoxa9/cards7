@@ -333,11 +333,15 @@ export function HeroBanner() {
                       {currentCard.originalPrice.toLocaleString()} BYN
                     </span>
                   )}
-                  {currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
+                  {currentCard.discount ? (
+                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
+                      -{currentCard.discount}%
+                    </Badge>
+                  ) : (currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
                     <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
                       -{Math.round(((currentCard.originalPrice - currentCard.price) / currentCard.originalPrice) * 100)}%
                     </Badge>
-                  )}
+                  ))}
                 </div>
               </div>
 

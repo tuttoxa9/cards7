@@ -194,11 +194,15 @@ export function FeaturedSections() {
                             </span>
                           )}
                         </div>
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -271,11 +275,15 @@ export function FeaturedSections() {
                             {card.originalPrice.toLocaleString()} BYN
                           </span>
                         )}
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
                         {card.price.toLocaleString()} BYN
@@ -381,11 +389,15 @@ export function FeaturedSections() {
                           </span>
                         )}
                       </div>
-                      {card.originalPrice && card.originalPrice > card.price && (
+                      {card.discount ? (
+                        <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                          -{card.discount}%
+                        </Badge>
+                      ) : (card.originalPrice && card.originalPrice > card.price && (
                         <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                           -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                         </Badge>
-                      )}
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -450,11 +462,15 @@ export function FeaturedSections() {
                             {card.originalPrice.toLocaleString()} BYN
                           </span>
                         )}
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                     </div>
                     <div className="text-white font-bold text-lg mb-2">
                         {card.price.toLocaleString()} BYN
@@ -543,11 +559,15 @@ export function FeaturedSections() {
                             </span>
                           )}
                         </div>
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -620,11 +640,15 @@ export function FeaturedSections() {
                             {card.originalPrice.toLocaleString()} BYN
                           </span>
                         )}
-                        {card.originalPrice && card.originalPrice > card.price && (
+                        {card.discount ? (
+                          <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
+                            -{card.discount}%
+                          </Badge>
+                        ) : (card.originalPrice && card.originalPrice > card.price && (
                           <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
-                        )}
+                        ))}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
                         {card.price.toLocaleString()} BYN
