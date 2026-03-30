@@ -172,11 +172,13 @@ export function FeaturedSections() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
                   {/* Discount badge */}
-                  <div className="absolute top-4 left-4 z-10">
-                    <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-red-400/30">
-                      🔥 {card.tag || "Акция"}
-                    </Badge>
-                  </div>
+                  {card.tag && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <Badge className="bg-gradient-to-r from-red-600 to-red-500 text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-red-400/30">
+                        🔥 {card.tag}
+                      </Badge>
+                    </div>
+                  )}
 
                   {/* Price at bottom */}
                   <div className="absolute bottom-4 left-4 right-4 z-10">
@@ -246,11 +248,13 @@ export function FeaturedSections() {
                 >
                   <div className="relative">
                     {/* Discount badge */}
-                    <div className="absolute -top-2 -left-2 z-10">
-                      <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
-                        Акция
-                      </Badge>
-                    </div>
+                    {card.tag && (
+                      <div className="absolute -top-2 -left-2 z-10">
+                        <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
+                          {card.tag}
+                        </Badge>
+                      </div>
+                    )}
 
                     <img
                       src={card.imageUrl || card.image}
@@ -262,12 +266,16 @@ export function FeaturedSections() {
                     <div>
                       <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{card.title}</h3>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-gray-400 text-xs line-through">
-                          {card.originalPrice?.toLocaleString() || '5 479'} BYN
-                        </span>
-                        <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
-                          -{card.discount || '79'}%
-                        </Badge>
+                        {card.originalPrice && (
+                          <span className="text-gray-400 text-xs line-through">
+                            {card.originalPrice.toLocaleString()} BYN
+                          </span>
+                        )}
+                        {card.originalPrice && card.originalPrice > card.price && (
+                          <Badge className="bg-pink-600 text-white text-xs font-bold px-2 py-1">
+                            -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
                         {card.price.toLocaleString()} BYN
@@ -352,11 +360,13 @@ export function FeaturedSections() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                <div className="absolute top-3 left-3 z-10">
-                  <Badge className="glass text-white font-bold text-xs px-2.5 py-1.5 rounded-full shadow-lg border border-purple-400/30">
-                    ⭐ {card.tag || "Хит продаж"}
-                  </Badge>
-                </div>
+                {card.tag && (
+                  <div className="absolute top-3 left-3 z-10">
+                    <Badge className="glass text-white font-bold text-xs px-2.5 py-1.5 rounded-full shadow-lg border border-purple-400/30">
+                      ⭐ {card.tag}
+                    </Badge>
+                  </div>
+                )}
 
                 <div className="absolute bottom-3 left-3 right-3 z-10">
                   <div className="glass-strong rounded-lg p-2.5">
@@ -435,15 +445,19 @@ export function FeaturedSections() {
                   <div>
                     <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-gray-400 text-xs line-through">
-                        {card.originalPrice?.toLocaleString() || '3 499'} BYN
-                      </span>
-                      <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
-                        -{card.discount || '80'}%
-                      </Badge>
+                        {card.originalPrice && (
+                          <span className="text-gray-400 text-xs line-through">
+                            {card.originalPrice.toLocaleString()} BYN
+                          </span>
+                        )}
+                        {card.originalPrice && card.originalPrice > card.price && (
+                          <Badge className="bg-blue-600 text-white text-xs font-bold px-2 py-1">
+                            -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                          </Badge>
+                        )}
                     </div>
                     <div className="text-white font-bold text-lg mb-2">
-                      {Math.round(card.price * 0.2).toLocaleString()} BYN
+                        {card.price.toLocaleString()} BYN
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -508,11 +522,13 @@ export function FeaturedSections() {
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                  <div className="absolute top-4 left-4 z-10">
-                    <Badge className="glass text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-purple-400/30">
-                      ✨ {card.tag || "Новинка"}
-                    </Badge>
-                  </div>
+                  {card.tag && (
+                    <div className="absolute top-4 left-4 z-10">
+                      <Badge className="glass text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-purple-400/30">
+                        ✨ {card.tag}
+                      </Badge>
+                    </div>
+                  )}
 
                   <div className="absolute bottom-4 left-4 right-4 z-10">
                     <div className="glass-strong rounded-xl p-3">
@@ -581,11 +597,13 @@ export function FeaturedSections() {
                 >
                   <div className="relative">
                     {/* Action badge */}
-                    <div className="absolute -top-2 -left-2 z-10">
-                      <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
-                        Акция
-                      </Badge>
-                    </div>
+                    {card.tag && (
+                      <div className="absolute -top-2 -left-2 z-10">
+                        <Badge className="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">
+                          {card.tag}
+                        </Badge>
+                      </div>
+                    )}
 
                     <img
                       src={card.imageUrl || card.image}
@@ -597,15 +615,19 @@ export function FeaturedSections() {
                     <div>
                       <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{card.title}</h3>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-gray-400 text-xs line-through">
-                          {card.originalPrice?.toLocaleString() || '599'} BYN
-                        </span>
-                        <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
-                          -{card.discount || '68'}%
-                        </Badge>
+                        {card.originalPrice && (
+                          <span className="text-gray-400 text-xs line-through">
+                            {card.originalPrice.toLocaleString()} BYN
+                          </span>
+                        )}
+                        {card.originalPrice && card.originalPrice > card.price && (
+                          <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
+                            -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
+                          </Badge>
+                        )}
                       </div>
                       <div className="text-white font-bold text-lg mb-2">
-                        193 BYN
+                        {card.price.toLocaleString()} BYN
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
