@@ -5,9 +5,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Heart, ShoppingCart, Star, Grid3X3, List, ChevronLeft, ChevronRight } from "lucide-react"
+import { Heart, ShoppingCart, Star, Grid3X3, List, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, getDocs, query, where, limit, startAfter, orderBy, QueryConstraint, DocumentData } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useCart } from "@/lib/cart-context"
 import { toast } from "sonner"
@@ -29,37 +29,106 @@ interface CardData {
   tag?: string;
 }
 
+interface FilterState {
+  priceRange: [number, number]
+  categories: string[]
+  universe: string[]
+  foil: boolean
+  condition: string[]
+}
+
 interface CatalogGridProps {
+  filters: FilterState;
   onCardsCountChange?: (count: number) => void;
 }
 
-export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
+export function CatalogGrid({ filters, onCardsCountChange }: CatalogGridProps) {
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [sortBy, setSortBy] = useState("popular")
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 12
+  const [lastDoc, setLastDoc] = useState<DocumentData | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+
+  const ITEMS_PER_PAGE = 12;
   const { addToCart } = useCart()
 
-  // Загрузка карточек из Firestore
+  const buildQueryConstraints = (isLoadMore: boolean = false) => {
+    const constraints: QueryConstraint[] = [];
+
+    // --- Firestore Multiple 'in' Restriction Handling ---
+    // Firestore only allows one `in`, `not-in`, or `array-contains-any` clause per query.
+    // If we have multiple array filters active (e.g. categories AND universe), we can only push one to the DB query.
+    // To ensure the DB returns EXACTLY ITEMS_PER_PAGE and we don't break pagination by filtering on the client,
+    // we must only use ONE array filter in the query and disable the others, or redesign the schema (e.g. combined tags).
+    // For this MVP, we prioritize `categories`, then `universe`, then `condition`.
+    // Any secondary array filters will be IGNORED in the query to guarantee correct page sizes and `hasMore` states.
+
+    let hasArrayFilter = false;
+
+    if (filters.categories.length > 0) {
+      constraints.push(where("category", "in", filters.categories));
+      hasArrayFilter = true;
+    }
+
+    if (filters.universe.length > 0 && !hasArrayFilter) {
+      constraints.push(where("universe", "in", filters.universe));
+      hasArrayFilter = true;
+    }
+
+    if (filters.condition.length > 0 && !hasArrayFilter) {
+      constraints.push(where("condition", "in", filters.condition));
+      hasArrayFilter = true;
+    }
+
+    if (filters.foil) {
+      constraints.push(where("foil", "==", true));
+    }
+
+    // Price range
+    constraints.push(where("price", ">=", filters.priceRange[0]));
+    constraints.push(where("price", "<=", filters.priceRange[1]));
+
+    // Sorting
+    // Note: To sort by a field, you must also filter on that field (or have a composite index).
+    // Price sorting is safe since we have price filters.
+    if (sortBy === "price-asc") {
+      constraints.push(orderBy("price", "asc"));
+    } else if (sortBy === "price-desc") {
+      constraints.push(orderBy("price", "desc"));
+    } else {
+      // fallback for 'popular' or default (needs proper index setup)
+      // for now, default to price asc since we have price filters active
+      constraints.push(orderBy("price", "asc"));
+    }
+
+    if (isLoadMore && lastDoc) {
+      constraints.push(startAfter(lastDoc));
+    }
+
+    constraints.push(limit(ITEMS_PER_PAGE));
+    return constraints;
+  };
+
+  // Загрузка первой страницы карточек
   useEffect(() => {
-    const loadCards = async () => {
+    const loadInitialCards = async () => {
       try {
         setIsLoading(true);
-        const querySnapshot = await getDocs(collection(db, "cards"));
-        const cardsData: CardData[] = [];
+        const constraints = buildQueryConstraints();
+        const q = query(collection(db, "cards"), ...constraints);
+        const querySnapshot = await getDocs(q);
 
+        const cardsData: CardData[] = [];
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          cardsData.push({
-            id: doc.id,
-            ...data,
-          } as CardData);
+          cardsData.push({ id: doc.id, ...doc.data() } as CardData);
         });
 
         setCards(cardsData);
-        onCardsCountChange?.(cardsData.length);
+        setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+        setHasMore(querySnapshot.docs.length === ITEMS_PER_PAGE);
+        onCardsCountChange?.(cardsData.length); // Note: This now represents loaded count, not total count
       } catch (error) {
         console.error("Ошибка загрузки карточек:", error);
       } finally {
@@ -67,8 +136,35 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
       }
     };
 
-    loadCards();
-  }, []);
+    loadInitialCards();
+  }, [filters, sortBy]); // Перезагружаем при смене фильтров или сортировки
+
+  const loadMore = async () => {
+    if (!hasMore || isLoadingMore) return;
+    try {
+      setIsLoadingMore(true);
+      const constraints = buildQueryConstraints(true);
+      const q = query(collection(db, "cards"), ...constraints);
+      const querySnapshot = await getDocs(q);
+
+      const newCardsData: CardData[] = [];
+      querySnapshot.forEach((doc) => {
+        newCardsData.push({ id: doc.id, ...doc.data() } as CardData);
+      });
+
+      setCards(prev => {
+        const updated = [...prev, ...newCardsData];
+        onCardsCountChange?.(updated.length);
+        return updated;
+      });
+      setLastDoc(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+      setHasMore(querySnapshot.docs.length === ITEMS_PER_PAGE);
+    } catch (error) {
+      console.error("Ошибка при дозагрузке карточек:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   return (
     <div className="flex-1 space-y-6">
@@ -207,12 +303,33 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
           {/* Empty State */}
           {cards.length === 0 && (
             <div className="text-center text-muted-foreground py-20">
-              Карточки не найдены
+              По заданным фильтрам карточек не найдено.
+            </div>
+          )}
+
+          {/* Load More Button */}
+          {hasMore && cards.length > 0 && (
+            <div className="flex justify-center pt-8">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={loadMore}
+                disabled={isLoadingMore}
+                className="bg-transparent border-zinc-700 text-white hover:bg-zinc-800"
+              >
+                {isLoadingMore ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Загрузка...
+                  </>
+                ) : (
+                  "Показать еще"
+                )}
+              </Button>
             </div>
           )}
         </>
       )}
-
 
     </div>
   )

@@ -9,6 +9,14 @@ import GradualBlur from "@/components/GradualBlur"
 
 export default function CatalogPage() {
   const [cardsCount, setCardsCount] = useState<number | null>(null);
+  const [filters, setFilters] = useState({
+    priceRange: [0, 5000] as [number, number],
+    categories: [] as string[],
+    universe: [] as string[],
+    foil: false,
+    condition: [] as string[],
+  });
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <Header />
@@ -48,11 +56,11 @@ export default function CatalogPage() {
         <div className="flex gap-8">
           {/* Sidebar Filters */}
           <aside className="hidden lg:block flex-shrink-0">
-            <CatalogFilters />
+            <CatalogFilters filters={filters} setFilters={setFilters} />
           </aside>
 
           {/* Main Content */}
-          <CatalogGrid onCardsCountChange={setCardsCount} />
+          <CatalogGrid filters={filters} onCardsCountChange={setCardsCount} />
         </div>
       </main>
 

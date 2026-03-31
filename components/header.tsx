@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import { Search, ShoppingCart, Heart, Grid3X3, Folder, X } from "lucide-react"
+import { Search, ShoppingCart, Heart, Grid3X3, Folder, X, Palette } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -160,6 +160,15 @@ export function Header() {
                 >
                   <Grid3X3 className="w-5 h-5" />
                   <span>Каталог</span>
+                </Button>
+              </Link>
+              <Link href="/custom">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-white text-lg flex items-center space-x-2 px-4 py-2 rounded-3xl bg-violet-700/80 hover:bg-violet-600 transition-colors backdrop-blur-sm shadow-[0_0_15px_rgba(109,40,217,0.3)]"
+                >
+                  <Palette className="w-5 h-5" />
+                  <span>Свой дизайн</span>
                 </Button>
               </Link>
               <Link href="/media">
