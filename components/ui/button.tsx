@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-purple-400/50 aria-invalid:ring-red-500/30 aria-invalid:border-red-500",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-violet-600/50 aria-invalid:ring-red-500/30 aria-invalid:border-red-500",
   {
     variants: {
       variant: {
         default:
-          "bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-lg hover:from-purple-500 hover:to-purple-400 border border-purple-400/30 hover:shadow-xl hover:shadow-purple-500/20",
+          "bg-gradient-to-r from-violet-700 to-violet-700 text-white shadow-lg hover:from-violet-700 hover:to-violet-600 border border-violet-600/30 hover:shadow-xl hover:shadow-violet-700/20",
         destructive:
           "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg hover:from-red-500 hover:to-red-400 border border-red-400/30 hover:shadow-xl hover:shadow-red-500/20",
         outline:
@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "glass text-white shadow-md hover:bg-white/10 border border-white/10",
         ghost:
           "text-white hover:bg-white/10 hover:text-white",
-        link: "text-purple-400 underline-offset-4 hover:underline hover:text-purple-300",
+        link: "text-violet-600 underline-offset-4 hover:underline hover:text-purple-300",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

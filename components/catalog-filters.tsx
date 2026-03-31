@@ -93,11 +93,11 @@ export function CatalogFilters() {
       </div>
 
       {/* Price Range */}
-      <Card className="bg-transparent border-0 shadow-none">
-        <CardHeader className="px-0 pb-3">
-          <CardTitle className="text-sm font-semibold text-white">Цена</CardTitle>
-        </CardHeader>
-        <CardContent className="px-0 space-y-4">
+      <div className="bg-transparent border-0 shadow-none">
+        <div className="pb-3">
+          <h3 className="text-sm font-semibold text-white">Цена</h3>
+        </div>
+        <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">от</span>
@@ -105,7 +105,7 @@ export function CatalogFilters() {
                 type="number"
                 value={filters.priceRange[0]}
                 onChange={(e) => setFilters(prev => ({...prev, priceRange: [Number(e.target.value), prev.priceRange[1]]}))}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
+                className="w-full bg-transparent border border-zinc-800 hover:border-zinc-700 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
               />
             </div>
             <div className="w-2 h-px bg-zinc-800" />
@@ -115,7 +115,7 @@ export function CatalogFilters() {
                 type="number"
                 value={filters.priceRange[1]}
                 onChange={(e) => setFilters(prev => ({...prev, priceRange: [prev.priceRange[0], Number(e.target.value)]}))}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
+                className="w-full bg-transparent border border-zinc-800 hover:border-zinc-700 rounded-lg py-2 pl-8 pr-3 text-sm text-white outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
@@ -127,8 +127,8 @@ export function CatalogFilters() {
             step={100}
             className="w-full [&_[role=slider]]:bg-white [&_[role=slider]]:border-primary [&_[role=slider]]:w-4 [&_[role=slider]]:h-4 [&_.bg-primary]:bg-primary h-[2px] mt-6"
           />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <div className="h-px bg-zinc-800/50 w-full" />
 

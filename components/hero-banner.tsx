@@ -143,7 +143,7 @@ export function HeroBanner() {
                   onClick={() => setActiveCard(index)}
                   className={`relative flex-shrink-0 w-28 h-28 rounded-2xl overflow-hidden transition-all duration-700 ease-out border-2 ${
                     index === activeCard
-                      ? "border-purple-400 shadow-2xl glow-purple z-10"
+                      ? "border-violet-600 shadow-2xl glow-violet z-10"
                       : "border-white/20 opacity-60 hover:opacity-80"
                   }`}
                   style={{
@@ -169,7 +169,7 @@ export function HeroBanner() {
                 variant="ghost"
                 size="icon"
                 onClick={prevCard}
-                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-purple rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
+                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-violet rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
               >
                 <ChevronLeft className="w-6 h-6" />
               </Button>
@@ -177,7 +177,7 @@ export function HeroBanner() {
                 variant="ghost"
                 size="icon"
                 onClick={nextCard}
-                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-purple rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
+                className="text-white hover:text-white glass-strong hover:bg-white/20 hover-glow-violet rounded-full w-12 h-12 border border-white/20 transition-all duration-300"
               >
                 <ChevronRight className="w-6 h-6" />
               </Button>
@@ -196,7 +196,7 @@ export function HeroBanner() {
                 onClick={() => setActiveCard(index)}
                 className={`relative flex-shrink-0 transition-all duration-300 border-2 ${
                   index === activeCard
-                    ? "w-20 h-24 border-purple-400 shadow-lg scale-110 z-10 glow-purple"
+                    ? "w-20 h-24 border-violet-600 shadow-lg scale-110 z-10 glow-violet"
                     : "w-16 h-20 opacity-60 border-white/20 hover:opacity-80"
                 } rounded-xl overflow-hidden`}
                 style={{
@@ -305,14 +305,14 @@ export function HeroBanner() {
             <div className="flex items-center gap-3 mb-4">
               {/* Бейдж категории на мобильных */}
               <div className="md:hidden">
-                <Badge className="glass-strong border-purple-400/30 text-white px-3 py-1.5 text-xs font-semibold rounded-full shadow-lg">
+                <Badge className="glass-strong border-violet-600/30 text-white px-3 py-1.5 text-xs font-semibold rounded-full shadow-lg">
                   {currentCard.category}
                 </Badge>
               </div>
 
               {/* Бейджи на десктопе */}
               <div className="hidden md:flex items-center gap-3">
-                <Badge className="glass-strong border-purple-400/30 text-white px-4 py-2 text-sm font-semibold rounded-full shadow-lg glow-purple">
+                <Badge className="glass-strong border-violet-600/30 text-white px-4 py-2 text-sm font-semibold rounded-full shadow-lg glow-violet">
                   {currentCard.category}
                 </Badge>
               </div>
@@ -334,11 +334,11 @@ export function HeroBanner() {
                     </span>
                   )}
                   {currentCard.discount ? (
-                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-violet-700 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
                       -{currentCard.discount}%
                     </Badge>
                   ) : (currentCard.originalPrice && currentCard.originalPrice > currentCard.price && (
-                    <Badge className="bg-gradient-to-r from-pink-500 to-purple-600 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
+                    <Badge className="bg-gradient-to-r from-pink-500 to-violet-700 text-white border-0 px-2 md:px-3 py-1 text-xs md:text-sm font-bold rounded-full">
                       -{Math.round(((currentCard.originalPrice - currentCard.price) / currentCard.originalPrice) * 100)}%
                     </Badge>
                   ))}
