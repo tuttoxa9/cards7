@@ -82,8 +82,10 @@ export async function POST(request: NextRequest) {
          quantity: item.quantity
       })
 
+      const escapedTitle = dbCard.title.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&')
+
       validatedItemsList.push(
-        `- ${dbCard.title} (${item.quantity} шт\\.) \\- ${dbCard.price.toLocaleString()} BYN`
+        `- ${escapedTitle} (${item.quantity} шт\\.) \\- ${dbCard.price.toLocaleString()} BYN`
       )
     }
 
