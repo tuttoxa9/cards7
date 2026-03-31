@@ -51,6 +51,9 @@ const cardSchema = z.object({
   category: z.string().min(1, "Категория обязательна для выбора"),
   description: z.string().optional(),
   rarity: z.enum(["common", "rare", "epic", "legendary"]),
+  universe: z.string().optional(),
+  foil: z.boolean().default(false),
+  condition: z.string().optional(),
   inStock: z.boolean(),
   isHot: z.boolean(),
   isFeatured: z.boolean(),
@@ -79,6 +82,9 @@ interface Card {
   isFeatured: boolean;
   category: string;
   description: string;
+  universe?: string;
+  foil?: boolean;
+  condition?: string;
   inStock: boolean;
   isHot: boolean;
 }
@@ -133,6 +139,9 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
         category: "",
         description: "",
         rarity: "common",
+        universe: "",
+        foil: false,
+        condition: "NM",
         inStock: true,
         isHot: false,
         isFeatured: false,
@@ -382,13 +391,36 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
                   </FormItem>
                 )} />
               </div>
-              <div className="space-y-2 pt-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 pt-2">
                 <FormField control={form.control} name="rarity" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Редкость</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl><SelectTrigger className="md:max-w-xs"><SelectValue placeholder="Выберите редкость" /></SelectTrigger></FormControl>
+                      <FormControl><SelectTrigger><SelectValue placeholder="Выберите редкость" /></SelectTrigger></FormControl>
                       <SelectContent>{rarities.map((rarity) => (<SelectItem key={rarity.value} value={rarity.value}>{rarity.label}</SelectItem>))}</SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="universe" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Вселенная</FormLabel>
+                    <FormControl><Input placeholder="Например: Marvel, DC" {...field} /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="condition" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Состояние (Грейд)</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl><SelectTrigger><SelectValue placeholder="Выберите состояние" /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="M">Mint (M)</SelectItem>
+                        <SelectItem value="NM">Near Mint (NM)</SelectItem>
+                        <SelectItem value="EX">Excellent (EX)</SelectItem>
+                        <SelectItem value="GD">Good (GD)</SelectItem>
+                        <SelectItem value="PR">Poor (PR)</SelectItem>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -396,7 +428,8 @@ export function CardForm({ onCancel, onSave, editingCard }: CardFormProps) {
               </div>
               <div className="space-y-4 pt-4">
                 <FormLabel>Дополнительные параметры</FormLabel>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <FormField control={form.control} name="foil" render={({ field }) => (<FormItem className="flex items-center space-x-3 p-2 rounded-md bg-zinc-900/50"><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel className="cursor-pointer !mt-0">Голограмма (Foil)</FormLabel></FormItem>)} />
                   <FormField control={form.control} name="inStock" render={({ field }) => (<FormItem className="flex items-center space-x-3 p-2 rounded-md bg-zinc-900/50"><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel className="cursor-pointer !mt-0">В наличии</FormLabel></FormItem>)} />
                   <FormField control={form.control} name="isHot" render={({ field }) => (<FormItem className="flex items-center space-x-3 p-2 rounded-md bg-zinc-900/50"><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel className="cursor-pointer !mt-0">Хит продаж</FormLabel></FormItem>)} />
                   <FormField control={form.control} name="isFeatured" render={({ field }) => (<FormItem className="flex items-center space-x-3 p-2 rounded-md bg-zinc-900/50"><FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl><FormLabel className="cursor-pointer !mt-0">На главной</FormLabel></FormItem>)} />

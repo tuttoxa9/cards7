@@ -9,20 +9,28 @@ import { Badge } from "@/components/ui/badge"
 import { X, Filter } from "lucide-react"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { Switch } from "@/components/ui/switch"
 
 interface FilterState {
   priceRange: [number, number]
   categories: string[]
+  universe: string[]
+  foil: boolean
+  condition: string[]
 }
 
-export function CatalogFilters() {
-  const [categories, setCategories] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+interface CatalogFiltersProps {
+  filters: FilterState;
+  setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+}
 
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: [0, 5000],
-    categories: [],
-  })
+// Предустановленные популярные вселенные для MVP (чтобы не скачивать всю базу)
+const POPULAR_UNIVERSES = ["Marvel", "DC", "Star Wars", "Pokemon", "Yu-Gi-Oh!", "Magic: The Gathering", "Dragon Ball", "Other"];
+
+export function CatalogFilters({ filters, setFilters }: CatalogFiltersProps) {
+  const [categories, setCategories] = useState<string[]>([])
+  const [universes, setUniverses] = useState<string[]>(POPULAR_UNIVERSES)
+  const [isLoading, setIsLoading] = useState(true)
 
   const [activeFiltersCount, setActiveFiltersCount] = useState(0)
 
@@ -51,6 +59,18 @@ export function CatalogFilters() {
     loadFilterData()
   }, [])
 
+  useEffect(() => {
+    let count = 0;
+    if (filters.categories.length > 0) count += filters.categories.length;
+    if (filters.universe.length > 0) count += filters.universe.length;
+    if (filters.condition.length > 0) count += filters.condition.length;
+    if (filters.foil) count += 1;
+    // Price range is not counted to match typical UI behavior or we can count if it differs from default
+    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000) count += 1;
+
+    setActiveFiltersCount(count);
+  }, [filters]);
+
   const handleCategoryChange = (category: string, checked: boolean) => {
     setFilters((prev) => ({
       ...prev,
@@ -58,12 +78,28 @@ export function CatalogFilters() {
     }))
   }
 
+  const handleUniverseChange = (uni: string, checked: boolean) => {
+    setFilters((prev) => ({
+      ...prev,
+      universe: checked ? [...prev.universe, uni] : prev.universe.filter((u) => u !== uni),
+    }))
+  }
+
+  const handleConditionChange = (cond: string, checked: boolean) => {
+    setFilters((prev) => ({
+      ...prev,
+      condition: checked ? [...prev.condition, cond] : prev.condition.filter((c) => c !== cond),
+    }))
+  }
+
   const clearAllFilters = () => {
     setFilters({
       priceRange: [0, 5000],
       categories: [],
+      universe: [],
+      foil: false,
+      condition: [],
     })
-    setActiveFiltersCount(0)
   }
 
   return (
@@ -164,6 +200,76 @@ export function CatalogFilters() {
               })}
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="h-px bg-zinc-800/50 w-full" />
+
+      {/* Universe Filters */}
+      {universes.length > 0 && (
+        <div className="bg-transparent border-0 shadow-none">
+          <div className="px-0 pb-3">
+            <h3 className="text-sm font-semibold text-white">Вселенная</h3>
+          </div>
+          <div className="px-0 space-y-3">
+            {universes.map((uni) => (
+              <div key={uni} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`uni-${uni}`}
+                  checked={filters.universe.includes(uni)}
+                  onCheckedChange={(checked) => handleUniverseChange(uni, checked as boolean)}
+                  className="border-zinc-700 data-[state=checked]:bg-primary"
+                />
+                <label htmlFor={`uni-${uni}`} className="text-sm font-medium text-zinc-300 leading-none cursor-pointer">
+                  {uni}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Foil Toggle */}
+      <div className="bg-transparent border-0 shadow-none">
+        <div className="flex items-center justify-between">
+          <label htmlFor="foil-toggle" className="text-sm font-semibold text-white cursor-pointer">
+            Только голограмма (Foil)
+          </label>
+          <Switch
+            id="foil-toggle"
+            checked={filters.foil}
+            onCheckedChange={(checked) => setFilters(prev => ({...prev, foil: checked}))}
+            className="data-[state=checked]:bg-primary"
+          />
+        </div>
+      </div>
+
+      <div className="h-px bg-zinc-800/50 w-full" />
+
+      {/* Condition Filters */}
+      <div className="bg-transparent border-0 shadow-none">
+        <div className="px-0 pb-3">
+          <h3 className="text-sm font-semibold text-white">Состояние</h3>
+        </div>
+        <div className="px-0 space-y-3">
+          {[
+            { id: "M", label: "Mint (M)" },
+            { id: "NM", label: "Near Mint (NM)" },
+            { id: "EX", label: "Excellent (EX)" },
+            { id: "GD", label: "Good (GD)" },
+          ].map((cond) => (
+            <div key={cond.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={`cond-${cond.id}`}
+                checked={filters.condition.includes(cond.id)}
+                onCheckedChange={(checked) => handleConditionChange(cond.id, checked as boolean)}
+                className="border-zinc-700 data-[state=checked]:bg-primary"
+              />
+              <label htmlFor={`cond-${cond.id}`} className="text-sm font-medium text-zinc-300 leading-none cursor-pointer">
+                {cond.label}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
 
