@@ -10,11 +10,13 @@ import { ImagesManagement } from "./images-management";
 import { CategoriesManagement } from "./categories-management";
 import { ReviewsManagement } from "./reviews-management";
 import { SettingsPanel } from "./settings-panel";
+import { OrdersManagement } from "./orders-management";
+import { CustomRequestsManagement } from "./custom-requests-management";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
 import { useDrawer } from "@/hooks/use-drawer";
 
-type ActiveTab = "cards" | "sections" | "images" | "categories" | "reviews" | "offers" | "orders";
+type ActiveTab = "cards" | "sections" | "images" | "categories" | "reviews" | "offers" | "orders" | "custom-requests";
 
 interface AdminDashboardProps {
   user: User;
@@ -48,11 +50,9 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
           </div>
         );
       case "orders":
-        return (
-          <div className="text-center text-zinc-400 py-20">
-            Раздел "Заказы" будет добавлен в будущих версиях
-          </div>
-        );
+        return <OrdersManagement user={user} />;
+      case "custom-requests":
+        return <CustomRequestsManagement user={user} />;
       default:
         return null;
     }
@@ -71,18 +71,20 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
             {activeTab === "reviews" && "Отзывы"}
             {activeTab === "offers" && "Предложения"}
             {activeTab === "orders" && "Заказы"}
+            {activeTab === "custom-requests" && "Кастомные заявки"}
           </h1>
 
           <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActiveTab)} className="w-full sm:w-auto">
-              <TabsList className="grid grid-cols-4 sm:grid-cols-7 w-full sm:w-auto bg-[#18181B] p-1 h-auto">
-                <TabsTrigger value="cards" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Карточки</TabsTrigger>
-                <TabsTrigger value="sections" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Секции</TabsTrigger>
-                <TabsTrigger value="images" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Изображения</TabsTrigger>
-                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Категории</TabsTrigger>
-                <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Отзывы</TabsTrigger>
-                <TabsTrigger value="offers" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Предложения</TabsTrigger>
-                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3 py-1.5">Заказы</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ActiveTab)} className="w-full sm:w-auto overflow-x-auto custom-scrollbar">
+              <TabsList className="flex w-max min-w-full sm:w-auto bg-[#18181B] p-1 h-auto">
+                <TabsTrigger value="cards" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Карточки</TabsTrigger>
+                <TabsTrigger value="sections" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Секции</TabsTrigger>
+                <TabsTrigger value="images" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Изображения</TabsTrigger>
+                <TabsTrigger value="categories" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Категории</TabsTrigger>
+                <TabsTrigger value="reviews" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Отзывы</TabsTrigger>
+                <TabsTrigger value="orders" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Заказы</TabsTrigger>
+                <TabsTrigger value="custom-requests" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2 text-violet-400 data-[state=active]:bg-violet-900/20 data-[state=active]:text-violet-300">Кастомные заявки</TabsTrigger>
+                <TabsTrigger value="offers" className="text-xs sm:text-sm whitespace-nowrap px-3 sm:px-4 py-2">Предложения</TabsTrigger>
               </TabsList>
             </Tabs>
              <div className="flex items-center gap-2">
