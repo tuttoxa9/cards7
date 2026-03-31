@@ -218,7 +218,7 @@ export function FeaturedSections() {
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
                       </svg>
                     </Button>
-                    <Button size="icon" className="w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white rounded-full shadow-xl border border-purple-400/30">
+                    <Button size="icon" className="w-14 h-14 bg-gradient-to-br from-violet-700 to-violet-800 hover:from-violet-700 hover:to-violet-700 text-white rounded-full shadow-xl border border-violet-600/30">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-heart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
                       </svg>
@@ -357,7 +357,7 @@ export function FeaturedSections() {
             bestSellers.map((card) => (
             <Card
               key={card.id}
-              className="group cursor-pointer glass-strong border-white/10 hover-glow-purple transition-all duration-300 overflow-visible rounded-2xl aspect-square h-64 hover:scale-[1.03]"
+              className="group cursor-pointer glass-strong border-white/10 hover-glow-violet transition-all duration-300 overflow-visible rounded-2xl aspect-square h-64 hover:scale-[1.03]"
             >
               <div className="relative w-full h-full overflow-hidden rounded-2xl">
                 <img
@@ -370,7 +370,7 @@ export function FeaturedSections() {
 
                 {card.tag && (
                   <div className="absolute top-3 left-3 z-10">
-                    <Badge className="glass text-white font-bold text-xs px-2.5 py-1.5 rounded-full shadow-lg border border-purple-400/30">
+                    <Badge className="glass text-white font-bold text-xs px-2.5 py-1.5 rounded-full shadow-lg border border-violet-600/30">
                       ⭐ {card.tag}
                     </Badge>
                   </div>
@@ -390,11 +390,11 @@ export function FeaturedSections() {
                         )}
                       </div>
                       {card.discount ? (
-                        <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                        <Badge className="bg-gradient-to-r from-violet-700 to-violet-700 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                           -{card.discount}%
                         </Badge>
                       ) : (card.originalPrice && card.originalPrice > card.price && (
-                        <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                        <Badge className="bg-gradient-to-r from-violet-700 to-violet-700 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                           -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                         </Badge>
                       ))}
@@ -407,7 +407,7 @@ export function FeaturedSections() {
                   <Button
                     size="icon"
                     onClick={() => handleAddToCart(card)}
-                    className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white rounded-full shadow-xl border border-purple-400/30"
+                    className="w-12 h-12 bg-gradient-to-br from-violet-700 to-violet-800 hover:from-violet-700 hover:to-violet-700 text-white rounded-full shadow-xl border border-violet-600/30"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-cart-fill w-5 h-5" viewBox="0 0 16 16">
                       <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -527,7 +527,7 @@ export function FeaturedSections() {
               newArrivals.map((card) => (
               <Card
                 key={card.id}
-                className="group cursor-pointer flex-shrink-0 w-80 h-80 glass-strong border-white/10 hover-glow-purple transition-all duration-300 overflow-visible rounded-2xl hover:scale-[1.03]"
+                className="group cursor-pointer flex-shrink-0 w-80 h-80 glass-strong border-white/10 hover-glow-violet transition-all duration-300 overflow-visible rounded-2xl hover:scale-[1.03]"
               >
                 <div className="relative w-full h-full overflow-hidden rounded-2xl">
                   <img
@@ -540,7 +540,7 @@ export function FeaturedSections() {
 
                   {card.tag && (
                     <div className="absolute top-4 left-4 z-10">
-                      <Badge className="glass text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-purple-400/30">
+                      <Badge className="glass text-white font-bold text-sm px-3 py-1.5 rounded-full shadow-lg border border-violet-600/30">
                         ✨ {card.tag}
                       </Badge>
                     </div>
@@ -560,11 +560,11 @@ export function FeaturedSections() {
                           )}
                         </div>
                         {card.discount ? (
-                          <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          <Badge className="bg-gradient-to-r from-violet-700 to-violet-700 text-white text-xs px-2 py-1 rounded-full font-bold">
                             -{card.discount}%
                           </Badge>
                         ) : (card.originalPrice && card.originalPrice > card.price && (
-                          <Badge className="bg-gradient-to-r from-purple-600 to-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                          <Badge className="bg-gradient-to-r from-violet-700 to-violet-700 text-white text-xs px-2 py-1 rounded-full font-bold">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
                         ))}
@@ -577,7 +577,7 @@ export function FeaturedSections() {
                     <Button
                       size="icon"
                       onClick={() => handleAddToCart(card)}
-                      className="w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white rounded-full shadow-xl border border-purple-400/30"
+                      className="w-14 h-14 bg-gradient-to-br from-violet-700 to-violet-800 hover:from-violet-700 hover:to-violet-700 text-white rounded-full shadow-xl border border-violet-600/30"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill w-6 h-6" viewBox="0 0 16 16">
                         <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
@@ -641,11 +641,11 @@ export function FeaturedSections() {
                           </span>
                         )}
                         {card.discount ? (
-                          <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
+                          <Badge className="bg-violet-700 text-white text-xs font-bold px-2 py-1">
                             -{card.discount}%
                           </Badge>
                         ) : (card.originalPrice && card.originalPrice > card.price && (
-                          <Badge className="bg-purple-600 text-white text-xs font-bold px-2 py-1">
+                          <Badge className="bg-violet-700 text-white text-xs font-bold px-2 py-1">
                             -{Math.round(((card.originalPrice - card.price) / card.originalPrice) * 100)}%
                           </Badge>
                         ))}

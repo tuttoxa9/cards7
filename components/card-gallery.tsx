@@ -173,7 +173,7 @@ export function CardGallery({ images, title }: CardGalleryProps) {
 
                   {/* Glow effect for active thumbnail */}
                   {currentImage === index && (
-                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-purple-500/50 rounded-2xl blur-sm -z-10" />
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-violet-700/50 rounded-2xl blur-sm -z-10" />
                   )}
                 </button>
               ))}

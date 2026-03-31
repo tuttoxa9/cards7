@@ -356,17 +356,17 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.glow-purple {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
+.glow-violet {
+  box-shadow: 0 0 20px rgba(109, 40, 217, 0.3), 0 0 40px rgba(109, 40, 217, 0.1);
 }
 
 .glow-red {
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.3), 0 0 40px rgba(239, 68, 68, 0.1);
 }
 
-.hover-glow-purple:hover {
-  box-shadow: 0 0 30px rgba(168, 85, 247, 0.4), 0 0 60px rgba(168, 85, 247, 0.2);
-  border-color: rgba(168, 85, 247, 0.5);
+.hover-glow-violet:hover {
+  box-shadow: 0 0 30px rgba(109, 40, 217, 0.4), 0 0 60px rgba(109, 40, 217, 0.2);
+  border-color: rgba(109, 40, 217, 0.5);
 }
 
 .hover-glow-red:hover {

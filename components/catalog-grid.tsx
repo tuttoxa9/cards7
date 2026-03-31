@@ -122,7 +122,7 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
         <>
           {/* Cards Grid */}
           <div
-            className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
+            className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"}`}
           >
             {cards.map((card) => (
               <Link key={card.id} href={`/card/${card.id}`} className="block h-full group">
@@ -139,15 +139,15 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
                     {/* Single Clean Badge */}
                     <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
                       {card.isHot ? (
-                        <Badge className="bg-[#1F2937] text-white text-xs px-2.5 py-1 rounded-md border border-zinc-700 font-medium tracking-wide">
+                        <Badge className="bg-gray-800 text-white text-[10px] px-2 py-0.5 rounded-md border-0 font-medium tracking-wide">
                           ХИТ ПРОДАЖ
                         </Badge>
                       ) : !card.inStock ? (
-                        <Badge className="bg-zinc-900 text-zinc-500 text-xs px-2.5 py-1 rounded-md border border-zinc-800 font-medium">
+                        <Badge className="bg-zinc-900 text-zinc-500 text-[10px] px-2 py-0.5 rounded-md border border-zinc-800 font-medium">
                           НЕТ В НАЛИЧИИ
                         </Badge>
                       ) : card.tag ? (
-                        <Badge className="bg-[#1F2937] text-zinc-300 text-xs px-2.5 py-1 rounded-md border border-zinc-700 font-medium">
+                        <Badge className="bg-gray-800 text-zinc-300 text-[10px] px-2 py-0.5 rounded-md border-0 font-medium">
                           {card.tag}
                         </Badge>
                       ) : null}
@@ -180,15 +180,15 @@ export function CatalogGrid({ onCardsCountChange }: CatalogGridProps) {
                   </div>
 
                   {/* Content Container (Directly below image, no boxes) */}
-                  <div className="pt-4 flex flex-col flex-1 gap-1">
-                    <p className="text-zinc-500 text-[13px] font-medium uppercase tracking-wider">
+                  <div className="mt-4 flex flex-col flex-1 gap-1">
+                    <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">
                       {card.category}
                     </p>
-                    <h3 className="font-medium text-white text-base line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-white text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                       {card.title}
                     </h3>
 
-                    <div className="flex items-end gap-2 mt-auto pt-2">
+                    <div className="flex items-end gap-2 mt-auto pt-1">
                       <span className="text-xl font-bold text-white tracking-tight">
                         {card.price.toLocaleString()} <span className="text-sm text-zinc-500 font-medium">BYN</span>
                       </span>

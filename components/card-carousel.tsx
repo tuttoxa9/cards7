@@ -87,10 +87,10 @@ export function CardCarousel() {
               <div
                 className={`
                   relative group cursor-pointer transition-all duration-300
-                  ${collection.isActive ? "ring-2 ring-purple-500 ring-offset-2 ring-offset-background" : ""}
+                  ${collection.isActive ? "ring-2 ring-violet-700 ring-offset-2 ring-offset-background" : ""}
                 `}
               >
-                <div className="aspect-square relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-transparent hover:border-purple-500/70 transition-all duration-300">
+                <div className="aspect-square relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-transparent hover:border-violet-700/70 transition-all duration-300">
                   <img
                     src={collection.image || "/placeholder.svg"}
                     alt={collection.title}
